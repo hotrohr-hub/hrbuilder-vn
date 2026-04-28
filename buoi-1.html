@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buổi 1 — HR Builder VN</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style-v2.css">
+<style>
+/* Khác biệt vs competitor — UNIQUE elements */
+.principle-banner {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a8a 100%);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.principle-banner::before {
+  content: ''; position: absolute;
+  top: -50%; right: -20%; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.principle-banner::after {
+  content: ''; position: absolute;
+  bottom: -30%; left: -10%; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.principle-content { position: relative; z-index: 2; }
+.principle-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  padding: 5px 12px; border-radius: 100px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.6px; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.principle-name {
+  font-size: 28px; font-weight: 800;
+  letter-spacing: -0.6px; line-height: 1.2;
+  margin-bottom: 8px;
+}
+.principle-desc { font-size: 15px; opacity: 0.9; max-width: 680px; }
+.principle-progress {
+  display: flex; gap: 4px; margin-top: 18px;
+}
+.pdot {
+  width: 30px; height: 5px; border-radius: 3px;
+  background: rgba(255,255,255,0.15);
+}
+.pdot.done { background: var(--accent); }
+.pdot.active { background: white; box-shadow: 0 0 12px rgba(255,255,255,0.6); }
+.principle-progress-label {
+  font-size: 12px; opacity: 0.8;
+  margin-top: 8px;
+}
+
+/* PERSONALIZATION BANNER */
+.personalize-banner {
+  background: linear-gradient(135deg, var(--accent-soft), #fef3c7);
+  border: 1px solid #fed7aa;
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 14px;
+}
+.personalize-banner .pb-icon { font-size: 20px; flex-shrink: 0; }
+.personalize-banner strong { color: #9a3412; }
+
+/* LAN VOICE BOX */
+.lan-voice {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px;
+  margin: 20px 0;
+  display: flex; gap: 14px;
+  align-items: start;
+}
+.lan-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px;
+  flex-shrink: 0;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.lan-content { flex: 1; }
+.lan-name {
+  font-size: 12px; font-weight: 700;
+  color: #92400e;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px;
+}
+.lan-voice-btn {
+  background: rgba(146, 64, 14, 0.1);
+  color: #92400e;
+  padding: 2px 8px; border-radius: 100px;
+  font-size: 10px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 4px;
+  cursor: pointer;
+}
+.lan-voice-btn:hover { background: rgba(146, 64, 14, 0.2); }
+.lan-msg { font-size: 14.5px; color: #78350f; line-height: 1.6; }
+.lan-msg em { font-style: normal; font-weight: 600; color: #9a3412; }
+
+/* ==================== QUIZ STRIP (ôn lại bài cũ) ==================== */
+.quiz-strip {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  border: 1px solid #c4b5fd;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+}
+.quiz-strip.empty { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border-color: var(--border-strong); }
+.quiz-icon { font-size: 24px; flex-shrink: 0; }
+.quiz-text { display: flex; flex-direction: column; gap: 2px; }
+.quiz-text strong { font-size: 13px; color: #5b21b6; font-weight: 700; }
+.quiz-strip.empty .quiz-text strong { color: var(--text-muted); }
+.quiz-text span { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+
+/* ==================== HIDDEN PRINCIPLE BANNER ==================== */
+.principle-banner.mystery::before { background: radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, transparent 70%); }
+.principle-banner.mystery::after { background: radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%); }
+
+.mystery-title {
+  font-size: 24px; font-weight: 800;
+  letter-spacing: -0.5px; line-height: 1.25;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #fff 0%, #fbbf24 50%, #f97316 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.mystery-sub {
+  font-size: 14px; opacity: 0.85;
+  max-width: 680px; margin-bottom: 18px;
+  line-height: 1.55;
+}
+
+.hints-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.hint-card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  transition: all 0.3s;
+}
+.hint-card.unlocked {
+  background: rgba(251, 191, 36, 0.15);
+  border-color: rgba(251, 191, 36, 0.4);
+  animation: hintReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes hintReveal {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.hint-num {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  opacity: 0.75;
+}
+.hint-card.unlocked .hint-num { color: #fbbf24; opacity: 1; }
+.hint-text {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  font-style: italic;
+}
+.hint-card.locked .hint-text { opacity: 0.5; font-style: normal; font-size: 11.5px; }
+
+/* Reveal state — sau khi xong Bước 3 */
+.principle-banner.revealed .mystery-title {
+  display: none;
+}
+.principle-banner.revealed .mystery-sub {
+  display: none;
+}
+.principle-banner.revealed .reveal-name {
+  display: block !important;
+}
+.reveal-name {
+  display: none;
+  font-size: 32px; font-weight: 800;
+  margin-bottom: 6px;
+  background: linear-gradient(135deg, #fff 0%, #fbbf24 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: revealPulse 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes revealPulse {
+  0% { transform: scale(0.9); opacity: 0; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ==================== DEEP DIVE PANEL ==================== */
+.deep-dive {
+  background: var(--surface);
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 22px 26px;
+  margin-bottom: 24px;
+  transition: all 0.4s;
+}
+.deep-dive.locked { opacity: 0.6; }
+.deep-dive.unlocked {
+  border: 2px solid var(--purple);
+  background: linear-gradient(135deg, #faf5ff 0%, #fdf4ff 100%);
+  opacity: 1;
+}
+
+.dd-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 16px;
+}
+.dd-icon-wrap {
+  width: 48px; height: 48px; border-radius: var(--radius-sm);
+  background: var(--surface-3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.deep-dive.unlocked .dd-icon-wrap {
+  background: linear-gradient(135deg, var(--purple), var(--primary));
+  color: white;
+}
+.dd-header h3 { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+.dd-header p { font-size: 13px; color: var(--text-muted); }
+
+.dd-layers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.dd-layer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  transition: all 0.2s;
+}
+.deep-dive.unlocked .dd-layer { border-color: rgba(139, 92, 246, 0.3); cursor: pointer; }
+.deep-dive.unlocked .dd-layer:hover {
+  border-color: var(--purple);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+}
+.dd-layer-num {
+  display: inline-block;
+  font-size: 10px; font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--purple);
+  background: var(--purple-soft);
+  padding: 3px 8px; border-radius: 100px;
+  margin-bottom: 8px;
+}
+.deep-dive.locked .dd-layer-num { color: var(--text-muted); background: var(--surface-3); }
+.dd-layer-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.deep-dive.locked .dd-layer-title { color: var(--text-light); }
+.dd-layer-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+@media (max-width: 768px) {
+  .hints-row { grid-template-columns: 1fr; }
+  .dd-layers { grid-template-columns: 1fr; }
+}
+
+/* STEP NUMBERING (different from competitor) */
+.step-num-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--primary-soft), #ede9fe);
+  color: var(--primary-dark);
+  padding: 4px 12px; border-radius: 100px;
+  font-size: 11px; font-weight: 800;
+  letter-spacing: 0.4px;
+}
+.step-num-badge .step-icon { font-size: 12px; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">
+    <a href="index.html" style="color: inherit; text-decoration: none;">HR Builder VN</a>
+    <span class="badge">CỘT MỐC #1</span>
+  </div>
+  <nav>
+    <a href="index.html" class="active">Lớp học</a>
+    <a href="#">Cộng đồng</a>
+    <a href="#">Lịch học</a>
+  </nav>
+  <div class="user">
+    <span class="streak">🔥 3 ngày</span>
+    <span class="xp">⚡ 240 XP</span>
+    <div class="avatar">VL</div>
+  </div>
+</header>
+
+<div class="lesson-wrap">
+
+  <a href="index.html" class="back-link">← Về lớp học</a>
+
+  <!-- QUIZ STRIP — ÔN LẠI (Buổi 1 chưa có gì để ôn) -->
+  <div class="quiz-strip empty">
+    <div class="quiz-icon">🧠</div>
+    <div class="quiz-text">
+      <strong>Quiz 30 giây ôn bài cũ</strong>
+      <span>Chưa có — đây là buổi đầu. Từ Buổi 3 trở đi, mỗi buổi sẽ có quiz nhắc lại tư duy 2 buổi trước.</span>
+    </div>
+  </div>
+
+  <!-- HIDDEN PRINCIPLE BANNER — bí mật, mở dần qua hint -->
+  <div class="principle-banner mystery" id="principleBanner">
+    <div class="principle-content">
+      <div class="principle-tag">🔮 TƯ DUY SỐ 1 — BÍ MẬT</div>
+      <h2 class="mystery-title">Bạn đoán xem buổi này dạy tư duy gì?</h2>
+      <p class="mystery-sub">Mỗi bước bạn xong → mở 1 gợi ý. Xong Bước 3 → tiết lộ tên đầy đủ. Đây không phải chiêu trò — não bạn nhớ tốt hơn 30-40% khi tự đoán trước.</p>
+
+      <!-- Hiện sau khi reveal -->
+      <h2 class="reveal-name">🎉 TỰ HỌC CÙNG AI</h2>
+      <p class="mystery-sub reveal-sub" style="display:none;">Bạn vừa khám phá. Đây là tư duy gốc — 9 nguyên lý còn lại đều dựa trên cái này.</p>
+
+      <div class="hints-row">
+        <div class="hint-card unlocked">
+          <div class="hint-num">Gợi ý 1 · đã mở</div>
+          <div class="hint-text">"Khi cần biết gì, bạn KHÔNG vào Google nữa..."</div>
+        </div>
+        <div class="hint-card locked">
+          <div class="hint-num">Gợi ý 2</div>
+          <div class="hint-text">🔒 Mở khi xong Bước 2</div>
+        </div>
+        <div class="hint-card locked">
+          <div class="hint-num">Gợi ý 3 + tên đầy đủ</div>
+          <div class="hint-text">🔒 Mở khi xong Bước 3</div>
+        </div>
+      </div>
+
+      <div class="principle-progress" style="margin-top: 18px;">
+        <div class="pdot active"></div>
+        <div class="pdot"></div>
+        <div class="pdot"></div>
+        <div class="pdot"></div>
+        <div class="pdot"></div>
+        <div class="pdot"></div>
+        <div class="pdot"></div>
+        <div class="pdot"></div>
+        <div class="pdot"></div>
+        <div class="pdot"></div>
+      </div>
+      <div class="principle-progress-label">Đây là tư duy số 1 trong 10. Mở từ từ.</div>
+    </div>
+  </div>
+
+  <!-- DEEP DIVE PANEL — chỉ hiện sau khi reveal (Bước 3 xong) -->
+  <div class="deep-dive locked" id="deepDive">
+    <div class="dd-header">
+      <div class="dd-icon-wrap">🔒</div>
+      <div>
+        <h3>Đào sâu 3 tầng</h3>
+        <p class="dd-sub-locked">Mở khi bạn xong Bước 3. Học master = thuộc cả 3 tầng cho 10 tư duy.</p>
+        <p class="dd-sub-unlocked" style="display:none;">Đào sâu nguyên lý "Tự học cùng AI" qua 3 tầng. Bấm vào từng tầng để xem.</p>
+      </div>
+    </div>
+
+    <div class="dd-layers">
+      <div class="dd-layer">
+        <div class="dd-layer-num">TẦNG 1 · CƠ BẢN</div>
+        <div class="dd-layer-title">Cái gì</div>
+        <div class="dd-layer-desc dd-locked-desc">🔒 Định nghĩa nguyên lý — gọn 1-2 dòng dễ nhớ.</div>
+        <div class="dd-layer-desc dd-unlocked-desc" style="display:none;">
+          Khi cần biết thông tin để giải bài toán, bạn HỎI máy thay Google. Vì máy nhớ ngữ cảnh bạn, hiểu mảng bạn làm, trả lời đúng việc bạn cần.
+        </div>
+      </div>
+      <div class="dd-layer">
+        <div class="dd-layer-num">TẦNG 2 · CƠ CHẾ</div>
+        <div class="dd-layer-title">Vì sao work</div>
+        <div class="dd-layer-desc dd-locked-desc">🔒 Cơ chế đằng sau. Vì sao máy hiểu hơn Google trong việc này.</div>
+        <div class="dd-layer-desc dd-unlocked-desc" style="display:none;">
+          Google trả 10 link generic — bạn tự đọc, tự lọc. Máy đã đọc 10 link giúp bạn, hiểu bạn là HR ở đâu, đề xuất cụ thể. Tốc độ học 5-10x nhanh hơn.
+        </div>
+      </div>
+      <div class="dd-layer">
+        <div class="dd-layer-num">TẦNG 3 · MASTER</div>
+        <div class="dd-layer-title">Khi nào KHÔNG dùng</div>
+        <div class="dd-layer-desc dd-locked-desc">🔒 Edge case. Khi nào tư duy này SAI / cần tư duy khác.</div>
+        <div class="dd-layer-desc dd-unlocked-desc" style="display:none;">
+          KHÔNG dùng máy khi: <strong>(1)</strong> cần xác minh chính xác (luật BHXH — phải tra văn bản gốc), <strong>(2)</strong> cần ý kiến chuyên gia con người (luật sư cho hợp đồng quan trọng), <strong>(3)</strong> data cực nhạy cảm không nên đưa vào prompt (CCCD đầy đủ, lương individual).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo button — cho Lan + beta tester preview reveal -->
+  <div style="text-align: center; margin: -10px 0 20px;">
+    <button onclick="simulateReveal()" style="background: var(--purple-soft); color: var(--purple); padding: 8px 18px; border-radius: 100px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px dashed var(--purple);">
+      🎮 [Demo] Xem trải nghiệm khi xong Bước 3 →
+    </button>
+  </div>
+
+  <!-- PERSONALIZATION (UNIQUE) -->
+  <div class="personalize-banner">
+    <div class="pb-icon">🎯</div>
+    <div>Buổi này được điều chỉnh cho bạn — <strong>HR mảng Tuyển dụng @ FPT Software</strong>. Câu hỏi mẫu sẽ ưu tiên ngữ cảnh tuyển dev/IT.</div>
+  </div>
+
+  <!-- LESSON HEADER -->
+  <div class="lesson-top">
+    <div class="lesson-info">
+      <div class="tag">TUẦN 1 · 90 PHÚT</div>
+      <h1>Bạn nói tiếng Việt 1 lần, 90 phút sau có trang web cá nhân có pháo hoa</h1>
+      <p class="lesson-sub">Mục tiêu: bạn KHÔNG gõ 1 dòng code. Chỉ nói tiếng Việt với "bạn đồng hành ảo" — xong có URL công khai gửi bạn bè.</p>
+    </div>
+    <div class="lesson-progress">
+      <div class="progress-text">Tiến độ buổi: <strong>1/5 bước</strong></div>
+      <div class="progress-bar"><div class="progress-bar-fill" style="width: 20%"></div></div>
+    </div>
+  </div>
+
+  <!-- LAN VOICE — UNIQUE -->
+  <div class="lan-voice">
+    <div class="lan-avatar">VL</div>
+    <div class="lan-content">
+      <div class="lan-name">
+        Lan nói
+        <span class="lan-voice-btn">🎙 Nghe giọng Lan · 90s</span>
+      </div>
+      <p class="lan-msg">
+        Trước khi bạn bắt đầu — mình muốn nói thẳng <em>câu hỏi đang trong đầu bạn</em>:
+        <em>"Build trang web phải học HTML/CSS trước? Em chưa từng code gì cả."</em>
+        <br><br>
+        Câu trả lời: <em>KHÔNG cần học gì.</em> Bạn không gõ 1 dòng code. Đây là 2026 — máy code thay bạn. 90 phút nữa bạn có URL công khai pin Bio, mình hứa.
+      </p>
+    </div>
+  </div>
+
+  <!-- KỲ VỌNG ĐẦU RA -->
+  <div class="outcome-card">
+    <h3>🎯 Cuối buổi bạn có gì</h3>
+    <div class="outcome-grid">
+      <div>
+        <h4>Tài sản cầm được</h4>
+        <ul>
+          <li>1 trang web cá nhân đẹp, có pháo hoa nổ</li>
+          <li>URL công khai (gửi bạn bè được, máy bạn tắt vẫn chạy)</li>
+          <li>Ô gửi tin — ai điền vào sẽ về Telegram bạn</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Tư duy nhận được</h4>
+        <ul>
+          <li>"Bạn đồng hành ảo" KHÁC ChatGPT — tự tạo file, tự cài, tự đưa lên mạng</li>
+          <li>Tả việc rõ — như viết mô tả công việc cho nhân viên</li>
+          <li>Bí thì hỏi máy, không Google</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- BƯỚC 1 — DONE (đổi tên "Câu" → "Bước" để khác biệt) -->
+  <div class="cau-card done">
+    <div class="cau-header">
+      <div class="cau-status">✓</div>
+      <div class="cau-title">
+        <h2>
+          <span class="step-num-badge"><span class="step-icon">✓</span>BƯỚC 1</span>
+          Cài Claude Code Desktop trên máy
+        </h2>
+        <div class="cau-meta">Đã xong · 12 phút · +20 XP đã nhận</div>
+      </div>
+      <div class="cau-toggle">▾</div>
+    </div>
+    <div class="cau-body">
+      <div class="task-prompt">
+        <strong>Bạn làm gì:</strong> Mở claude.ai, hỏi nó hướng dẫn cài Claude Code Desktop trên hệ điều hành bạn dùng (Windows/Mac). Làm theo từng bước.
+      </div>
+      <div class="task-input-wrap">
+        <label>Câu trả lời bạn đã nộp:</label>
+        <div class="task-answer-display">Em đã hỏi Claude.ai — nó cho em link tải tại claude.ai/code, em tải xong, đăng nhập tài khoản Pro của em. Mở thử, gõ /help thấy có hướng dẫn. Đã setup xong.</div>
+      </div>
+      <div class="cau-feedback pass">
+        <strong>✓ Bạn đồng hành chấm: Đạt</strong>
+        <p>Bạn làm đúng — đặc biệt tốt: đã ghi cụ thể đường link và lệnh /help. Đây là tinh thần "tự kiểm tra" rất quan trọng cho 9 tuần tới.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BƯỚC 2 — ACTIVE -->
+  <div class="cau-card active expanded">
+    <div class="cau-header">
+      <div class="cau-status">●</div>
+      <div class="cau-title">
+        <h2>
+          <span class="step-num-badge" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;"><span class="step-icon">▶</span>BƯỚC 2</span>
+          Tạo trang web cá nhân có pháo hoa
+        </h2>
+        <div class="cau-meta">Đang làm · Ước 30 phút · +50 XP</div>
+      </div>
+      <div class="cau-toggle">▴</div>
+    </div>
+    <div class="cau-body">
+
+      <div class="task-prompt">
+        <p><strong>Bạn làm gì:</strong></p>
+        <ol>
+          <li>Mở Claude Code Desktop, tạo 1 thư mục mới tên <code>HR-Builder-Profile</code></li>
+          <li>Trong cửa sổ chat, dán đoạn lời nhờ dưới (chỉnh phần in đậm theo bạn):</li>
+        </ol>
+
+        <div class="prompt-box">
+          <div class="prompt-box-header">
+            <span>📋 Lời nhờ mẫu (chỉnh phần in đậm)</span>
+            <button class="btn-copy" onclick="copyPrompt()">Sao chép</button>
+          </div>
+          <pre id="promptText">Bạn là dev của tôi. Tôi là HR ở <b>[TÊN CÔNG TY]</b>, không biết code.
+Hãy tạo cho tôi 1 trang web cá nhân "HR Builder Profile" — sau đó đưa
+lên mạng để tôi gửi cho bạn bè xem được kể cả khi tôi tắt máy.
+
+YÊU CẦU TRANG:
+- Phía trên: ảnh đại diện (placeholder), tên tôi <b>[TÊN BẠN]</b>,
+  chức danh "<b>[VỊ TRÍ]</b> @ <b>[CÔNG TY]</b>"
+- 3 nút lớn: Facebook / Zalo / LinkedIn (link tôi paste sau)
+- 1 nút "🎉 Tặng tôi 1 lời chúc" — bấm vào sẽ pháo hoa nổ tung tóe
+  4 giây trên màn hình, rồi hiện ô nhỏ "Cảm ơn bạn!"
+- Phong cách: hiện đại, font tiếng Việt đẹp, màu xanh navy + cam
+
+QUY TRÌNH:
+1. Tạo file, viết code, cài thư viện cần
+2. Mở thử trong trình duyệt cho tôi xem
+3. Nếu OK, đưa lên GitHub Pages (miễn phí, không cần thẻ Visa)
+4. Trả tôi đường link công khai
+
+Tôi sẽ ngồi xem bạn làm. Mỗi bước xong, nói tôi 1 dòng đang xem cái gì.
+KHÔNG cần giải thích từng dòng code — tôi không hiểu.</pre>
+        </div>
+
+        <p style="margin-top: 14px;"><strong>3.</strong> Đợi 5-10 phút, máy tự làm. Khi máy hỏi gì, trả lời (vd: đăng nhập GitHub).</p>
+        <p><strong>4.</strong> Khi xong, máy đưa cho bạn 1 đường link kiểu <code>tên-bạn.github.io/HR-Builder-Profile</code>. Mở trong trình duyệt, click thử nút pháo hoa.</p>
+      </div>
+
+      <!-- LAN VOICE inline -->
+      <div class="lan-voice">
+        <div class="lan-avatar">VL</div>
+        <div class="lan-content">
+          <div class="lan-name">Lan nói riêng cho bạn</div>
+          <p class="lan-msg">
+            Bạn HR mảng Tuyển dụng — phần "kỹ năng" trên trang, mình gợi ý bạn cho 6 chip:
+            <em>"Tuyển dev/IT"</em>, <em>"Onboarding"</em>, <em>"Brand công ty"</em>,
+            <em>"AI HR Builder"</em>, <em>"Compliance Nghị định 13"</em>, <em>"Dashboard tuyển dụng"</em>.
+            Hợp với background bạn ở FPT Software hơn list generic.
+          </p>
+        </div>
+      </div>
+
+      <div class="task-input-wrap">
+        <label for="cau12-answer">Trả lời: <strong>Đường link công khai trang của bạn là gì?</strong> Kèm 1 dòng kể: lúc pháo hoa nổ bạn cảm thấy thế nào?</label>
+        <textarea id="cau12-answer" placeholder="Đường link: https://...
+
+Cảm giác lúc pháo hoa nổ:..." rows="5"></textarea>
+
+        <div class="task-actions">
+          <button class="btn-submit" onclick="submitStep('1.2')">Nộp bài · +50 XP</button>
+          <button class="btn-help" onclick="openHelp('1.2')">Bí? Hỏi bạn đồng hành</button>
+        </div>
+      </div>
+
+      <div class="task-community">
+        <div class="avatars">
+          <div class="mini-ava" style="background: linear-gradient(135deg, #f97316, #ec4899);">MA</div>
+          <div class="mini-ava" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">TH</div>
+          <div class="mini-ava" style="background: linear-gradient(135deg, #10b981, #14b8a6);">DT</div>
+          <div class="mini-ava" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">+5</div>
+        </div>
+        <span class="community-text">8 đồng môn cohort #1 đã xong bước này · <a href="#">Xem trang của họ</a></span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BƯỚC 3 — LOCKED -->
+  <div class="cau-card locked">
+    <div class="cau-header">
+      <div class="cau-status">🔒</div>
+      <div class="cau-title">
+        <h2>
+          <span class="step-num-badge" style="opacity: 0.5;"><span class="step-icon">🔒</span>BƯỚC 3</span>
+          Đổi màu sắc + chỉnh pháo hoa
+        </h2>
+        <div class="cau-meta">Khoá · Hoàn thành Bước 2 để mở · +30 XP</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BƯỚC 4 — LOCKED -->
+  <div class="cau-card locked">
+    <div class="cau-header">
+      <div class="cau-status">🔒</div>
+      <div class="cau-title">
+        <h2>
+          <span class="step-num-badge" style="opacity: 0.5;"><span class="step-icon">🔒</span>BƯỚC 4</span>
+          Thêm ô gửi tin nhắn về Telegram
+        </h2>
+        <div class="cau-meta">Khoá · +60 XP</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BƯỚC 5 — LOCKED -->
+  <div class="cau-card locked">
+    <div class="cau-header">
+      <div class="cau-status">🔒</div>
+      <div class="cau-title">
+        <h2>
+          <span class="step-num-badge" style="opacity: 0.5;"><span class="step-icon">🔒</span>BƯỚC 5</span>
+          Suy nghĩ: bạn vừa học được tư duy gì?
+        </h2>
+        <div class="cau-meta">Khoá · +40 XP · Mở Buổi 2 sau khi xong</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="lesson-nav">
+    <a href="index.html" class="btn-secondary">← Về lớp học</a>
+    <span class="lesson-nav-info">Hoàn thành 5 bước để mở Buổi 2</span>
+    <button class="btn-primary" disabled>Buổi 2 →</button>
+  </div>
+
+</div>
+
+<!-- HELP DRAWER -->
+<div class="help-drawer" id="helpDrawer">
+  <div class="help-header">
+    <div class="ai-avatar-mini">🤖</div>
+    <div>
+      <div class="help-title">Bạn đồng hành ảo</div>
+      <div class="help-subtitle">Đang giúp Bước 2 · <span style="color: var(--success)">●</span> Online</div>
+    </div>
+    <button class="close-help" onclick="closeHelp()">×</button>
+  </div>
+
+  <div class="help-messages">
+    <div class="help-msg bot">
+      <p>Chào bạn 👋 Mình thấy bạn ở Bước 2 — tạo trang web có pháo hoa.</p>
+      <p>Bạn đang vướng ở đâu? Click 1 cái dưới hoặc gõ tự do:</p>
+    </div>
+    <div class="help-quick">
+      <button class="quick-btn">🤔 Máy đứng im không làm gì sau khi tôi paste lời nhờ</button>
+      <button class="quick-btn">❓ GitHub là gì? Tôi chưa có tài khoản</button>
+      <button class="quick-btn">🐛 Pháo hoa không nổ khi click</button>
+      <button class="quick-btn">🔗 Link nó cho không vào được</button>
+      <button class="quick-btn">💭 Sửa prompt mẫu cho công ty mình thế nào?</button>
+      <button class="quick-btn">🎙 Nói voice với Lan thay vì gõ</button>
+    </div>
+  </div>
+
+  <div class="help-input">
+    <textarea placeholder="Hỏi bạn đồng hành..." rows="2"></textarea>
+    <button>↑</button>
+  </div>
+</div>
+
+<!-- LIVE NOTIFICATIONS -->
+<div class="live-notif-stack" id="liveNotifs"></div>
+
+<script>
+function copyPrompt() {
+  const text = document.getElementById('promptText').innerText;
+  navigator.clipboard.writeText(text);
+  showNotif('📋 Đã sao chép! Dán vào Claude Code Desktop nhé.', '#10b981');
+}
+
+function submitStep(stepId) {
+  const answer = document.getElementById('cau12-answer').value;
+  if (!answer.trim()) {
+    showNotif('⚠️ Bạn chưa điền câu trả lời nha!', '#f59e0b');
+    return;
+  }
+  showNotif('⏳ Đang gửi bạn đồng hành chấm...', '#2563eb');
+  setTimeout(() => {
+    confetti();
+    showNotif('🎉 Pass! +50 XP. Bước 3 đã mở.', '#10b981');
+  }, 1500);
+}
+
+function openHelp() { document.getElementById('helpDrawer').classList.add('open'); }
+function closeHelp() { document.getElementById('helpDrawer').classList.remove('open'); }
+
+document.querySelectorAll('.cau-card').forEach(card => {
+  if (card.classList.contains('locked')) return;
+  card.querySelector('.cau-header').addEventListener('click', () => {
+    card.classList.toggle('expanded');
+  });
+});
+
+// Live notifications stack
+function showNotif(text, color) {
+  const stack = document.getElementById('liveNotifs');
+  const div = document.createElement('div');
+  div.className = 'live-notif';
+  div.style.borderLeftColor = color;
+  div.innerHTML = `<div class="live-ava">🔔</div><div>${text}</div>`;
+  stack.appendChild(div);
+  setTimeout(() => { div.style.opacity = '0'; setTimeout(() => div.remove(), 300); }, 3500);
+}
+
+// Cohort live activity (fake demo)
+const cohortActivity = [
+  { ava: 'MA', txt: '<strong>Minh Anh</strong> vừa hoàn thành Bước 3 Buổi 1', color: '#10b981' },
+  { ava: 'TH', txt: '<strong>Thu Hà</strong> vừa pass Buổi 2 với 95/100', color: '#10b981' },
+  { ava: 'DT', txt: '<strong>Đức Trung</strong> đang học Bước 4 Buổi 2', color: '#2563eb' },
+  { ava: 'NL', txt: '<strong>Ngọc Linh</strong> vừa public agent Telegram trên LinkedIn', color: '#f97316' },
+];
+let activityIdx = 0;
+function rotateActivity() {
+  const a = cohortActivity[activityIdx % cohortActivity.length];
+  const stack = document.getElementById('liveNotifs');
+  const div = document.createElement('div');
+  div.className = 'live-notif';
+  div.style.borderLeftColor = a.color;
+  div.innerHTML = `<div class="live-ava">${a.ava}</div><div>${a.txt}</div>`;
+  stack.appendChild(div);
+  setTimeout(() => { div.style.opacity = '0'; setTimeout(() => div.remove(), 300); }, 4500);
+  activityIdx++;
+}
+setTimeout(() => { rotateActivity(); setInterval(rotateActivity, 8000); }, 3000);
+
+// Mô phỏng trải nghiệm khi xong Bước 3 — reveal nguyên lý + mở Deep Dive
+function simulateReveal() {
+  const banner = document.getElementById('principleBanner');
+  const dd = document.getElementById('deepDive');
+
+  // Mở 2 hint còn lại
+  const hints = banner.querySelectorAll('.hint-card.locked');
+  hints.forEach((h, i) => {
+    setTimeout(() => {
+      h.classList.remove('locked');
+      h.classList.add('unlocked');
+      const num = h.querySelector('.hint-num');
+      const txt = h.querySelector('.hint-text');
+      if (i === 0) {
+        num.textContent = 'Gợi ý 2 · vừa mở';
+        txt.textContent = '"...vì máy hiểu ngữ cảnh bạn — Google không..."';
+      } else {
+        num.textContent = 'Gợi ý 3 · vừa mở';
+        txt.textContent = '"AI dạy bạn dùng AI — đó là tư duy gốc"';
+      }
+      txt.style.fontStyle = 'italic';
+    }, i * 600);
+  });
+
+  // Reveal full name + show deep dive sau 1.5s
+  setTimeout(() => {
+    banner.classList.add('revealed');
+    banner.querySelector('.principle-tag').innerHTML = '🎉 ĐÃ TIẾT LỘ';
+    banner.querySelector('.reveal-sub').style.display = 'block';
+
+    // Mở deep dive
+    dd.classList.remove('locked');
+    dd.classList.add('unlocked');
+    dd.querySelector('.dd-icon-wrap').innerHTML = '🌳';
+    dd.querySelector('.dd-sub-locked').style.display = 'none';
+    dd.querySelector('.dd-sub-unlocked').style.display = 'block';
+    dd.querySelectorAll('.dd-locked-desc').forEach(e => e.style.display = 'none');
+    dd.querySelectorAll('.dd-unlocked-desc').forEach(e => e.style.display = 'block');
+
+    confetti();
+    showNotif('🎉 Bạn vừa khám phá: TỰ HỌC CÙNG AI · +50 XP', '#10b981');
+
+    // Scroll xuống deep dive
+    setTimeout(() => dd.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
+  }, 2000);
+}
+
+// Confetti
+function confetti() {
+  const colors = ['#f97316', '#2563eb', '#10b981', '#8b5cf6', '#ec4899', '#fbbf24'];
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.top = '-10px';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 3000);
+  }
+}
+</script>
+
+</body>
+</html>

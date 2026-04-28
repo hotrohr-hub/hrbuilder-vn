@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chứng chỉ — HR Builder VN</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style-v2.css">
+<style>
+body { background: #0f172a; min-height: 100vh; padding: 40px 20px; }
+.cert-wrap { max-width: 900px; margin: 0 auto; }
+.cert-paper {
+  background: linear-gradient(135deg, #fef9e7 0%, #fef3c7 100%);
+  border: 12px solid #92400e;
+  border-radius: 8px;
+  padding: 60px 70px;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+  background-image:
+    repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(146, 64, 14, 0.03) 35px, rgba(146, 64, 14, 0.03) 70px),
+    linear-gradient(135deg, #fef9e7 0%, #fef3c7 100%);
+}
+.cert-paper::before {
+  content: ''; position: absolute; inset: 8px;
+  border: 2px solid #92400e; border-radius: 4px;
+  pointer-events: none;
+}
+.cert-header { text-align: center; margin-bottom: 30px; }
+.cert-logo { font-size: 14px; font-weight: 800; color: #92400e; letter-spacing: 4px; margin-bottom: 10px; }
+.cert-divider { width: 80px; height: 3px; background: #92400e; margin: 0 auto 20px; }
+.cert-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px; font-weight: 800;
+  color: #78350f;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+}
+.cert-subtitle { font-size: 16px; color: #92400e; margin-bottom: 30px; }
+.cert-presented { font-size: 13px; color: #78350f; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+.cert-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 56px; font-weight: 800;
+  color: #1e3a8a;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+  border-bottom: 3px solid #92400e;
+  padding-bottom: 12px;
+  display: inline-block;
+  min-width: 60%;
+}
+.cert-body { text-align: center; }
+.cert-desc {
+  font-size: 16px; color: #78350f;
+  line-height: 1.7;
+  max-width: 680px;
+  margin: 24px auto;
+}
+.cert-desc strong { color: #1e3a8a; }
+.cert-principles {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+  max-width: 600px; margin: 24px auto;
+}
+.cert-principle {
+  background: rgba(146, 64, 14, 0.08);
+  padding: 8px 6px;
+  border-radius: 6px;
+  font-size: 11px; font-weight: 700;
+  color: #78350f;
+  text-align: center;
+  border: 1px solid #fbbf24;
+}
+.cert-footer {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 2px solid rgba(146, 64, 14, 0.3);
+}
+.cert-sign { text-align: center; }
+.cert-sign-line {
+  border-bottom: 2px solid #78350f;
+  height: 50px;
+  margin-bottom: 8px;
+  display: flex; align-items: end; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 22px;
+  color: #1e3a8a;
+}
+.cert-sign-name { font-size: 14px; font-weight: 700; color: #78350f; }
+.cert-sign-role { font-size: 11px; color: #92400e; text-transform: uppercase; letter-spacing: 1px; }
+.cert-meta {
+  margin-top: 30px;
+  display: flex; justify-content: space-between; align-items: end;
+  font-size: 11px; color: #92400e;
+}
+.cert-id { font-family: monospace; }
+.cert-qr {
+  width: 80px; height: 80px;
+  border: 2px solid #1e3a8a;
+  background: white;
+  padding: 4px;
+}
+.cert-qr img { width: 100%; height: 100%; display: block; }
+.cert-invalid {
+  background: #fee2e2;
+  border: 2px solid #dc2626;
+  color: #991b1b;
+  padding: 30px;
+  border-radius: 8px;
+  text-align: center;
+  margin: 20px 0;
+}
+.cert-invalid h2 { margin-bottom: 12px; color: #991b1b; }
+.cert-actions {
+  display: flex; gap: 12px; justify-content: center;
+  margin-top: 30px;
+}
+.cert-actions button {
+  padding: 12px 24px; border-radius: 8px;
+  font-weight: 600; font-size: 14px;
+  cursor: pointer;
+}
+.btn-print { background: white; color: #1e3a8a; border: 1px solid white; }
+.btn-share { background: #1e3a8a; color: white; }
+@media print {
+  body { background: white; padding: 0; }
+  .cert-actions, .topbar { display: none !important; }
+  .cert-paper { box-shadow: none; border-width: 8px; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar" style="background: #1e3a8a; border-color: transparent;">
+  <div class="logo" style="color: white;">
+    <a href="index.html" style="color: inherit; text-decoration: none;">HR Builder VN</a>
+  </div>
+  <nav>
+    <a href="index.html" style="color: white;">Lớp học</a>
+  </nav>
+  <div class="user">
+    <div class="avatar">VL</div>
+  </div>
+</header>
+
+<div class="cert-wrap">
+  <div class="cert-paper" id="certPaper">
+    <div class="cert-header">
+      <div class="cert-logo">HR BUILDER VIỆT NAM</div>
+      <div class="cert-divider"></div>
+      <h1 class="cert-title">Chứng chỉ Hoàn thành</h1>
+      <div class="cert-subtitle">CỘT MỐC #1 — KHÓA TIÊN PHONG</div>
+    </div>
+
+    <div class="cert-body">
+      <div class="cert-presented">Cấp cho</div>
+      <div class="cert-name" id="certName">[Tên học viên]</div>
+
+      <p class="cert-desc">
+        đã hoàn thành chương trình <strong>AI HR Builder</strong> kéo dài mười tuần — nắm vững <strong>mười nguyên lý tư duy AI Agent</strong> và đã <strong>tự build + vận hành ba AI agent thật</strong> tại công ty của mình. Không phải demo, không phải lý thuyết — chạy thật.
+      </p>
+
+      <div class="cert-principles" id="certPrinciples">
+        <!-- 10 principles -->
+      </div>
+
+      <p class="cert-desc">
+        Người sở hữu chứng chỉ này được công nhận có đủ năng lực <strong>tự thiết kế, tự build và tự triển khai AI agent giải bài toán HR</strong> trong môi trường doanh nghiệp Việt Nam. Không phụ thuộc dev. Không phụ thuộc agency.
+      </p>
+
+      <div class="cert-footer">
+        <div class="cert-sign">
+          <div class="cert-sign-line">Vũ Hoài Lan</div>
+          <div class="cert-sign-name">VŨ HOÀI LAN</div>
+          <div class="cert-sign-role">Founder, HR Builder VN</div>
+        </div>
+        <div class="cert-sign">
+          <div class="cert-sign-line">★</div>
+          <div class="cert-sign-name">CAPSTONE PASSED</div>
+          <div class="cert-sign-role">Demo Day · Cohort #1</div>
+        </div>
+      </div>
+
+      <div class="cert-meta">
+        <div>
+          <div>Ngày cấp: <strong id="certDate">[ngày]</strong></div>
+          <div>Mã chứng chỉ: <span class="cert-id" id="certId">HBV-001-XXXXX</span></div>
+          <div>Verify: <strong id="certVerifyUrl">[verify URL]</strong></div>
+        </div>
+        <div class="cert-qr"><img id="certQR" src="" alt="QR verify"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cert-actions">
+    <button class="btn-print" onclick="window.print()">🖨 In ra giấy</button>
+    <button class="btn-share" onclick="shareLinkedIn()">💼 Chia sẻ LinkedIn</button>
+    <button class="btn-secondary" onclick="downloadPDF()">📄 Tải PDF</button>
+  </div>
+</div>
+
+<script src="progress.js"></script>
+<script>
+const PRINCIPLES = [
+  'Tự học cùng máy', 'Chia nhỏ việc', 'Tả việc rõ', 'Tự kích hoạt', 'Đưa công cụ',
+  'Nhiều agent phối hợp', 'Agent biết học', 'Tự kích hoạt nâng cao', 'Đặt rào trước', 'Chuyển mảng'
+];
+
+function formatDateVN(isoDate) {
+  if (!isoDate) return new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: 'long', year: 'numeric' });
+  return new Date(isoDate).toLocaleDateString('vi-VN', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+function getCertIdFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id');
+}
+
+async function loadCertData(id) {
+  try {
+    const resp = await fetch('cert-data.json', { cache: 'no-store' });
+    if (!resp.ok) throw new Error('Không tải được dữ liệu chứng chỉ');
+    const data = await resp.json();
+    return data[id] || null;
+  } catch (e) {
+    console.error('Load cert-data failed:', e);
+    return null;
+  }
+}
+
+function showInvalid(id) {
+  const wrap = document.querySelector('.cert-wrap');
+  wrap.innerHTML = `
+    <div class="cert-invalid">
+      <h2>⚠ Chứng chỉ không hợp lệ</h2>
+      <p>Mã <strong>${id || '(không có)'}</strong> không tìm thấy trong cơ sở dữ liệu HR Builder VN.</p>
+      <p>Nếu Lan vừa cấp chứng chỉ này thì có thể chưa đồng bộ — thử lại sau vài phút.</p>
+      <p><a href="index.html">← Về Lớp học</a></p>
+    </div>
+  `;
+}
+
+function renderCert(certData, certId) {
+  document.getElementById('certName').textContent = certData.name;
+  document.getElementById('certDate').textContent = formatDateVN(certData.issuedDate);
+  document.getElementById('certId').textContent = certId;
+
+  const verifyUrl = `${window.location.origin}${window.location.pathname}?id=${certId}`;
+  document.getElementById('certVerifyUrl').textContent = verifyUrl.replace(/^https?:\/\//, '');
+
+  // QR code thật trỏ tới verify URL — dùng QR Server (free, không cần auth)
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=4&data=${encodeURIComponent(verifyUrl)}`;
+  document.getElementById('certQR').src = qrSrc;
+  document.getElementById('certQR').alt = `QR verify ${certId}`;
+
+  const principlesEl = document.getElementById('certPrinciples');
+  principlesEl.innerHTML = PRINCIPLES.map(p => `<div class="cert-principle">${p}</div>`).join('');
+}
+
+async function render() {
+  const certId = getCertIdFromUrl();
+
+  // Mode 1: Có ID trên URL → fetch JSON, verify
+  if (certId) {
+    const certData = await loadCertData(certId);
+    if (!certData || certData.status !== 'valid') {
+      showInvalid(certId);
+      return;
+    }
+    renderCert(certData, certId);
+    return;
+  }
+
+  // Mode 2: Không có ID → fallback demo từ localStorage (cho học viên xem trước)
+  const profile = (typeof getProfile === 'function') ? getProfile() : null;
+  const demoData = {
+    name: profile?.name || 'Tester Demo',
+    issuedDate: new Date().toISOString().slice(0, 10),
+    status: 'valid'
+  };
+  const demoId = 'HBV-001-PREVIEW';
+  renderCert(demoData, demoId);
+
+  // Banner báo đây là preview
+  const wrap = document.querySelector('.cert-wrap');
+  const banner = document.createElement('div');
+  banner.style.cssText = 'background:#fef3c7;border:1px solid #f59e0b;color:#78350f;padding:12px 20px;border-radius:8px;margin-bottom:20px;text-align:center;font-size:13px;';
+  banner.innerHTML = '👁 <strong>Đây là bản preview</strong> — chứng chỉ thật sẽ có URL riêng kiểu <code>?id=HBV-001-XXXXX</code> sau khi pass capstone.';
+  wrap.insertBefore(banner, wrap.firstChild);
+}
+
+function shareLinkedIn() {
+  const text = encodeURIComponent('Tôi vừa hoàn thành khóa AI HR Builder VN — Cohort #1. Mười nguyên lý tư duy AI Agent, ba agent đang chạy thật ở công ty. Không phải demo. #HRBuilderVN #AITransformation');
+  window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&summary=${text}`, '_blank');
+}
+
+function downloadPDF() {
+  alert('Để lưu PDF: Bấm "🖨 In ra giấy" → trong cửa sổ in chọn "Save as PDF" → Save.');
+}
+
+render();
+</script>
+</body>
+</html>

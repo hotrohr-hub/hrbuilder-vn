@@ -1,0 +1,16 @@
+{
+  "_meta": {
+    "description": "Database chứng chỉ HR Builder VN. Mỗi entry là 1 học viên đã pass capstone. ID format: HBV-{cohort}-{6 chars}.",
+    "version": "1.0",
+    "lastUpdated": "2026-04-28"
+  },
+  "HBV-001-DEMO01": {
+    "name": "Tester Demo",
+    "issuedDate": "2026-04-28",
+    "cohort": 1,
+    "courseTitle": "AI HR Builder VN — Cohort #1",
+    "capstoneTitle": "Demo Agent — Bản mẫu kiểm thử",
+    "completedLessons": 10,
+    "status": "valid"
+  }
+}

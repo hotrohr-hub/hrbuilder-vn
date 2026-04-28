@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Builder VN — Lớp học</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style-v2.css">
+<style>
+/* Dashboard-specific */
+.dash-wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; }
+
+.welcome-banner {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #312e81 100%);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  color: white;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.welcome-banner::before {
+  content: ''; position: absolute;
+  top: -50%; right: -10%; width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.25) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.welcome-content { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+.welcome-content h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.6px; line-height: 1.2; margin-bottom: 8px; }
+.welcome-content h1 .wave { display: inline-block; animation: wave 1.5s ease-in-out infinite; }
+@keyframes wave { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(15deg); } 75% { transform: rotate(-10deg); } }
+.welcome-meta { font-size: 14px; opacity: 0.85; margin-top: 6px; }
+
+.welcome-stats { display: flex; gap: 16px; }
+.stat-box {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  text-align: center;
+  min-width: 100px;
+}
+.stat-box .num { font-size: 28px; font-weight: 800; line-height: 1; }
+.stat-box .label { font-size: 11px; opacity: 0.8; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* TRACK SECTIONS */
+.track-section { margin-bottom: 40px; }
+.track-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.track-title-wrap { display: flex; align-items: baseline; gap: 12px; }
+.track-title {
+  font-size: 22px; font-weight: 800;
+  letter-spacing: -0.4px;
+}
+.track-subtitle { color: var(--text-muted); font-size: 14px; }
+.track-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.4px; text-transform: uppercase;
+}
+.pill-foundation { background: var(--success-soft); color: #065f46; }
+.pill-advanced { background: var(--purple-soft); color: var(--purple); }
+.pill-specialty { background: #fef3c7; color: #92400e; }
+.pill-master { background: linear-gradient(135deg, #fbbf24, #f97316); color: #7c2d12; }
+
+/* MODULE GRID */
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.module-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: all 0.2s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.module-card:hover { border-color: var(--primary-light); box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.module-card.completed::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 60%, var(--success-soft) 100%);
+  pointer-events: none;
+}
+.module-card.active {
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-soft);
+}
+.module-card.locked { opacity: 0.55; cursor: not-allowed; }
+
+.mod-header { display: flex; align-items: start; gap: 10px; margin-bottom: 10px; }
+.mod-num {
+  flex-shrink: 0;
+  width: 36px; height: 36px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px;
+  position: relative;
+}
+.mod-num.foundation { background: linear-gradient(135deg, var(--success), #059669); color: white; }
+.mod-num.foundation.active { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
+.mod-num.foundation.locked { background: var(--surface-3); color: var(--text-light); }
+.mod-num.advanced { background: linear-gradient(135deg, var(--purple), #7c3aed); color: white; }
+.mod-num.advanced.locked { background: var(--surface-3); color: var(--text-light); }
+.mod-num.specialty { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+.mod-num.specialty.locked { background: var(--surface-3); color: var(--text-light); }
+.mod-num.master { background: linear-gradient(135deg, #fbbf24, #f97316); color: #7c2d12; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); }
+
+.mod-info { flex: 1; min-width: 0; }
+.mod-tag {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.4px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.mod-title { font-size: 15px; font-weight: 700; line-height: 1.3; color: var(--text); }
+.module-card.locked .mod-title { color: var(--text-light); }
+.mod-desc { font-size: 13px; color: var(--text-muted); margin-top: 6px; line-height: 1.45; }
+.mod-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid var(--surface-3);
+  font-size: 12px;
+}
+.mod-status {
+  font-weight: 700;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.mod-status.done { color: var(--success); }
+.mod-status.active { color: var(--primary); }
+.mod-status.locked { color: var(--text-light); }
+.mod-xp {
+  background: var(--primary-soft); color: var(--primary-dark);
+  padding: 2px 8px; border-radius: 100px;
+  font-weight: 700;
+}
+
+/* SKILL TREE */
+.skill-tree-card {
+  background: linear-gradient(135deg, #fafbff 0%, #ffffff 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 28px;
+}
+.skill-tree-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.skill-tree-header h2 { font-size: 18px; font-weight: 800; }
+.skill-tree-header .tree-meta { font-size: 13px; color: var(--text-muted); }
+.principles-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+.principle-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 10px;
+  text-align: center;
+  position: relative;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+.principle-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.principle-tile.unlocked { background: linear-gradient(135deg, var(--success-soft), #ecfdf5); border-color: var(--success); }
+.principle-tile.unlocked .pt-icon { background: linear-gradient(135deg, var(--success), #059669); color: white; }
+.principle-tile.active { background: linear-gradient(135deg, var(--primary-soft), #f0f9ff); border-color: var(--primary); border-width: 2px; }
+.principle-tile.active .pt-icon { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+.principle-tile.locked { opacity: 0.5; }
+.principle-tile.locked .pt-icon { background: var(--surface-3); color: var(--text-light); }
+
+.pt-icon {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--surface-3);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 6px;
+  font-size: 16px; font-weight: 800;
+}
+.pt-name {
+  font-size: 11px; font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.principle-tile.locked .pt-name { color: var(--text-light); }
+
+/* MASTER PATH */
+.master-card {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #831843 100%);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin-bottom: 28px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.master-card::before {
+  content: ''; position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(251, 191, 36, 0.2), transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.2), transparent 50%);
+}
+.master-content { position: relative; z-index: 2; }
+.master-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(251, 191, 36, 0.2);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #fbbf24;
+  padding: 5px 12px; border-radius: 100px;
+  font-size: 11px; font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+.master-title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+.master-desc { opacity: 0.85; font-size: 15px; max-width: 700px; line-height: 1.6; }
+.master-stages {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+.master-stage {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+.master-stage-num {
+  font-size: 11px; font-weight: 700;
+  opacity: 0.7;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.master-stage-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.master-stage-desc { font-size: 12px; opacity: 0.75; line-height: 1.4; }
+
+/* RIGHT — leaderboard */
+.dashboard-grid { display: grid; grid-template-columns: 1fr 320px; gap: 28px; }
+.aside-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.aside-card h3 {
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.4px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.leaderboard-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--surface-3);
+  font-size: 13px;
+}
+.leaderboard-item:last-child { border-bottom: none; }
+.lb-rank {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--surface-3);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 11px; color: var(--text-muted);
+}
+.lb-rank.gold { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
+.lb-rank.silver { background: linear-gradient(135deg, #cbd5e1, #94a3b8); color: white; }
+.lb-rank.bronze { background: linear-gradient(135deg, #d97706, #92400e); color: white; }
+.lb-name { flex: 1; font-weight: 600; }
+.lb-name small { color: var(--text-muted); font-weight: 400; display: block; font-size: 11px; }
+.lb-xp { background: var(--primary-soft); color: var(--primary-dark); padding: 3px 9px; border-radius: 100px; font-weight: 700; font-size: 11px; }
+
+@media (max-width: 1100px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .principles-grid { grid-template-columns: repeat(3, 1fr); }
+  .master-stages { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .welcome-content { grid-template-columns: 1fr; }
+  .welcome-content h1 { font-size: 22px; }
+  .welcome-stats { justify-content: space-between; }
+  .stat-box { min-width: 0; flex: 1; padding: 10px; }
+  .stat-box .num { font-size: 22px; }
+  .principles-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">
+    HR Builder VN
+    <span class="badge">CỘT MỐC #1</span>
+  </div>
+  <nav>
+    <a href="index.html" class="active">Lớp học</a>
+    <a href="cert.html">Chứng chỉ</a>
+    <a href="settings.html">Cài đặt</a>
+  </nav>
+  <div class="user">
+    <span class="streak" id="topStreak">🔥 0 ngày</span>
+    <span class="xp" id="topXp">⚡ 0 XP</span>
+    <div class="avatar" id="topAvatar">?</div>
+  </div>
+</header>
+
+<div class="dash-wrap">
+
+  <!-- WELCOME BANNER -->
+  <div class="welcome-banner">
+    <div class="welcome-content">
+      <div>
+        <h1 id="welcomeName">Chào bạn <span class="wave">👋</span></h1>
+        <p class="welcome-meta" id="welcomeMeta" style="min-height: 1em;"></p>
+        <div style="margin-top: 14px;">
+          <a id="continueBtn" href="lesson.html?id=1" class="btn-primary" style="background: white; color: var(--primary-dark); padding: 10px 24px; border-radius: 8px; font-weight: 700; text-decoration: none;">▶ Vào Buổi 1</a>
+        </div>
+      </div>
+      <div class="welcome-stats">
+        <div class="stat-box">
+          <div class="num" id="statXp">0</div>
+          <div class="label">XP tích lũy</div>
+        </div>
+        <div class="stat-box">
+          <div class="num" id="statStreak">0</div>
+          <div class="label">Ngày streak</div>
+        </div>
+        <div class="stat-box">
+          <div class="num" id="statPercent">0%</div>
+          <div class="label">Tiến độ khóa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+
+    <!-- LEFT COLUMN: full curriculum -->
+    <div>
+
+      <!-- SKILL TREE: 10 nguyên lý -->
+      <div class="skill-tree-card">
+        <div class="skill-tree-header">
+          <div>
+            <h2>🌳 Cây mười nguyên lý tư duy</h2>
+            <div class="tree-meta">Mỗi tuần một nguyên lý. Cuối khóa thuộc cả mười — không phải học vẹt, là dùng được.</div>
+          </div>
+          <div style="font-size: 13px; font-weight: 700; color: var(--success);">1/10 mở khóa</div>
+        </div>
+        <div class="principles-grid">
+          <div class="principle-tile active">
+            <div class="pt-icon">1</div>
+            <div class="pt-name">Tự học cùng máy</div>
+          </div>
+          <div class="principle-tile locked">
+            <div class="pt-icon">2</div>
+            <div class="pt-name">Chia nhỏ việc</div>
+          </div>
+          <div class="principle-tile locked">
+            <div class="pt-icon">3</div>
+            <div class="pt-name">Tả việc rõ</div>
+          </div>
+          <div class="principle-tile locked">
+            <div class="pt-icon">4</div>
+            <div class="pt-name">Tự kích hoạt</div>
+          </div>
+          <div class="principle-tile locked">
+            <div class="pt-icon">5</div>
+            <div class="pt-name">Đưa công cụ</div>
+          </div>
+          <div class="principle-tile locked">
+            <div class="pt-icon">6</div>
+            <div class="pt-name">Nhiều agent phối hợp</div>
+          </div>
+          <div class="principle-tile locked">
+            <div class="pt-icon">7</div>
+            <div class="pt-name">Agent biết học</div>
+          </div>
+          <div class="principle-tile locked">
+            <div class="pt-icon">8</div>
+            <div class="pt-name">Tự kích hoạt nâng cao</div>
+          </div>
+          <div class="principle-tile locked">
+            <div class="pt-icon">9</div>
+            <div class="pt-name">Đặt rào trước</div>
+          </div>
+          <div class="principle-tile locked">
+            <div class="pt-icon">10</div>
+            <div class="pt-name">Chuyển mảng</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KHÓA NÀY DÀNH CHO AI / KHÔNG DÀNH CHO AI -->
+      <div class="icp-section" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; padding: 0;">
+        <div style="background: #ecfdf5; border: 1px solid #6ee7b7; border-radius: 12px; padding: 20px 22px;">
+          <h3 style="font-size: 16px; font-weight: 800; color: #047857; margin-bottom: 12px;">✅ Khóa này dành cho bạn nếu</h3>
+          <ul style="margin: 0 0 0 18px; font-size: 14px; line-height: 1.7; color: #064e3b;">
+            <li>Bạn là <strong>HR Executive / HR Manager</strong>, làm <strong>tuyển dụng (TA)</strong> hoặc <strong>HRBP</strong> ở công ty <strong>50-500 nhân viên</strong></li>
+            <li>Công ty bạn là <strong>văn phòng</strong>: tech, fintech, SaaS, dịch vụ, F&B chuỗi, retail</li>
+            <li>Bạn đã thử ChatGPT vài lần, không sợ tech — nhưng cũng chưa "build" cái gì</li>
+            <li>Bạn muốn deploy được công cụ mà <strong>3 đồng nghiệp dùng được hằng ngày</strong>, không phải chỉ để bạn xài 1 mình</li>
+            <li>Bạn 26-40 tuổi, đã ít nhất 1 năm làm HR — đủ pain để biết mình muốn fix gì</li>
+          </ul>
+        </div>
+        <div style="background: #fef2f2; border: 1px solid #fca5a5; border-radius: 12px; padding: 20px 22px;">
+          <h3 style="font-size: 16px; font-weight: 800; color: #b91c1c; margin-bottom: 12px;">❌ Khóa này KHÔNG dành cho bạn nếu</h3>
+          <ul style="margin: 0 0 0 18px; font-size: 14px; line-height: 1.7; color: #7f1d1d;">
+            <li>Bạn là <strong>HR sản xuất</strong> với 1000+ công nhân, pain chính là BHXH/chấm công xưởng — sẽ có khóa riêng cho bạn (Cohort 2)</li>
+            <li>Bạn là <strong>C&B specialist</strong> ở công ty FDI, compliance heavy — chờ Pro Track</li>
+            <li>Bạn là <strong>founder/dev</strong> đã dùng Claude Code/Cursor hằng ngày — Buổi 1-3 sẽ basic với bạn, hãy hỏi Lan về Pro Track 1-1</li>
+            <li>Bạn là HR junior <strong>dưới 1 năm kinh nghiệm</strong> — chưa đủ pain để 9.9M xứng đáng</li>
+            <li>Bạn muốn "AI làm thay tôi 100%" — khóa này dạy bạn dùng AI, không thay bạn</li>
+          </ul>
+        </div>
+      </div>
+      <style>
+        @media (max-width: 720px) {
+          .icp-section { grid-template-columns: 1fr !important; }
+        }
+      </style>
+
+      <!-- PHẦN A — Cốt lõi -->
+      <div class="track-section">
+        <div class="track-header">
+          <div class="track-title-wrap">
+            <h2 class="track-title">Phần A — Cốt lõi</h2>
+            <span class="track-pill pill-foundation">FOUNDATION · TUẦN 1-4</span>
+          </div>
+          <span class="track-subtitle">Mốc cam kết hoàn 5M</span>
+        </div>
+
+        <div class="modules-grid">
+          <div class="module-card active" onclick="location.href='lesson.html?id=1'">
+            <div class="mod-header">
+              <div class="mod-num foundation active">1</div>
+              <div class="mod-info">
+                <div class="mod-tag">Tuần 1 · 90 phút</div>
+                <div class="mod-title">HR Builder Profile pháo hoa</div>
+              </div>
+            </div>
+            <div class="mod-desc">Một câu prompt → trang web cá nhân có URL công khai. Bạn không gõ một dòng code nào.</div>
+            <div class="mod-footer">
+              <span class="mod-status active">▶ ĐANG HỌC · 1/5 bước</span>
+              <span class="mod-xp">+200 XP</span>
+            </div>
+          </div>
+
+          <div class="module-card" onclick="location.href='lesson.html?id=2'">
+            <div class="mod-header">
+              <div class="mod-num foundation locked">2</div>
+              <div class="mod-info">
+                <div class="mod-tag">Tuần 2 · 90 phút</div>
+                <div class="mod-title">Recruiter + Dashboard đẹp như báo cáo tập đoàn</div>
+              </div>
+            </div>
+            <div class="mod-desc">Screen 30 CV thật → dashboard có radar chart, click ứng viên ra modal popup. Năm phút xong.</div>
+            <div class="mod-footer">
+              <span class="mod-status locked">🔒 Khoá</span>
+              <span class="mod-xp">+250 XP</span>
+            </div>
+          </div>
+
+          <div class="module-card" onclick="location.href='lesson.html?id=3'">
+            <div class="mod-header">
+              <div class="mod-num foundation locked">3</div>
+              <div class="mod-info">
+                <div class="mod-tag">Tuần 3 · 90 phút</div>
+                <div class="mod-title">Skills Package fork được</div>
+              </div>
+            </div>
+            <div class="mod-desc">Đóng gói brand công ty. Đồng nghiệp clone về máy năm phút là chạy.</div>
+            <div class="mod-footer">
+              <span class="mod-status locked">🔒 Khoá</span>
+              <span class="mod-xp">+250 XP</span>
+            </div>
+          </div>
+
+          <div class="module-card" onclick="location.href='lesson.html?id=4'">
+            <div class="mod-header">
+              <div class="mod-num foundation locked">4</div>
+              <div class="mod-info">
+                <div class="mod-tag">Tuần 4 · 90 phút · ⭐ MỐC</div>
+                <div class="mod-title">Routines cloud 24/7</div>
+              </div>
+            </div>
+            <div class="mod-desc">Agent chạy 24/7 trên cloud Anthropic. Tắt laptop vẫn chạy. Sáu giờ sáng Telegram đổ briefing đêm qua.</div>
+            <div class="mod-footer">
+              <span class="mod-status locked">🔒 Khoá · Mốc hoàn 5M</span>
+              <span class="mod-xp">+400 XP</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHẦN B — Mở rộng -->
+      <div class="track-section">
+        <div class="track-header">
+          <div class="track-title-wrap">
+            <h2 class="track-title">Phần B — Mở rộng</h2>
+            <span class="track-pill pill-foundation">FOUNDATION · TUẦN 5-10</span>
+          </div>
+          <span class="track-subtitle">Sản phẩm hóa + Capstone</span>
+        </div>
+
+        <div class="modules-grid">
+          <div class="module-card" onclick="location.href='lesson.html?id=5'"><div class="mod-header"><div class="mod-num foundation locked">5</div><div class="mod-info"><div class="mod-tag">Tuần 5</div><div class="mod-title">MCP Connectors + Microsite</div></div></div><div class="mod-desc">Drive, Gmail, Zalo OA, HRIS. Năm microsite cá nhân hóa cho top 5 ứng viên — đối thủ há mồm.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+250 XP</span></div></div>
+
+          <div class="module-card" onclick="location.href='lesson.html?id=6'"><div class="mod-header"><div class="mod-num foundation locked">6</div><div class="mod-info"><div class="mod-tag">Tuần 6</div><div class="mod-title">Multi-agent chạy song song</div></div></div><div class="mod-desc">Bốn sub-agent chạy song song. Nhanh gấp bốn. Pattern Orchestrator điều phối như HR Manager điều team junior.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+250 XP</span></div></div>
+
+          <div class="module-card" onclick="location.href='lesson.html?id=7'"><div class="mod-header"><div class="mod-num foundation locked">7</div><div class="mod-info"><div class="mod-tag">Tuần 7</div><div class="mod-title">Memory + Đoán đúng gu bạn</div></div></div><div class="mod-desc">Agent học từ feedback. Tuần 8 đoán đúng gu bạn 95%. Như đứa em ruột cuối cùng cũng hiểu mình.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+250 XP</span></div></div>
+
+          <div class="module-card" onclick="location.href='lesson.html?id=8'"><div class="mod-header"><div class="mod-num foundation locked">8</div><div class="mod-info"><div class="mod-tag">Tuần 8</div><div class="mod-title">API Routine — Internal Tool thay dev</div></div></div><div class="mod-desc">Form công ty submit → agent xử lý → ghi Sheet. KHÔNG cần thuê dev backend nào hết.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+300 XP</span></div></div>
+
+          <div class="module-card" onclick="location.href='lesson.html?id=9'"><div class="mod-header"><div class="mod-num foundation locked">9</div><div class="mod-info"><div class="mod-tag">Tuần 9</div><div class="mod-title">Compliance Scanner VN — bảo hiểm pháp lý</div></div></div><div class="mod-desc">Quét pipeline tự flag vi phạm Nghị định 13 + Luật LĐ + BHXH 2026. ROI khoảng nghìn lần.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+300 XP</span></div></div>
+
+          <div class="module-card" onclick="location.href='lesson.html?id=10'"><div class="mod-header"><div class="mod-num foundation locked">10</div><div class="mod-info"><div class="mod-tag">Tuần 10 · ⭐ DEMO DAY</div><div class="mod-title">Capstone tự chọn + Demo Day</div></div></div><div class="mod-desc">Bạn build agent cho bài HR riêng công ty. Demo trước cohort + Lan. Đỗ là cấp chứng chỉ.</div><div class="mod-footer"><span class="mod-status locked">🔒 Cấp chứng chỉ</span><span class="mod-xp">+500 XP</span></div></div>
+        </div>
+      </div>
+
+      <!-- PRO TRACK -->
+      <div class="track-section">
+        <div class="track-header">
+          <div class="track-title-wrap">
+            <h2 class="track-title">Pro Track — vượt cohort</h2>
+            <span class="track-pill pill-advanced">ADVANCED · TUẦN 11-15</span>
+          </div>
+          <span class="track-subtitle">Production-grade · Mở khóa sau Demo Day</span>
+        </div>
+
+        <div class="modules-grid">
+          <div class="module-card locked"><div class="mod-header"><div class="mod-num advanced locked">A1</div><div class="mod-info"><div class="mod-tag">PRO · Tuần 11</div><div class="mod-title">Vector RAG cho công ty</div></div></div><div class="mod-desc">Index toàn bộ tài liệu HR công ty thành knowledge base. Agent trả lời chính xác trên 95%, có trích nguồn — hết "AI bịa".</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+400 XP</span></div></div>
+
+          <div class="module-card locked"><div class="mod-header"><div class="mod-num advanced locked">A2</div><div class="mod-info"><div class="mod-tag">PRO · Tuần 12</div><div class="mod-title">Eval suite + A/B agent</div></div></div><div class="mod-desc">Build bộ test agent. Đo accuracy, hallucination, cost. A/B hai phiên bản → chọn winner bằng số, không bằng cảm.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+400 XP</span></div></div>
+
+          <div class="module-card locked"><div class="mod-header"><div class="mod-num advanced locked">A3</div><div class="mod-info"><div class="mod-tag">PRO · Tuần 13</div><div class="mod-title">Cost optimization + caching</div></div></div><div class="mod-desc">Giảm chi phí API 60-80% qua prompt caching, batching, model routing. Báo cáo tiền cho sếp — sếp gật.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+400 XP</span></div></div>
+
+          <div class="module-card locked"><div class="mod-header"><div class="mod-num advanced locked">A4</div><div class="mod-info"><div class="mod-tag">PRO · Tuần 14</div><div class="mod-title">Vision + Voice agents</div></div></div><div class="mod-desc">Agent đọc CV scan, ID card, video interview. Voice agent gọi điện ứng viên xác thực — wow factor lớn.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+450 XP</span></div></div>
+
+          <div class="module-card locked"><div class="mod-header"><div class="mod-num advanced locked">A5</div><div class="mod-info"><div class="mod-tag">PRO · Tuần 15</div><div class="mod-title">Observability + Debugging</div></div></div><div class="mod-desc">Trace, log, alert khi agent fail. Dashboard health real-time. Build dễ — vận hành mới khó. Đó là master.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+450 XP</span></div></div>
+        </div>
+      </div>
+
+      <!-- SPECIALIZATION TRACK -->
+      <div class="track-section">
+        <div class="track-header">
+          <div class="track-title-wrap">
+            <h2 class="track-title">Chuyên sâu theo mảng</h2>
+            <span class="track-pill pill-specialty">SPECIALTY · CHỌN 1 LANE</span>
+          </div>
+          <span class="track-subtitle">5 mảng HR · Mở sau Pro Track</span>
+        </div>
+
+        <div class="modules-grid">
+          <div class="module-card locked"><div class="mod-header"><div class="mod-num specialty locked">TA</div><div class="mod-info"><div class="mod-tag">SPECIALTY · 4 tuần</div><div class="mod-title">TA Pro — Sourcing automation 1000/ngày</div></div></div><div class="mod-desc">Crawl LinkedIn/TopCV, outreach personalized scale 1000/ngày, ATS integration sâu, employer branding agent.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+800 XP</span></div></div>
+
+          <div class="module-card locked"><div class="mod-header"><div class="mod-num specialty locked">CB</div><div class="mod-info"><div class="mod-tag">SPECIALTY · 4 tuần</div><div class="mod-title">C&B Pro — Payroll + BHXH chuyên sâu</div></div></div><div class="mod-desc">Payroll auditor ba nguồn (BHXH/Thuế/Lương), Total Rewards Statement, Bonus calculator, Salary benchmarker.</div><div class="mod-footer"><span class="mod-status locked">🔒 Co-teach Luật sư</span><span class="mod-xp">+800 XP</span></div></div>
+
+          <div class="module-card locked"><div class="mod-header"><div class="mod-num specialty locked">LD</div><div class="mod-info"><div class="mod-tag">SPECIALTY · 4 tuần</div><div class="mod-title">L&D Pro — Đào tạo cá nhân hóa</div></div></div><div class="mod-desc">Skill gap analyzer, learning path generator sáu tháng, microlearning daily, AI tutor cho hard skill, Manager coaching bot.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+800 XP</span></div></div>
+
+          <div class="module-card locked"><div class="mod-header"><div class="mod-num specialty locked">BP</div><div class="mod-info"><div class="mod-tag">SPECIALTY · 4 tuần</div><div class="mod-title">HRBP Pro — Số liệu kể chuyện</div></div></div><div class="mod-desc">Attrition predictor (XGBoost+SHAP), workforce dashboard, manager effectiveness scorer, exit interview analyzer.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+800 XP</span></div></div>
+
+          <div class="module-card locked"><div class="mod-header"><div class="mod-num specialty locked">OP</div><div class="mod-info"><div class="mod-tag">SPECIALTY · 4 tuần</div><div class="mod-title">HR Ops Pro — Helpdesk + Compliance</div></div></div><div class="mod-desc">Helpdesk bot 24/7 đa kênh, ticket triage, leave automation, alumni network, document search RAG.</div><div class="mod-footer"><span class="mod-status locked">🔒</span><span class="mod-xp">+800 XP</span></div></div>
+        </div>
+      </div>
+
+      <!-- LỘ TRÌNH DÀI HẠN (Cohort 1 chỉ là Chặng 1) -->
+      <div class="master-card">
+        <div class="master-content">
+          <div class="master-tag">🎯 LỘ TRÌNH DÀI HẠN · 4 CHẶNG</div>
+          <h2 class="master-title">Cohort 1 là Chặng 1. Có 3 chặng nữa, dành cho ai muốn đi tiếp.</h2>
+          <p class="master-desc">
+            <strong>Sau Cohort 1 (10 tuần)</strong>, bạn KHÔNG trở thành "master" — không một khóa 10 tuần nào trên thế giới làm được điều đó, kể cả khóa này. Cái bạn có là: <strong>1 Skills Package brand công ty bạn</strong>, <strong>5+ lệnh AI hoạt động ổn ở 1 mảng HR</strong>, đồng nghiệp clone về dùng được, và một capstone project trên CV. Đo được. Cụ thể.
+            <br><br>
+            Ai muốn lên chuyên gia thực thụ — đi tiếp Chặng 2-4. Lúc đó mới gọi là "Specialist" hay "Engineer". Không trước được.
+          </p>
+          <div class="master-stages">
+            <div class="master-stage">
+              <div class="master-stage-num">CHẶNG 1 · cohort 1</div>
+              <div class="master-stage-name">Foundation</div>
+              <div class="master-stage-desc">10 tuần Phần A + B<br>Cấp: <strong>AI HR Practitioner</strong></div>
+            </div>
+            <div class="master-stage">
+              <div class="master-stage-num">CHẶNG 2</div>
+              <div class="master-stage-name">Pro Track</div>
+              <div class="master-stage-desc">5 tuần production<br>Cấp: <strong>AI HR Engineer</strong></div>
+            </div>
+            <div class="master-stage">
+              <div class="master-stage-num">CHẶNG 3</div>
+              <div class="master-stage-name">Specialty Lane</div>
+              <div class="master-stage-desc">4 tuần chuyên mảng<br>Cấp: <strong>HR [TA/CB/LD/BP/OP] Specialist</strong></div>
+            </div>
+            <div class="master-stage">
+              <div class="master-stage-num">CHẶNG 4</div>
+              <div class="master-stage-name">Master Capstone</div>
+              <div class="master-stage-desc">Build production agent + case study<br>Cấp: <strong>AI HR Specialist Lead</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT — leaderboard + cohort -->
+    <aside>
+      <div class="aside-card">
+        <h3>🏆 Bảng xếp hạng tuần</h3>
+        <div class="leaderboard-item">
+          <div class="lb-rank gold">1</div>
+          <div class="lb-name">Minh Anh<small>HR @ FPT Software</small></div>
+          <div class="lb-xp">⚡ 720</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="lb-rank silver">2</div>
+          <div class="lb-name">Đức Trung<small>HRBP @ MB Bank</small></div>
+          <div class="lb-xp">⚡ 690</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="lb-rank bronze">3</div>
+          <div class="lb-name">Thu Hà<small>C&B @ Vinamilk</small></div>
+          <div class="lb-xp">⚡ 620</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="lb-rank">4</div>
+          <div class="lb-name">Ngọc Linh<small>L&D @ Highlands</small></div>
+          <div class="lb-xp">⚡ 580</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="lb-rank" style="background: var(--primary); color: white;">12</div>
+          <div class="lb-name"><strong>Bạn (Lan)</strong><small>HR @ joywork.vn</small></div>
+          <div class="lb-xp">⚡ 240</div>
+        </div>
+      </div>
+
+      <div class="aside-card">
+        <h3>📅 Sự kiện cohort</h3>
+        <div style="font-size: 13px;">
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--surface-3);">
+            <div style="font-weight: 700; color: var(--primary);">Thứ Sáu tuần này · 20:00</div>
+            <div>Office hour Lan voice — gỡ kẹt Buổi 1</div>
+          </div>
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--surface-3);">
+            <div style="font-weight: 700;">Thứ Bảy tuần sau · 14:00</div>
+            <div>Show & Tell — cohort khoe trang web pháo hoa, ai hoành tráng nhất ăn quà</div>
+          </div>
+          <div style="padding: 10px 0;">
+            <div style="font-weight: 700;">28 ngày nữa</div>
+            <div>⭐ Mốc cam kết hoàn 5M — chốt Buổi 4</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="aside-card">
+        <h3>🎁 Phần thưởng đã mở</h3>
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+          <div style="padding: 8px 12px; background: var(--success-soft); border-radius: var(--radius-sm); border-left: 3px solid var(--success);">
+            ✓ Mẫu prompt "HR Profile" tiếng Việt
+          </div>
+          <div style="padding: 8px 12px; background: var(--primary-soft); border-radius: var(--radius-sm); border-left: 3px solid var(--primary);">
+            ✓ Quyền vào office hour Lan
+          </div>
+          <div style="padding: 8px 12px; background: var(--surface-2); border-radius: var(--radius-sm); border-left: 3px solid var(--text-light); opacity: 0.7;">
+            🔒 Mẫu Recruiter Agent — pass Buổi 2 mới mở
+          </div>
+          <div style="padding: 8px 12px; background: var(--surface-2); border-radius: var(--radius-sm); border-left: 3px solid var(--text-light); opacity: 0.7;">
+            🔒 Card visit "AI HR Builder" — Demo Day mới có
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+</div>
+
+<script src="lessons-data.js"></script>
+<script src="ai-client.js"></script>
+<script src="progress.js"></script>
+<script src="onboarding.js"></script>
+<script>
+// Trigger onboarding nếu chưa
+if (!isOnboarded()) {
+  showOnboardingModal();
+}
+
+// Render progress thực tế
+function refreshDashboard() {
+  const profile = getProfile();
+  const stats = getOverallStats();
+  const currentLesson = getCurrentLesson();
+
+  // Welcome
+  if (profile) {
+    const firstName = profile.name.split(' ').pop();
+    document.getElementById('welcomeName').innerHTML = `Chào ${firstName} <span class="wave">👋</span>`;
+    const initials = profile.name.split(' ').map(w => w[0]).join('').slice(-2).toUpperCase();
+    document.getElementById('topAvatar').textContent = initials;
+  }
+
+  // Meta
+  const lessonDoneCount = stats.lessonsCompleted;
+  const stepsInCurrent = Object.values(getProgress().lessons[currentLesson]?.steps || {}).filter(s => s.done).length;
+  document.getElementById('welcomeMeta').innerHTML = `Bạn đang ở <strong>Buổi ${currentLesson}</strong> · xong ${stepsInCurrent}/5 bước · ${stats.lessonsCompleted}/10 buổi đã đi qua`;
+
+  // Continue button
+  document.getElementById('continueBtn').href = `lesson.html?id=${currentLesson}`;
+  document.getElementById('continueBtn').innerHTML = lessonDoneCount === 0 && stepsInCurrent === 0
+    ? `▶ Vào Buổi ${currentLesson}`
+    : `▶ Đi tiếp Buổi ${currentLesson}`;
+
+  // Stats
+  document.getElementById('statXp').textContent = stats.totalXp;
+  document.getElementById('statStreak').textContent = stats.streak;
+  document.getElementById('statPercent').textContent = stats.percentComplete + '%';
+  document.getElementById('topXp').textContent = `⚡ ${stats.totalXp} XP`;
+  document.getElementById('topStreak').textContent = `🔥 ${stats.streak} ngày`;
+
+  // Update module cards với progress thật
+  document.querySelectorAll('.module-card').forEach((card, idx) => {
+    // Lấy onclick handler để biết lesson ID
+    const onclickStr = card.getAttribute('onclick') || '';
+    const m = onclickStr.match(/id=(\d+)/);
+    if (!m) return;
+    const lid = parseInt(m[1]);
+    if (lid > 10) return; // chỉ Phần A + B
+
+    const isDone = isLessonDone(lid);
+    const isUnlocked = isLessonUnlocked(lid);
+    const isActive = lid === currentLesson;
+
+    // Reset classes
+    card.classList.remove('completed', 'active', 'locked');
+    if (isDone) card.classList.add('completed');
+    else if (isActive) card.classList.add('active');
+    else if (!isUnlocked) card.classList.add('locked');
+
+    // Update num
+    const numEl = card.querySelector('.mod-num');
+    if (numEl) {
+      numEl.classList.remove('locked', 'active');
+      if (!isUnlocked && !isDone) numEl.classList.add('locked');
+      if (isActive) numEl.classList.add('active');
+    }
+
+    // Update status
+    const statusEl = card.querySelector('.mod-status');
+    if (statusEl) {
+      statusEl.classList.remove('done', 'active', 'locked');
+      if (isDone) {
+        statusEl.classList.add('done');
+        statusEl.innerHTML = '✓ HOÀN THÀNH';
+      } else if (isActive) {
+        statusEl.classList.add('active');
+        const stepsDone = Object.values(getProgress().lessons[lid]?.steps || {}).filter(s => s.done).length;
+        statusEl.innerHTML = `▶ ĐANG HỌC · ${stepsDone}/5 bước`;
+      } else if (!isUnlocked) {
+        statusEl.classList.add('locked');
+        statusEl.innerHTML = '🔒 Chưa mở';
+      } else {
+        statusEl.innerHTML = '○ Sẵn sàng vào';
+      }
+    }
+  });
+
+  // Update skill tree (10 nguyên lý)
+  document.querySelectorAll('.principle-tile').forEach((tile, idx) => {
+    const lid = idx + 1;
+    tile.classList.remove('unlocked', 'active', 'locked');
+    if (isLessonDone(lid)) tile.classList.add('unlocked');
+    else if (lid === currentLesson) tile.classList.add('active');
+    else if (!isLessonUnlocked(lid)) tile.classList.add('locked');
+  });
+}
+
+if (isOnboarded()) {
+  refreshDashboard();
+} else {
+  // Chưa onboard → ẩn nút "Vào Buổi 1" để không gây ảo tưởng có thể click qua overlay
+  const cb = document.getElementById('continueBtn');
+  if (cb) cb.style.display = 'none';
+}
+</script>
+
+</body>
+</html>

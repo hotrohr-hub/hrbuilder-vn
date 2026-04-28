@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cài đặt — HR Builder VN</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style-v2.css">
+<style>
+.settings-wrap { max-width: 720px; margin: 40px auto; padding: 0 24px; }
+.settings-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 32px; margin-bottom: 20px; }
+.settings-card h2 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+.settings-card p.muted { color: var(--text-muted); font-size: 14px; margin-bottom: 16px; }
+.settings-card input { width: 100%; padding: 11px 14px; border: 1px solid var(--border-strong); border-radius: 8px; font-family: inherit; font-size: 14.5px; margin-bottom: 12px; }
+.settings-card input:focus { outline: none; border-color: var(--primary); }
+.profile-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--surface-3); font-size: 14px; }
+.profile-row:last-child { border-bottom: none; }
+.profile-row .label { color: var(--text-muted); }
+.profile-row .value { font-weight: 600; }
+.danger-btn { background: var(--danger-soft); color: var(--danger); padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; }
+.test-result { padding: 10px 14px; border-radius: 8px; margin-top: 10px; font-size: 14px; }
+.test-result.ok { background: var(--success-soft); color: #065f46; }
+.test-result.err { background: var(--danger-soft); color: #991b1b; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo"><a href="index.html" style="color: inherit; text-decoration: none;">HR Builder VN</a><span class="badge">CỘT MỐC #1</span></div>
+  <nav>
+    <a href="index.html">Lớp học</a>
+    <a href="settings.html" class="active">Cài đặt</a>
+  </nav>
+  <div class="user">
+    <div class="avatar">VL</div>
+  </div>
+</header>
+
+<div class="settings-wrap">
+  <a href="index.html" class="back-link" style="display: inline-block; margin-bottom: 16px; color: var(--text-muted);">← Về lớp học</a>
+
+  <div class="settings-card">
+    <h2>🔑 Gemini API Key</h2>
+    <p class="muted">Key dùng để Bạn đồng hành chat + chấm bài. Lưu chỉ ở máy bạn (localStorage), không gửi server, không gửi đâu cả.</p>
+    <input id="apikey-input" type="password" placeholder="AIzaSy…">
+    <div style="display: flex; gap: 10px;">
+      <button class="btn-primary" onclick="saveKey()">Lưu + Test</button>
+      <button class="btn-secondary" onclick="showKey()">Xem key hiện tại</button>
+    </div>
+    <div id="test-result"></div>
+    <p class="muted" style="margin-top: 14px;">Chưa có key? Lấy free tại <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> — hai phút là xong.</p>
+  </div>
+
+  <div class="settings-card">
+    <h2>👤 Hồ sơ của bạn</h2>
+    <div id="profile-display">Đang tải…</div>
+    <button class="btn-secondary" style="margin-top: 14px;" onclick="editProfile()">Sửa lại hồ sơ</button>
+  </div>
+
+  <div class="settings-card">
+    <h2>📊 Tiến độ học</h2>
+    <div id="progress-stats">Đang tải…</div>
+  </div>
+
+  <div class="settings-card" style="border-color: var(--danger-soft);">
+    <h2 style="color: var(--danger);">⚠️ Vùng nguy hiểm — cẩn thận</h2>
+    <p class="muted">Reset toàn bộ sẽ xóa hồ sơ + tiến độ + chat history. Không hoàn lại được. Tôi xin nhắc thêm lần nữa: không hoàn lại được.</p>
+    <button class="danger-btn" onclick="resetEverything()">Reset toàn bộ</button>
+  </div>
+</div>
+
+<script src="lessons-data.js"></script>
+<script src="ai-client.js"></script>
+<script src="progress.js"></script>
+<script src="onboarding.js"></script>
+
+<script>
+// Load profile + progress khi mở trang
+function renderProfile() {
+  const p = getProfile();
+  const el = document.getElementById('profile-display');
+  if (!p) {
+    el.innerHTML = '<p style="color: var(--text-muted);">Chưa có hồ sơ. <a href="index.html">Về lớp học</a> onboard cái đã.</p>';
+    return;
+  }
+  el.innerHTML = `
+    <div class="profile-row"><span class="label">Tên</span><span class="value">${p.name}</span></div>
+    <div class="profile-row"><span class="label">Vai trò</span><span class="value">${p.role}</span></div>
+    <div class="profile-row"><span class="label">Công ty</span><span class="value">${p.company}</span></div>
+    <div class="profile-row"><span class="label">Mảng HR</span><span class="value">${p.area}</span></div>
+    <div class="profile-row"><span class="label">Cái đang khổ</span><span class="value" style="font-weight: 400; max-width: 60%; text-align: right;">${p.pain}</span></div>
+    <div class="profile-row"><span class="label">Onboard lúc</span><span class="value" style="font-weight: 400; font-size: 12px;">${new Date(p.onboardedAt).toLocaleString('vi-VN')}</span></div>
+  `;
+}
+
+function renderProgress() {
+  const stats = getOverallStats();
+  const el = document.getElementById('progress-stats');
+  el.innerHTML = `
+    <div class="profile-row"><span class="label">XP tích lũy</span><span class="value">⚡ ${stats.totalXp}</span></div>
+    <div class="profile-row"><span class="label">Buổi đã xong</span><span class="value">${stats.lessonsCompleted}/10</span></div>
+    <div class="profile-row"><span class="label">Bước đã xong</span><span class="value">${stats.stepsCompleted}/${stats.totalSteps}</span></div>
+    <div class="profile-row"><span class="label">Tiến độ tổng</span><span class="value">${stats.percentComplete}%</span></div>
+    <div class="profile-row"><span class="label">Streak</span><span class="value">🔥 ${stats.streak} ngày</span></div>
+  `;
+}
+
+async function saveKey() {
+  const key = document.getElementById('apikey-input').value.trim();
+  if (!key) { showResult('Bạn nhập key vào đã!', 'err'); return; }
+  showResult('⏳ Đang test giúp bạn…', 'ok');
+  const result = await testApiKey(key);
+  if (result.ok) {
+    showResult('✅ Key OK! Đã lưu. Mọi tính năng AI đã sẵn sàng.', 'ok');
+    setApiKey(key);
+    document.getElementById('apikey-input').value = '';
+  } else {
+    showResult(`❌ ${result.message}`, 'err');
+  }
+}
+
+function showKey() {
+  const key = getApiKey();
+  if (!key) { showResult('Chưa có key đâu nha', 'err'); return; }
+  alert('Key hiện tại: ' + key.substring(0, 10) + '…' + key.substring(key.length - 4));
+}
+
+function showResult(msg, type) {
+  const el = document.getElementById('test-result');
+  el.className = 'test-result ' + type;
+  el.textContent = msg;
+}
+
+function editProfile() {
+  if (confirm('Reset hồ sơ và onboard lại từ đầu?')) {
+    localStorage.removeItem('hrbuilder_profile');
+    showOnboardingModal();
+  }
+}
+
+function resetEverything() {
+  if (confirm('CHẮC CHẮN reset toàn bộ? Mất tiến độ + hồ sơ + chat history. Không hoàn lại được đâu.')) {
+    resetAll();
+    alert('Đã reset. Tôi reload lại trang giúp bạn.');
+    window.location.href = 'index.html';
+  }
+}
+
+renderProfile();
+renderProgress();
+</script>
+</body>
+</html>

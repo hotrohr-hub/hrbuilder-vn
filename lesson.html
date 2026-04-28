@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buổi học — HR Builder VN</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style-v2.css">
+<style>
+.principle-banner { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a8a 100%); border-radius: var(--radius-lg); padding: 24px 28px; margin-bottom: 20px; color: white; position: relative; overflow: hidden; }
+.principle-banner::before { content: ''; position: absolute; top: -50%; right: -20%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, transparent 70%); border-radius: 50%; }
+.principle-banner::after { content: ''; position: absolute; bottom: -30%; left: -10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%); border-radius: 50%; }
+.principle-content { position: relative; z-index: 2; }
+.principle-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); padding: 5px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 14px; }
+.mystery-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.25; margin-bottom: 8px; background: linear-gradient(135deg, #fff 0%, #fbbf24 50%, #f97316 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.mystery-sub { font-size: 14px; opacity: 0.85; max-width: 680px; margin-bottom: 18px; line-height: 1.55; }
+.hints-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.hint-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-sm); padding: 12px 14px; transition: all 0.3s; }
+.hint-card.unlocked { background: rgba(251, 191, 36, 0.15); border-color: rgba(251, 191, 36, 0.4); }
+.hint-num { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; opacity: 0.75; }
+.hint-card.unlocked .hint-num { color: #fbbf24; opacity: 1; }
+.hint-text { font-size: 13px; font-weight: 500; line-height: 1.4; font-style: italic; }
+.hint-card.locked .hint-text { opacity: 0.5; font-style: normal; font-size: 11.5px; }
+.principle-banner.revealed .mystery-title { display: none; }
+.principle-banner.revealed .mystery-sub { display: none; }
+.reveal-name { display: none; font-size: 32px; font-weight: 800; margin-bottom: 6px; background: linear-gradient(135deg, #fff 0%, #fbbf24 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.principle-banner.revealed .reveal-name { display: block; }
+.reveal-msg { display: none; font-size: 14px; opacity: 0.9; max-width: 680px; line-height: 1.55; margin-bottom: 14px; }
+.principle-banner.revealed .reveal-msg { display: block; }
+.principle-progress { display: flex; gap: 4px; margin-top: 18px; }
+.pdot { width: 30px; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.15); }
+.pdot.done { background: var(--accent); }
+.pdot.active { background: white; }
+.principle-progress-label { font-size: 12px; opacity: 0.8; margin-top: 8px; }
+
+.quiz-strip { display: flex; align-items: center; gap: 14px; padding: 14px 20px; background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); border: 1px solid #c4b5fd; border-radius: var(--radius); margin-bottom: 20px; }
+.quiz-strip.empty { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border-color: var(--border-strong); }
+.quiz-icon { font-size: 24px; flex-shrink: 0; }
+.quiz-text { display: flex; flex-direction: column; gap: 2px; }
+.quiz-text strong { font-size: 13px; color: #5b21b6; font-weight: 700; }
+.quiz-strip.empty .quiz-text strong { color: var(--text-muted); }
+.quiz-text span { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+
+.personalize-banner { background: linear-gradient(135deg, var(--accent-soft), #fef3c7); border: 1px solid #fed7aa; border-radius: var(--radius); padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; font-size: 14px; }
+.personalize-banner .pb-icon { font-size: 20px; flex-shrink: 0; }
+.personalize-banner strong { color: #9a3412; }
+
+.lan-voice { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; padding: 16px 20px; margin: 20px 0; display: flex; gap: 14px; align-items: start; }
+.lan-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.lan-content { flex: 1; }
+.lan-name { font-size: 12px; font-weight: 700; color: #92400e; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+.lan-msg { font-size: 14.5px; color: #78350f; line-height: 1.6; }
+.lan-msg em { font-style: normal; font-weight: 600; color: #9a3412; }
+
+.deep-dive { background: var(--surface); border: 2px dashed var(--border-strong); border-radius: var(--radius-lg); padding: 22px 26px; margin-bottom: 24px; transition: all 0.4s; }
+.deep-dive.locked { opacity: 0.6; }
+.deep-dive.unlocked { border: 2px solid var(--purple); background: linear-gradient(135deg, #faf5ff 0%, #fdf4ff 100%); opacity: 1; }
+.dd-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.dd-icon-wrap { width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--surface-3); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.deep-dive.unlocked .dd-icon-wrap { background: linear-gradient(135deg, var(--purple), var(--primary)); color: white; }
+.dd-header h3 { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+.dd-header p { font-size: 13px; color: var(--text-muted); }
+.dd-layers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.dd-layer { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; }
+.deep-dive.unlocked .dd-layer { border-color: rgba(139, 92, 246, 0.3); }
+.dd-layer-num { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; color: var(--purple); background: var(--purple-soft); padding: 3px 8px; border-radius: 100px; margin-bottom: 8px; }
+.deep-dive.locked .dd-layer-num { color: var(--text-muted); background: var(--surface-3); }
+.dd-layer-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.deep-dive.locked .dd-layer-title { color: var(--text-light); }
+.dd-layer-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+.step-num-badge { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--primary-soft), #ede9fe); color: var(--primary-dark); padding: 4px 12px; border-radius: 100px; font-size: 11px; font-weight: 800; letter-spacing: 0.4px; }
+
+/* Capstone picker (Lớp 10) */
+.capstone-picker { background: linear-gradient(135deg, #fef3c7 0%, #fff7ed 100%); border: 2px solid #fbbf24; border-radius: 16px; padding: 24px 28px; margin-bottom: 24px; }
+.capstone-picker h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; color: #78350f; }
+.capstone-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.capstone-card { background: white; border: 2px solid var(--border); border-radius: 12px; padding: 18px 20px; cursor: pointer; transition: all 0.2s; position: relative; }
+.capstone-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(249, 115, 22, 0.15); transform: translateY(-2px); }
+.capstone-card.recommended { border-color: var(--accent); background: linear-gradient(135deg, white 0%, #fff7ed 100%); }
+.capstone-card.selected { border-color: var(--success); background: linear-gradient(135deg, white 0%, var(--success-soft) 100%); }
+.capstone-card.selected::after { content: '✓ Đã chọn'; position: absolute; top: 10px; right: 12px; background: var(--success); color: white; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; }
+.cap-tag { display: inline-block; background: var(--accent); color: white; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+.cap-icon { font-size: 28px; margin-bottom: 8px; }
+.cap-name { font-size: 15px; font-weight: 700; line-height: 1.3; margin-bottom: 6px; color: var(--text); }
+.cap-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px; }
+.cap-scope { font-size: 11.5px; color: var(--purple); font-weight: 600; margin-bottom: 10px; }
+.cap-pick-btn { background: var(--surface-2); color: var(--primary); border: 1px solid var(--border-strong); padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 13px; width: 100%; cursor: pointer; }
+.capstone-card:hover .cap-pick-btn { background: var(--primary); color: white; border-color: var(--primary); }
+
+@media (max-width: 768px) { .hints-row { grid-template-columns: 1fr; } .dd-layers { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">
+    <a href="index.html" style="color: inherit; text-decoration: none;">HR Builder VN</a>
+    <span class="badge">CỘT MỐC #1</span>
+  </div>
+  <nav>
+    <a href="index.html" class="active">Lớp học</a>
+    <a href="settings.html">Cài đặt</a>
+  </nav>
+  <div class="user">
+    <span class="streak" id="streakDisplay">🔥 0 ngày</span>
+    <span class="xp" id="xpDisplay">⚡ 0 XP</span>
+    <div class="avatar" id="userAvatar">?</div>
+  </div>
+</header>
+
+<div class="lesson-wrap" id="lessonRoot">
+  <!-- Render bằng JS -->
+</div>
+
+<!-- Help drawer -->
+<div class="help-drawer" id="helpDrawer">
+  <div class="help-header">
+    <div class="ai-avatar-mini">🤖</div>
+    <div>
+      <div class="help-title">Bạn đồng hành</div>
+      <div class="help-subtitle">Online · luôn ngồi cạnh bạn</div>
+    </div>
+    <button class="close-help" onclick="closeHelp()">×</button>
+  </div>
+  <div class="help-messages">
+    <div class="help-msg bot">
+      <p>Chào bạn 👋 Bạn đang vướng chỗ nào? Click một cái dưới, hoặc cứ gõ tự do — tôi đang nghe đây.</p>
+    </div>
+    <div class="help-quick" id="helpQuick"></div>
+  </div>
+  <div class="help-input">
+    <textarea placeholder="Hỏi Bạn đồng hành..." rows="2"></textarea>
+    <button>↑</button>
+  </div>
+</div>
+
+<div class="live-notif-stack" id="liveNotifs"></div>
+
+<script src="lessons-data.js"></script>
+<script src="ai-client.js"></script>
+<script src="progress.js"></script>
+<script src="onboarding.js"></script>
+<script>
+// Đọc ID buổi từ URL: ?id=2
+const urlParams = new URLSearchParams(window.location.search);
+const lessonId = parseInt(urlParams.get('id') || '1');
+const lesson = LESSONS[lessonId];
+
+// Kiểm tra onboarding
+if (!isOnboarded()) {
+  showOnboardingModal();
+}
+
+// Kiểm tra lesson tồn tại trước (tránh hiện "Buổi 98 đang khoá" khi ?id=99)
+if (!lesson) {
+  document.getElementById('lessonRoot').innerHTML = `
+    <a href="index.html" class="back-link">← Về lớp học</a>
+    <div style="text-align: center; padding: 80px 20px; background: white; border-radius: 16px; margin-top: 20px;">
+      <div style="font-size: 60px; margin-bottom: 16px;">🤷</div>
+      <h1 style="font-size: 24px; margin-bottom: 12px;">Buổi ${lessonId}? Tôi tìm không thấy đâu cả.</h1>
+      <p style="color: var(--text-muted); margin-bottom: 24px;">Khóa hiện có Buổi 1-15. Bạn nhập sai số, hoặc link cũ rồi.</p>
+      <a href="index.html" class="btn-primary" style="padding: 12px 28px; border-radius: 8px;">← Về lớp học</a>
+    </div>
+  `;
+} else if (!isLessonUnlocked(lessonId)) {
+  document.getElementById('lessonRoot').innerHTML = `
+    <a href="index.html" class="back-link">← Về lớp học</a>
+    <div style="text-align: center; padding: 80px 20px; background: white; border-radius: 16px; margin-top: 20px;">
+      <div style="font-size: 60px; margin-bottom: 16px;">🔒</div>
+      <h1 style="font-size: 24px; margin-bottom: 12px;">Buổi ${lessonId} chưa mở</h1>
+      <p style="color: var(--text-muted); margin-bottom: 24px;">Bạn cần xong Buổi ${lessonId - 1} (đủ năm bước) thì Buổi này mới mở. Quy luật, không phải tôi đặt.</p>
+      <a href="lesson.html?id=${lessonId - 1}" class="btn-primary" style="padding: 12px 28px; border-radius: 8px;">→ Đi tới Buổi ${lessonId - 1}</a>
+    </div>
+  `;
+} else {
+  renderLesson(lesson, lessonId);
+  loadChatHistory();
+  updateXpDisplay();
+}
+
+// Capstone picker UI cho Lớp 10
+function capstonePicker() {
+  const profile = getProfile();
+  const userArea = profile?.area || '';
+
+  const capstones = [
+    { id: 'TA', icon: '🎯', name: 'TA — Sourcing Pipeline + Interview Scheduler', desc: 'Tự sourcing LinkedIn/TopCV/GitHub → outreach personalized → đặt lịch PV. Tiết kiệm 15-20 giờ/tuần.', match: ['TA'], scope: 'Khả thi một tuần' },
+    { id: 'CB', icon: '💰', name: 'C&B — Payroll Auditor + BHXH Advisor', desc: 'Đối chiếu Payroll vs BHXH vs Thuế TNCN. Flag sai sót. Tránh phạt + tiết kiệm 10-15 giờ/tháng.', match: ['C&B'], scope: 'Khả thi một tuần · cần data sandbox' },
+    { id: 'LD', icon: '📚', name: 'L&D — Learning Path + Microlearning Bot', desc: 'Sinh lộ trình sáu tháng cá nhân hóa. Push Zalo daily năm phút lesson. Completion rate gấp hai gấp ba.', match: ['L&D'], scope: 'Khả thi một tuần' },
+    { id: 'HRBP', icon: '📊', name: 'HRBP — Engagement Sentiment Dashboard', desc: 'Đọc pulse + Slack/Zalo public → cảnh báo nguy cơ nghỉ việc 3-6 tháng trước.', match: ['HRBP'], scope: 'Khả thi một tuần' },
+    { id: 'Ops', icon: '⚙️', name: 'HR Ops — Document Search + Leave Approver', desc: 'Helpdesk Q&A 24/7 + tự duyệt đơn nghỉ phép qua API Routine. Giảm 60% ticket — đỡ một ngàn câu hỏi.', match: ['Ops'], scope: 'Khả thi một tuần' },
+  ];
+
+  const cards = capstones.map(c => {
+    const isMatched = c.match.includes(userArea);
+    return `
+      <div class="capstone-card ${isMatched ? 'recommended' : ''}" onclick="pickCapstone('${c.id}', '${c.name.replace(/'/g, "\\'")}')">
+        ${isMatched ? '<div class="cap-tag">⭐ Đề xuất cho bạn (mảng ' + userArea + ')</div>' : ''}
+        <div class="cap-icon">${c.icon}</div>
+        <div class="cap-name">${c.name}</div>
+        <div class="cap-desc">${c.desc}</div>
+        <div class="cap-scope">📐 ${c.scope}</div>
+        <button class="cap-pick-btn">Chọn capstone này →</button>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="capstone-picker">
+      <h2>🏆 Chọn Capstone Tự Do — bài HR riêng công ty bạn</h2>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Năm lựa chọn theo mảng. <strong>Tôi xin được nói thẳng:</strong> capstone tốt nhất là bài CHÍNH BẠN đang đau, không phải bài generic. Mentor sẽ giúp bạn scope cho vừa một tuần — không tham, không sa lầy.</p>
+      <div class="capstone-grid">${cards}</div>
+      <div style="margin-top: 16px; padding: 14px 18px; background: var(--surface-2); border-radius: 8px; font-size: 13.5px; line-height: 1.6;">
+        <strong>💭 Có bài HR khác ngoài năm cái này không?</strong> Click nút "Bí? Hỏi Bạn đồng hành" → mô tả bài bạn muốn → Mentor sẽ giúp scope + spec chín nguyên lý cho bài đó.
+      </div>
+    </div>
+  `;
+}
+
+function pickCapstone(id, name) {
+  const p = getProgress();
+  if (!p.capstone) p.capstone = {};
+  p.capstone.chosen = id;
+  p.capstone.name = name;
+  p.capstone.pickedAt = new Date().toISOString();
+  saveProgress(p);
+  showNotif(`🎯 Đã chọn capstone: ${id}. Bạn kéo xuống Bước 1 bắt đầu spec.`, '#10b981');
+  document.querySelectorAll('.capstone-card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+function updateXpDisplay() {
+  const stats = getOverallStats();
+  const el = document.getElementById('xpDisplay');
+  if (el) el.textContent = `⚡ ${stats.totalXp} XP`;
+  const streakEl = document.getElementById('streakDisplay');
+  if (streakEl) streakEl.textContent = `🔥 ${stats.streak} ngày`;
+  // Avatar
+  const profile = getProfile();
+  const ava = document.getElementById('userAvatar');
+  if (ava && profile) {
+    const initials = profile.name.split(' ').map(w => w[0]).join('').slice(-2).toUpperCase();
+    ava.textContent = initials;
+  }
+}
+
+function renderLesson(l, id) {
+  const prevId = id - 1;
+  const nextId = id + 1;
+  const prevLesson = LESSONS[prevId];
+
+  const quizStrip = id === 1
+    ? `<div class="quiz-strip empty"><div class="quiz-icon">🧠</div><div class="quiz-text"><strong>Quiz 30 giây ôn bài cũ</strong><span>Chưa có — đây là buổi đầu. Từ Buổi 3 trở đi, mỗi buổi mở đầu tôi sẽ quiz lại tư duy hai buổi trước.</span></div></div>`
+    : id === 2
+    ? `<div class="quiz-strip empty"><div class="quiz-icon">🧠</div><div class="quiz-text"><strong>Quiz 30 giây ôn bài cũ</strong><span>Chưa có đâu — Buổi 3 mới bắt đầu có quiz.</span></div></div>`
+    : `<div class="quiz-strip"><div class="quiz-icon">🧠</div><div class="quiz-text"><strong>Quiz 30 giây — nhớ lại tư duy đã học</strong><span>Bạn còn nhớ "<strong>${LESSONS[id-2]?.principle.name || ''}</strong>" (buổi ${id-2}) không? Click làm quiz nhanh đã, rồi mới vào buổi mới.</span></div></div>`;
+
+  // Hint progression — Buổi đang active hint 1, các bước sau mở dần
+  const hintsHtml = l.hints.map((h, i) => {
+    const isUnlocked = i === 0; // chỉ hint 1 mở sẵn
+    const cls = isUnlocked ? 'unlocked' : 'locked';
+    const num = isUnlocked ? `Gợi ý ${i+1} · đã mở` : `Gợi ý ${i+1}`;
+    const txt = isUnlocked ? `"${h}"` : (i === 1 ? '🔒 Xong Bước 2 mới mở' : '🔒 Xong Bước 3 mới mở + tiết lộ tên nguyên lý');
+    return `<div class="hint-card ${cls}"><div class="hint-num">${num}</div><div class="hint-text">${txt}</div></div>`;
+  }).join('');
+
+  // Pdot count: 10 cho Phần A+B, 15 cho Pro Track
+  const totalPrinciples = l.principle.num > 10 ? 15 : 10;
+  const pdotsHtml = Array.from({length: totalPrinciples}, (_, i) =>
+    `<div class="pdot ${i+1 < l.principle.num ? 'done' : i+1 === l.principle.num ? 'active' : ''}"></div>`
+  ).join('');
+
+  const stepsHtml = l.steps.map((step, i) => {
+    // Lấy status thật từ progress
+    const status = typeof getStepStatus === 'function' ? getStepStatus(id, i) : (i === 0 ? 'active' : 'locked');
+    const isActive = status === 'active';
+    const isDone = status === 'done';
+    const stateClass = isDone ? 'done' : (isActive ? 'active expanded' : 'locked');
+    const stateIcon = isDone ? '✓' : (isActive ? '●' : '🔒');
+    let stateBadge;
+    if (isDone) {
+      stateBadge = `<span class="step-num-badge" style="background: linear-gradient(135deg, var(--success), #059669); color: white;"><span>✓</span>BƯỚC ${i+1}</span>`;
+    } else if (isActive) {
+      stateBadge = `<span class="step-num-badge" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;"><span>▶</span>BƯỚC ${i+1}</span>`;
+    } else {
+      stateBadge = `<span class="step-num-badge" style="opacity: 0.5;"><span>🔒</span>BƯỚC ${i+1}</span>`;
+    }
+    const meta = isDone ? `✓ Đã xong · +${step.xp} XP đã nhận` : (isActive ? `Đang làm · +${step.xp} XP` : `Chưa mở · +${step.xp} XP`);
+
+    let body = '';
+    if (isActive) {
+      body = `
+        <div class="cau-body">
+          <div class="task-prompt"><strong>Bạn làm gì:</strong> ${step.desc}</div>
+          ${step.samplePrompt ? `
+            <div class="prompt-box">
+              <div class="prompt-box-header">
+                <span>${
+                  step.sampleType === 'prompt' ? '📋 Prompt mẫu — paste vào Claude Code' :
+                  step.sampleType === 'instruction' ? '📖 Hướng dẫn từng bước' :
+                  step.sampleType === 'rubric' ? '📝 Cấu trúc bài viết của bạn' :
+                  '📋 Mẫu'
+                }</span>
+                <button class="btn-copy" onclick="copyPrompt(this)">📑 Copy</button>
+              </div>
+              <pre>${step.samplePrompt.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}</pre>
+            </div>
+          ` : ''}
+          <div class="task-input-wrap">
+            <label>Câu trả lời của bạn (paste link, screenshot, hoặc gõ tự do — kể tôi nghe bạn đã làm gì):</label>
+            <textarea id="answerInput" placeholder="Bạn trả lời ở đây…" rows="4"></textarea>
+            <div class="task-actions">
+              <button class="btn-submit" onclick="submitStep(${i})">Nộp bài · +${step.xp} XP</button>
+              <button class="btn-help" onclick="openHelp()">Bí? Hỏi Bạn đồng hành</button>
+            </div>
+          </div>
+          <div class="task-community">
+            <div class="avatars">
+              <div class="mini-ava" style="background: linear-gradient(135deg, #f97316, #ec4899);">MA</div>
+              <div class="mini-ava" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">TH</div>
+              <div class="mini-ava" style="background: linear-gradient(135deg, #10b981, #14b8a6);">DT</div>
+            </div>
+            <span class="community-text">${Math.floor(Math.random()*15+3)} đồng môn cohort #1 đã xong bước này rồi</span>
+          </div>
+        </div>`;
+    }
+
+    return `<div class="cau-card ${stateClass}">
+      <div class="cau-header">
+        <div class="cau-status">${stateIcon}</div>
+        <div class="cau-title"><h2>${stateBadge} ${step.title}</h2><div class="cau-meta">${meta}</div></div>
+        <div class="cau-toggle">${isActive ? '▴' : ''}</div>
+      </div>
+      ${body}
+    </div>`;
+  }).join('');
+
+  const html = `
+    <a href="index.html" class="back-link">← Về lớp học</a>
+
+    ${l.prereqWarning ? `<div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 14px 18px; border-radius: 0 8px 8px 0; margin-bottom: 18px; font-size: 14px; line-height: 1.6; color: #78350f;">${l.prereqWarning}</div>` : ''}
+
+    ${quizStrip}
+
+    <div class="principle-banner mystery" id="principleBanner">
+      <div class="principle-content">
+        <div class="principle-tag">🔮 TƯ DUY SỐ ${l.principle.num} — BÍ MẬT</div>
+        <h2 class="mystery-title">Bạn thử đoán xem buổi này dạy tư duy gì nào?</h2>
+        <p class="mystery-sub">Mỗi bước xong → mở thêm một gợi ý. Xong Bước 3 → tôi tiết lộ tên đầy đủ. Não bạn nhớ tốt hơn 30-40% khi tự đoán trước — số liệu thật, không phải tôi bịa.</p>
+        <h2 class="reveal-name">🎉 ${l.principle.name.toUpperCase()}</h2>
+        <p class="reveal-msg">${l.revealMsg}</p>
+        <div class="hints-row">${hintsHtml}</div>
+        <div class="principle-progress">${pdotsHtml}</div>
+        <div class="principle-progress-label">Đây là tư duy số ${l.principle.num} trong mười cái. Mở từ từ — vội ăn nóng miệng.</div>
+      </div>
+    </div>
+
+    ${(() => {
+      const p = typeof getProfile === 'function' ? getProfile() : null;
+      if (!p) return `<div class="personalize-banner"><div class="pb-icon">🎯</div><div>Bạn chưa onboard. <a href="index.html">Quay về dashboard</a>.</div></div>`;
+
+      let banners = `<div class="personalize-banner">
+        <div class="pb-icon">🎯</div>
+        <div>Buổi này tôi đã điều chỉnh cho <strong>${p.name}</strong> — <strong>${p.role} mảng ${p.area} @ ${p.company}</strong>. Bài tập sẽ neo về cái khổ bạn đã khai, không bê giáo án dùng chung.</div>
+      </div>`;
+
+      // Cảnh báo Buổi 4 nếu chưa có Claude Max
+      if (id === 4 && p.claude_plan !== 'max') {
+        banners += `<div class="personalize-banner" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b; margin-top: 8px;">
+          <div class="pb-icon">⚠️</div>
+          <div><strong>Lưu ý — bạn đang dùng Claude ${p.claude_plan === 'pro' ? 'Pro $20' : '(chưa có gì)'}.</strong> Buổi này dạy <strong>Routines cloud</strong>, mà Routines chỉ có với gói Max $100. Đừng lo — bạn vẫn học được qua <strong>local hook</strong> (chạy trên máy bạn, máy mở thì agent chạy). Nguyên lý "Tự kích hoạt" giống nhau, không thiệt thòi gì. Cuối Buổi 4 bạn chọn một trong hai: (a) upgrade Max thử Routines thật, (b) làm local hook + bỏ qua Routines.</div>
+        </div>`;
+      }
+
+      // Sandbox data hint nếu mảng phù hợp
+      if (id === 2 && (p.area === 'TA' || p.area === 'C&B')) {
+        banners += `<div class="personalize-banner" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-color: #93c5fd; margin-top: 8px;">
+          <div class="pb-icon">📦</div>
+          <div><strong>Sếp bạn chưa cho dùng data thật?</strong> Bạn cứ dùng <a href="sandbox-data/" style="color: var(--primary); font-weight: 700;">sandbox data fake</a> trong folder \`sandbox-data/ta-cv/\` (30 CV) — vẫn pass được Buổi 2 đàng hoàng.</div>
+        </div>`;
+      }
+
+      return banners;
+    })()}
+
+    <div class="lesson-top">
+      <div class="lesson-info">
+        <div class="tag">${l.week} · ${l.duration}</div>
+        <h1>${l.title}</h1>
+        <p class="lesson-sub">${l.sub}</p>
+      </div>
+      <div class="lesson-progress">
+        ${(() => {
+          const lessonProgress = typeof getProgress === 'function' ? getProgress() : { lessons: {} };
+          const steps = lessonProgress.lessons?.[id]?.steps || {};
+          const doneCount = Object.values(steps).filter(s => s.done).length;
+          const pct = Math.round((doneCount / l.steps.length) * 100);
+          return `<div class="progress-text">Bạn đã đi: <strong>${doneCount}/${l.steps.length} bước</strong></div>
+          <div class="progress-bar"><div class="progress-bar-fill" style="width: ${pct}%"></div></div>`;
+        })()}
+      </div>
+    </div>
+
+    <div class="lan-voice">
+      <div class="lan-avatar">VL</div>
+      <div class="lan-content">
+        <div class="lan-name">Lan nói riêng với bạn</div>
+        <p class="lan-msg">${l.lanVoice}</p>
+      </div>
+    </div>
+
+    <div class="outcome-card">
+      <h3>🎯 Cuối buổi bạn có gì trong tay</h3>
+      <div class="outcome-grid">
+        <div>
+          <h4>Tài sản cầm được</h4>
+          <ul>${l.outcomes.cam.map(o => `<li>${o}</li>`).join('')}</ul>
+        </div>
+        <div>
+          <h4>Tư duy nhận được</h4>
+          <ul>${l.outcomes.tuduy.map(o => `<li>${o}</li>`).join('')}</ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="deep-dive locked" id="deepDive">
+      <div class="dd-header">
+        <div class="dd-icon-wrap">🔒</div>
+        <div>
+          <h3>Đào sâu ba tầng</h3>
+          <p>Xong Bước 3 mới mở. Master = thuộc cả ba tầng cho mười tư duy. Không thuộc thì chưa master, đơn giản vậy thôi.</p>
+        </div>
+      </div>
+      <div class="dd-layers">
+        ${l.layers.map((layer, i) => `
+          <div class="dd-layer">
+            <div class="dd-layer-num">TẦNG ${i+1} · ${i===0?'CƠ BẢN':i===1?'CƠ CHẾ':'MASTER'}</div>
+            <div class="dd-layer-title">${layer.name}</div>
+            <div class="dd-layer-desc dd-locked-desc">🔒 ${layer.text.substring(0, 60)}...</div>
+            <div class="dd-layer-desc dd-unlocked-desc" style="display:none;">${layer.text}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div style="text-align: center; margin: -10px 0 20px;">
+      <button onclick="simulateReveal()" style="background: var(--purple-soft); color: var(--purple); padding: 8px 18px; border-radius: 100px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px dashed var(--purple);">
+        🎮 [Demo] Xem trước trải nghiệm khi bạn xong Bước 3 →
+      </button>
+    </div>
+
+    ${id === 10 ? capstonePicker() : ''}
+
+    ${stepsHtml}
+
+    <div class="lesson-nav">
+      ${prevId >= 1 ? `<a href="lesson.html?id=${prevId}" class="btn-secondary">← Buổi ${prevId}</a>` : `<a href="index.html" class="btn-secondary">← Lớp học</a>`}
+      ${(() => {
+        const isDone = typeof isLessonDone === 'function' && isLessonDone(id);
+        const nextExists = LESSONS[nextId];
+
+        if (isDone) {
+          if (nextExists) return `<span class="lesson-nav-info" style="color: var(--success); font-weight: 700;">🎉 Xong rồi! Sang buổi tiếp →</span>
+          <a href="lesson.html?id=${nextId}" class="btn-primary" style="text-decoration: none;">Buổi ${nextId} →</a>`;
+          if (id === 10) return `<span class="lesson-nav-info" style="color: var(--success); font-weight: 700;">🎉 Capstone xong! Đi nhận chứng chỉ →</span>
+          <a href="cert.html" class="btn-primary" style="text-decoration: none;">🎓 Chứng chỉ</a>`;
+          if (id === 15) return `<span class="lesson-nav-info" style="color: var(--purple); font-weight: 700;">⭐ Pro Track xong! Vào Master Path</span>
+          <button class="btn-primary" disabled>⭐ Master Path (sắp ra)</button>`;
+          return `<span></span><button class="btn-primary" disabled>Đã xong</button>`;
+        }
+
+        return `<span class="lesson-nav-info">Bạn cần xong ${l.steps.length} bước thì ${nextExists ? 'Buổi ' + nextId : 'Specialty Lane'} mới mở</span>
+        <button class="btn-primary" disabled>${nextExists ? 'Buổi ' + nextId + ' →' : '🎓 Demo Day'}</button>`;
+      })()}
+    </div>
+  `;
+
+  document.getElementById('lessonRoot').innerHTML = html;
+  document.title = `Buổi ${id} — HR Builder VN`;
+}
+
+// Demo reveal
+function simulateReveal() {
+  const banner = document.getElementById('principleBanner');
+  const dd = document.getElementById('deepDive');
+
+  const hints = banner.querySelectorAll('.hint-card.locked');
+  hints.forEach((h, i) => {
+    setTimeout(() => {
+      h.classList.remove('locked'); h.classList.add('unlocked');
+      const num = h.querySelector('.hint-num');
+      const txt = h.querySelector('.hint-text');
+      const hintIdx = i + 1;
+      num.textContent = `Gợi ý ${hintIdx + 1} · vừa mở`;
+      txt.textContent = `"${lesson.hints[hintIdx]}"`;
+      txt.style.fontStyle = 'italic';
+    }, i * 600);
+  });
+
+  setTimeout(() => {
+    banner.classList.add('revealed');
+    banner.querySelector('.principle-tag').innerHTML = '🎉 ĐÃ TIẾT LỘ';
+    dd.classList.remove('locked'); dd.classList.add('unlocked');
+    dd.querySelector('.dd-icon-wrap').innerHTML = '🌳';
+    dd.querySelector('p').textContent = 'Bấm vào từng tầng để xem nội dung. Master = thuộc cả ba tầng, không thiếu cái nào.';
+    dd.querySelectorAll('.dd-locked-desc').forEach(e => e.style.display = 'none');
+    dd.querySelectorAll('.dd-unlocked-desc').forEach(e => e.style.display = 'block');
+    confetti();
+    showNotif(`🎉 Bạn vừa khám phá ra: ${lesson.principle.name.toUpperCase()} · +50 XP`, '#10b981');
+    setTimeout(() => dd.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
+  }, 2000);
+}
+
+async function submitStep(idx) {
+  const a = document.getElementById('answerInput').value;
+  if (!a.trim()) { showNotif('⚠️ Bạn chưa điền câu trả lời. Tôi đợi.', '#f59e0b'); return; }
+
+  // Disable button
+  const btns = document.querySelectorAll('.btn-submit');
+  btns.forEach(b => { b.disabled = true; b.textContent = '⏳ Đang chấm…'; });
+  showNotif('⏳ Bạn đồng hành đang đọc bài của bạn…', '#2563eb');
+
+  try {
+    const profile = getProfile();
+    const step = lesson.steps[idx];
+    const result = await aiGrade({
+      lessonId,
+      stepIdx: idx,
+      stepTitle: step.title,
+      stepDesc: step.desc,
+      principleName: lesson.principle.name,
+      submission: a,
+      profile,
+      gradingCriteria: step.gradingCriteria,
+    });
+
+    // Hiển thị kết quả
+    showGradeResult(idx, result, step.xp);
+
+    // Lưu progress nếu pass
+    if (result.status === 'pass' || result.status === 'borderline') {
+      markStepDone(lessonId, idx, result);
+      confetti();
+      showNotif(`🎉 ${result.status === 'pass' ? 'Pass' : 'Đạt điều kiện'}! +${step.xp} XP. Bước tiếp đã mở rồi.`, '#10b981');
+      updateXpDisplay();
+      // Reload sau 3s để hiển thị step mới
+      setTimeout(() => location.reload(), 3500);
+    } else {
+      showNotif('Chưa đạt — bạn đọc feedback rồi sửa. Nộp lại được, không giới hạn.', '#f59e0b');
+      btns.forEach(b => { b.disabled = false; b.textContent = `Nộp lại · +${step.xp} XP`; });
+    }
+  } catch (err) {
+    // err.userMessage là message thân thiện do ai-client tạo; fallback sang err.message nếu chưa có
+    const friendly = err.userMessage || (
+      err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')
+        ? 'Mất mạng rồi. Bạn check Wifi xong nộp lại giúp tôi.'
+        : err.message?.includes('429') || err.message?.includes('quota')
+        ? 'Gemini đang bận (rate limit). Đợi ba mươi giây rồi nộp lại.'
+        : err.message?.includes('401') || err.message?.includes('403') || err.message?.includes('API key')
+        ? 'API key Gemini có vấn đề. Bạn vào Cài đặt kiểm tra lại.'
+        : 'Lỗi chấm bài: ' + (err.message || 'không rõ').slice(0, 120)
+    );
+    showNotif('❌ ' + friendly, '#ef4444');
+    if (err.raw) console.warn('[grade] raw response:', err.raw);
+    btns.forEach(b => { b.disabled = false; b.textContent = `Nộp lại · +${lesson.steps[idx].xp} XP`; });
+  }
+}
+
+function showGradeResult(idx, result, xp) {
+  const inputWrap = document.querySelector('.task-input-wrap');
+  if (!inputWrap) return;
+
+  const colorMap = { pass: '#10b981', borderline: '#f59e0b', fail: '#ef4444' };
+  const labelMap = { pass: '✅ Đạt', borderline: '⚠️ Đạt điều kiện (Lan sẽ review thêm)', fail: '❌ Chưa đạt' };
+
+  const html = `
+    <div class="grade-result-box" style="margin-top: 16px; padding: 18px 20px; border-radius: 12px; border-left: 4px solid ${colorMap[result.status]}; background: ${colorMap[result.status]}15;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div style="font-size: 16px; font-weight: 700; color: ${colorMap[result.status]};">${labelMap[result.status]}</div>
+        <div style="font-size: 24px; font-weight: 800; color: ${colorMap[result.status]};">${result.score}/100</div>
+      </div>
+      ${result.strengths?.length ? `<div style="margin-bottom: 10px;"><strong style="font-size: 13px;">💪 Bạn làm tốt chỗ này:</strong><ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">${result.strengths.map(s => `<li>${s}</li>`).join('')}</ul></div>` : ''}
+      ${result.improvements?.length ? `<div style="margin-bottom: 10px;"><strong style="font-size: 13px;">🔧 Lần tới cải thiện thêm:</strong><ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">${result.improvements.map(i => `<li>${i}</li>`).join('')}</ul></div>` : ''}
+      ${result.next_step_hint ? `<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 13.5px;"><strong>👉 Gợi ý cho bước sau:</strong> ${result.next_step_hint}</div>` : ''}
+    </div>
+  `;
+  inputWrap.insertAdjacentHTML('beforeend', html);
+}
+
+function copyPrompt(btn) {
+  const pre = btn.closest('.prompt-box').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const old = btn.innerHTML;
+    btn.innerHTML = '✅ Đã copy';
+    setTimeout(() => btn.innerHTML = old, 1500);
+  }).catch(() => {
+    btn.innerHTML = '⚠ Lỗi — copy thủ công bằng Ctrl+A';
+  });
+}
+
+function openHelp() { document.getElementById('helpDrawer').classList.add('open'); }
+function closeHelp() { document.getElementById('helpDrawer').classList.remove('open'); }
+
+// Load chat history vào help drawer
+function loadChatHistory() {
+  const history = getChatHistory(lessonId);
+  if (history.length === 0) return;
+  const container = document.querySelector('.help-messages');
+  // Xoá welcome bot message + quick buttons khi đã có history
+  history.forEach(msg => {
+    appendChatBubble(msg.role, msg.text);
+  });
+}
+
+function appendChatBubble(role, text) {
+  const container = document.querySelector('.help-messages');
+  const div = document.createElement('div');
+  div.className = 'help-msg ' + (role === 'user' ? 'user' : 'bot');
+  div.style.cssText = role === 'user'
+    ? 'background: var(--primary); color: white; padding: 10px 14px; border-radius: 14px 14px 4px 14px; margin-bottom: 12px; max-width: 85%; align-self: flex-end; font-size: 14px;'
+    : 'background: var(--surface-2); padding: 10px 14px; border-radius: 14px 14px 14px 4px; margin-bottom: 12px; max-width: 85%; font-size: 14px; line-height: 1.5; border-left: 3px solid var(--purple);';
+  div.textContent = text;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+// Send message in help drawer
+async function sendChatMessage(message) {
+  if (!message.trim()) return;
+
+  appendChatBubble('user', message);
+  appendChatHistory(lessonId, 'user', message);
+
+  // Show typing indicator
+  const container = document.querySelector('.help-messages');
+  const typing = document.createElement('div');
+  typing.id = 'typing';
+  typing.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+  typing.style.cssText = 'padding: 10px 14px; margin-bottom: 12px;';
+  container.appendChild(typing);
+  container.scrollTop = container.scrollHeight;
+
+  try {
+    const profile = getProfile();
+    const history = getChatHistory(lessonId).slice(-10); // 10 turn gần nhất
+    const reply = await aiChat(message, {
+      lessonId,
+      lessonTitle: lesson.title,
+      principleName: lesson.principle.name,
+      currentStepTitle: lesson.steps[0].title, // step active hiện tại
+      profile,
+      history,
+    });
+
+    typing.remove();
+    appendChatBubble('bot', reply);
+    appendChatHistory(lessonId, 'model', reply);
+  } catch (err) {
+    typing.remove();
+    const friendly =
+      err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')
+        ? '📡 Mất kết nối rồi. Bạn check Wifi xong gửi lại giúp tôi.'
+        : err.message?.includes('429') || err.message?.includes('quota')
+        ? '⏳ Tôi đang bận quá (Gemini rate limit). Đợi ba mươi giây rồi gửi lại.'
+        : err.message?.includes('401') || err.message?.includes('403') || err.message?.includes('API key')
+        ? '🔑 API key Gemini có vấn đề. Bạn vào Cài đặt kiểm tra lại.'
+        : '❌ Lỗi: ' + (err.message || 'không rõ').slice(0, 100) + '. Bạn thử gửi lại giúp tôi.';
+    appendChatBubble('bot', friendly);
+    console.warn('[chat] error:', err.message);
+  }
+}
+
+// Bind input
+setTimeout(() => {
+  const input = document.querySelector('.help-input textarea');
+  const btn = document.querySelector('.help-input button');
+  if (input && btn) {
+    btn.onclick = () => {
+      const msg = input.value;
+      input.value = '';
+      sendChatMessage(msg);
+    };
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        btn.click();
+      }
+    });
+  }
+  // Bind quick prompts
+  document.querySelectorAll('.help-quick .quick-btn').forEach(qb => {
+    qb.onclick = () => sendChatMessage(qb.textContent.trim());
+  });
+}, 200);
+
+function showNotif(text, color) {
+  const stack = document.getElementById('liveNotifs');
+  const div = document.createElement('div');
+  div.className = 'live-notif';
+  div.style.borderLeftColor = color;
+  div.innerHTML = `<div class="live-ava">🔔</div><div>${text}</div>`;
+  stack.appendChild(div);
+  setTimeout(() => { div.style.opacity = '0'; setTimeout(() => div.remove(), 300); }, 3500);
+}
+
+function confetti() {
+  const colors = ['#f97316', '#2563eb', '#10b981', '#8b5cf6', '#ec4899', '#fbbf24'];
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.top = '-10px';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 3000);
+  }
+}
+
+// Cohort live activity
+const cohortActivity = [
+  { ava: 'MA', txt: '<strong>Minh Anh</strong> vừa pass Bước 3 Buổi 4 — đỉnh', color: '#10b981' },
+  { ava: 'TH', txt: '<strong>Thu Hà</strong> vừa khám phá tư duy số 5', color: '#8b5cf6' },
+  { ava: 'DT', txt: '<strong>Đức Trung</strong> vừa vào Buổi 6 — chúc anh em', color: '#2563eb' },
+  { ava: 'NL', txt: '<strong>Ngọc Linh</strong> vừa khoe agent trên LinkedIn — được đó', color: '#f97316' },
+];
+let actIdx = 0;
+function rotate() {
+  const a = cohortActivity[actIdx % cohortActivity.length];
+  const stack = document.getElementById('liveNotifs');
+  const div = document.createElement('div');
+  div.className = 'live-notif';
+  div.style.borderLeftColor = a.color;
+  div.innerHTML = `<div class="live-ava">${a.ava}</div><div>${a.txt}</div>`;
+  stack.appendChild(div);
+  setTimeout(() => { div.style.opacity = '0'; setTimeout(() => div.remove(), 300); }, 4500);
+  actIdx++;
+}
+setTimeout(() => { rotate(); setInterval(rotate, 8000); }, 3000);
+
+// Help quick prompts
+document.getElementById('helpQuick').innerHTML = `
+  <button class="quick-btn">🤔 Máy đứng im sau khi tôi paste prompt</button>
+  <button class="quick-btn">❓ Bước này tôi không hiểu — bạn giải thích lại?</button>
+  <button class="quick-btn">🐛 Có lỗi đỏ trên màn hình, tôi sợ</button>
+  <button class="quick-btn">💭 Prompt mẫu này tôi sửa cho công ty mình thế nào?</button>
+  <button class="quick-btn">🎙 Tôi muốn nói voice với Lan thay vì gõ</button>
+`;
+</script>
+
+</body>
+</html>
