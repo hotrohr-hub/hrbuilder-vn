@@ -11,14 +11,14 @@ function showOnboardingModal() {
       <div class="onboard-card">
         <div class="onboard-step" data-step="1">
           <div class="onboard-emoji">👋</div>
-          <h2>Chào bạn. Mời vào Cohort #1 HR Builder VN.</h2>
-          <p>Tôi tên là <strong>Bạn đồng hành</strong> — một cái tên hơi lạ, tôi xin thừa nhận, nhưng bạn cứ quen dần. Mười tuần tới tôi ngồi cạnh bạn, không bỏ đi đâu, kể cả những lúc bạn làm sai (mà bạn sẽ làm sai — chuyện thường ngày ở huyện). Năm phút thôi, tôi xin phép hỏi vài câu, xong rồi vẽ cho bạn một lộ trình riêng.</p>
+          <h2>Chào anh chị. Mời vào Cohort #1 HR Builder VN.</h2>
+          <p>Tôi tên là <strong>Bạn đồng hành</strong> — cái tên hơi lạ tí, nhưng anh chị sẽ quen dần. Mười tuần tới tôi ngồi cạnh anh chị, không bỏ đi đâu, kể cả những lúc anh chị làm sai (mà chắc chắn anh chị sẽ làm sai — chuyện thường ngày ở huyện). Năm phút thôi, tôi xin phép hỏi vài câu, xong rồi vẽ lộ trình riêng cho anh chị.</p>
           <button class="btn-primary onboard-next">Bắt đầu →</button>
         </div>
 
         <div class="onboard-step" data-step="2" style="display:none;">
-          <h3>1/5 — Bạn tên là gì?</h3>
-          <input id="onb-name" type="text" placeholder="Họ tên của bạn (ví dụ: Vũ Thị Hoài Lan)" />
+          <h3>1/5 — Anh chị tên là gì?</h3>
+          <input id="onb-name" type="text" placeholder="Họ tên của anh chị (ví dụ: Vũ Thị Hoài Lan)" />
           <div class="onboard-actions">
             <button class="btn-secondary onboard-back">← Quay lại</button>
             <button class="btn-primary onboard-next" data-required="onb-name">Tiếp →</button>
@@ -26,7 +26,7 @@ function showOnboardingModal() {
         </div>
 
         <div class="onboard-step" data-step="3" style="display:none;">
-          <h3>2/5 — Bạn làm vai trò gì?</h3>
+          <h3>2/5 — Anh chị làm vai trò gì?</h3>
           <input id="onb-role" type="text" placeholder="Ví dụ: HR Manager / TA Lead / HRBP / C&B Specialist..." />
           <div class="onboard-actions">
             <button class="btn-secondary onboard-back">← Quay lại</button>
@@ -35,8 +35,8 @@ function showOnboardingModal() {
         </div>
 
         <div class="onboard-step" data-step="4" style="display:none;">
-          <h3>3/5 — Bạn ở công ty nào?</h3>
-          <input id="onb-company" type="text" placeholder="Tên công ty (sẽ chỉ dùng để personalize, không share công khai)" />
+          <h3>3/5 — Anh chị ở công ty nào?</h3>
+          <input id="onb-company" type="text" placeholder="Tên công ty (chỉ dùng để personalize, không share công khai)" />
           <div class="onboard-actions">
             <button class="btn-secondary onboard-back">← Quay lại</button>
             <button class="btn-primary onboard-next" data-required="onb-company">Tiếp →</button>
@@ -44,8 +44,8 @@ function showOnboardingModal() {
         </div>
 
         <div class="onboard-step" data-step="5" style="display:none;">
-          <h3>4/5 — Bạn chuyên mảng nào trong HR?</h3>
-          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Chọn một thôi — bài tập sẽ được điều chỉnh cho mảng này. Sau này đổi sau cũng được, không khắt khe.</p>
+          <h3>4/5 — Anh chị chuyên mảng nào?</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Chọn một — bài tập sẽ được điều chỉnh cho mảng này. Sau này đổi cũng được, không khắt khe gì.</p>
           <div class="onboard-radio-group">
             <label class="onboard-radio"><input type="radio" name="area" value="TA"><span>Tuyển dụng (TA)</span></label>
             <label class="onboard-radio"><input type="radio" name="area" value="C&B"><span>Lương thưởng phúc lợi (C&B)</span></label>
@@ -60,9 +60,9 @@ function showOnboardingModal() {
         </div>
 
         <div class="onboard-step" data-step="6" style="display:none;">
-          <h3>5/5 — Cái gì đang làm bạn khổ nhất trong nghề HR?</h3>
-          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Ba đến năm dòng. Càng cụ thể càng tốt — bài tập sẽ neo về cái khổ này, không neo lung tung.</p>
-          <textarea id="onb-pain" rows="4" placeholder="Ví dụ: Tuần nào cũng đọc trên 100 CV cho 5 vị trí dev, mất 12-15 tiếng. Phản hồi ứng viên chậm 3-5 ngày, mất khá nhiều người giỏi sang đối thủ..."></textarea>
+          <h3>5/5 — Cái gì đang làm anh chị khổ nhất?</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Ba đến năm dòng. Càng cụ thể càng tốt — bài tập sẽ được neo vào đó, không neo lung tung.</p>
+          <textarea id="onb-pain" rows="4" placeholder="Ví dụ: Tuần nào cũng đọc 100+ CV cho 5 vị trí dev, mất 12-15 tiếng. Phản hồi ứng viên chậm 3-5 ngày, mất người giỏi sang đối thủ..."></textarea>
           <div class="onboard-actions">
             <button class="btn-secondary onboard-back">← Quay lại</button>
             <button class="btn-primary onboard-next" data-required="onb-pain">Tiếp →</button>
@@ -74,7 +74,7 @@ function showOnboardingModal() {
         <div class="onboard-step" data-step="7" style="display:none;">
           <h3>🔑 Bước cuối — Lấy Gemini API key</h3>
           <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 14px;">
-            Để Bạn đồng hành chat với bạn 24/7 + chấm bài tự động, tôi cần một cái Gemini API key của bạn. <strong>Free, mất hai phút lấy thôi.</strong>
+            Để tôi chat với anh chị 24/7 + chấm bài tự động, tôi cần một cái Gemini API key. <strong>Free, mất hai phút lấy.</strong>
           </p>
 
           <div style="background: var(--primary-soft); border: 1px solid var(--primary-light); border-radius: 8px; padding: 14px 16px; margin-bottom: 14px;">
@@ -90,11 +90,11 @@ function showOnboardingModal() {
           </div>
 
           <div style="background: var(--surface-2); border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; font-size: 13px;">
-            <strong>❓ Lo lắng thường gặp, tôi xin trả lời trước:</strong>
+            <strong>❓ Những nỗi sợ thường gặp, tôi xin trả lời trước:</strong>
             <ul style="margin-top: 6px; margin-left: 18px; line-height: 1.7;">
-              <li><strong>"Có tốn tiền không?"</strong> → Free tier dùng cả khóa vẫn còn dư.</li>
-              <li><strong>"Lỡ key bị lộ thì sao?"</strong> → Key lưu chỉ ở máy bạn (localStorage), không gửi server, không gửi đâu cả.</li>
-              <li><strong>"Tôi có biết Google Cloud đâu?"</strong> → Không cần biết. Aistudio.google.com là sản phẩm riêng cho người mới, dễ dùng, không phải Google Cloud.</li>
+              <li><strong>"Có tốn tiền không?"</strong> → Free tier dùng cả khóa vẫn còn dư hết.</li>
+              <li><strong>"Lỡ key bị lộ thì sao?"</strong> → Key lưu chỉ ở máy anh chị (localStorage), không gửi server, không gửi đâu cả.</li>
+              <li><strong>"Tôi có biết Google Cloud đâu?"</strong> → Không cần biết. Aistudio.google.com là sản phẩm riêng cho người mới, dễ dùng lắm, không phải Google Cloud phức tạp.</li>
             </ul>
           </div>
 
@@ -106,8 +106,8 @@ function showOnboardingModal() {
           </div>
           <label style="display: block; padding: 12px 14px; border: 1px dashed var(--border-strong); border-radius: 8px; cursor: pointer; font-size: 13.5px; line-height: 1.5;" id="onb-cohort-key-wrap">
             <input type="checkbox" id="onb-use-cohort-key" style="margin-right: 8px;" />
-            <strong>Dùng key tạm của khoá (Phase A — Buổi 1-3)</strong>
-            <div style="margin-top: 6px; color: var(--text-muted);">Quota free 50 call/ngày. Đủ dùng Buổi 1-3 cảm nhận khoá. Từ Buổi 4 bạn cần lấy key riêng — lúc đó tôi hướng dẫn 1-1 lấy nhanh.</div>
+            <strong>Dùng key tạm của khóa (Phase A — Buổi 1-3)</strong>
+            <div style="margin-top: 6px; color: var(--text-muted);">Quota free 50 call/ngày. Đủ dùng Buổi 1-3 cảm nhận khóa. Từ Buổi 4 anh chị cần lấy key riêng — lúc đó tôi hướng dẫn 1-1 lấy nhanh.</div>
           </label>
           <div class="onboard-actions">
             <button class="btn-secondary onboard-back">← Quay lại</button>
@@ -119,16 +119,16 @@ function showOnboardingModal() {
         <div class="onboard-step" data-step="8" style="display:none;">
           <div class="onboard-loading">
             <div class="spinner"></div>
-            <h3>Bạn đồng hành đang vẽ lộ trình riêng cho bạn — chờ tôi một lát…</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">Khoảng mười giây, không lâu</p>
+            <h3>Tôi đang vẽ lộ trình riêng cho anh chị — chờ tôi một lát…</h3>
+            <p style="font-size: 13px; color: var(--text-muted);">Khoảng mười giây, không lâu đâu</p>
           </div>
         </div>
 
         <div class="onboard-step" data-step="9" style="display:none;">
           <div class="onboard-emoji">🎉</div>
-          <h2>Chào <span id="welcome-name">bạn</span>!</h2>
+          <h2>Chào <span id="welcome-name">anh chị</span>!</h2>
           <div class="onboard-welcome-msg" id="welcome-msg"></div>
-          <button class="btn-primary" onclick="closeOnboarding()">Vào Buổi 1 →</button>
+          <button class="btn-primary" onclick="closeOnboarding()">Bắt đầu Buổi 1 →</button>
         </div>
       </div>
     </div>
@@ -238,11 +238,11 @@ function attachOnboardingEvents() {
       if (required) {
         if (required === 'area' || required === 'claude_plan') {
           const checked = document.querySelector(`input[name="${required}"]:checked`);
-          if (!checked) { alert('Bạn chọn một mục cái đã!'); return; }
+          if (!checked) { alert('Anh chị chọn một mục cái đã!'); return; }
           data[required] = checked.value;
         } else {
           const el = document.getElementById(required);
-          if (!el.value.trim()) { alert('Bạn điền vào trước đã!'); el.focus(); return; }
+          if (!el.value.trim()) { alert('Anh chị điền vào trước đã!'); el.focus(); return; }
           data[required.replace('onb-', '')] = el.value.trim();
         }
       }
@@ -276,7 +276,7 @@ function attachOnboardingEvents() {
       finishBtn.disabled = true;
       finishBtn.textContent = '⏳ Đang setup…';
       localStorage.setItem('use_cohort_proxy', '1');
-      resultEl.innerHTML = '✅ Dùng key tạm của khoá — bắt đầu khoá ngay!';
+      resultEl.innerHTML = '✅ Dùng key tạm của khóa — bắt đầu khóa ngay!';
       resultEl.style.color = 'var(--success)';
       // Skip key test, save profile, lên loading
       saveProfile({
@@ -288,16 +288,16 @@ function attachOnboardingEvents() {
       setTimeout(() => {
         document.getElementById('welcome-name').textContent = data.name.split(' ').pop();
         document.getElementById('welcome-msg').textContent =
-          `Tôi đã ghi nhớ bạn là ${data.role} mảng ${data.area} @ ${data.company}.\n\n` +
-          `Bạn đã chọn dùng key tạm của khoá cho Buổi 1-3 — quota free 50 call/ngày, đủ dùng. Từ Buổi 4, tôi sẽ hướng dẫn bạn lấy key riêng — chỉ 2 phút.\n\n` +
-          `Sẵn sàng chưa? Click bắt đầu, tôi đợi.`;
+          `Tôi đã ghi nhớ anh chị là ${data.role} mảng ${data.area} @ ${data.company}.\n\n` +
+          `Anh chị đã chọn dùng key tạm của khóa cho Buổi 1-3 — quota free 50 call/ngày, đủ dùng hết. Từ Buổi 4, tôi sẽ hướng dẫn anh chị lấy key riêng — chỉ 2 phút.\n\n` +
+          `Sẵn sàng rồi hả? Click bắt đầu, tôi đợi.`;
         showStep(9);
       }, 800);
       return;
     }
 
     if (!key) {
-      resultEl.innerHTML = '⚠ Bạn chưa điền API key vào ô trên — hoặc tick chọn "Dùng key tạm của khoá" ở dưới.';
+      resultEl.innerHTML = '⚠ Anh chị chưa điền API key vào ô trên — hoặc tick chọn "Dùng key tạm của khóa" ở dưới.';
       resultEl.style.color = 'var(--danger)';
       document.getElementById('onb-apikey').focus();
       return;
@@ -367,9 +367,9 @@ function attachOnboardingEvents() {
       // Fallback nếu API lỗi
       document.getElementById('welcome-name').textContent = data.name.split(' ').pop();
       document.getElementById('welcome-msg').textContent =
-        `Tôi đã ghi nhớ bạn là ${data.role} mảng ${data.area} @ ${data.company}. Đầy đủ.\n\n` +
-        `Lộ trình mười tuần đã được điều chỉnh theo cái khổ của bạn. Buổi 1 — chưa dính HR ngay đâu, bạn build một trang web cá nhân có pháo hoa nổ. Lý do: làm quen "Bạn đồng hành" qua một project an toàn, không sợ làm sai.\n\n` +
-        `Sẵn sàng chưa? Click bắt đầu, tôi đợi.`;
+        `Tôi đã ghi nhớ anh chị là ${data.role} mảng ${data.area} @ ${data.company}. Đầy đủ.\n\n` +
+        `Lộ trình mười tuần đã được điều chỉnh theo cái khổ của anh chị. Buổi 1 — chưa dính HR ngay, anh chị build một cổng HR công ty có ba nút (xin nghỉ, hỏi luật, đăng ký team building). Lý do: làm quen "Bạn đồng hành" qua project an toàn, không sợ làm sai.\n\n` +
+        `Sẵn sàng rồi hả? Click bắt đầu, tôi đợi.`;
       showStep(9);
     }
   });

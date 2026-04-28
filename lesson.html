@@ -125,12 +125,12 @@
   </div>
   <div class="help-messages">
     <div class="help-msg bot">
-      <p>Chào bạn 👋 Bạn đang vướng chỗ nào? Click một cái dưới, hoặc cứ gõ tự do — tôi đang nghe đây.</p>
+      <p>Chào anh chị 👋 Anh chị đang vướng chỗ nào? Click một cái dưới, hoặc cứ gõ tự do — tôi đang nghe đây.</p>
     </div>
     <div class="help-quick" id="helpQuick"></div>
   </div>
   <div class="help-input">
-    <textarea placeholder="Hỏi Bạn đồng hành..." rows="2"></textarea>
+    <textarea placeholder="Anh chị hỏi tôi mà…" rows="2"></textarea>
     <button>↑</button>
   </div>
 </div>
@@ -159,7 +159,7 @@ if (!lesson) {
     <div style="text-align: center; padding: 80px 20px; background: white; border-radius: 16px; margin-top: 20px;">
       <div style="font-size: 60px; margin-bottom: 16px;">🤷</div>
       <h1 style="font-size: 24px; margin-bottom: 12px;">Buổi ${lessonId}? Tôi tìm không thấy đâu cả.</h1>
-      <p style="color: var(--text-muted); margin-bottom: 24px;">Khóa hiện có Buổi 1-15. Bạn nhập sai số, hoặc link cũ rồi.</p>
+      <p style="color: var(--text-muted); margin-bottom: 24px;">Khóa hiện có Buổi 1-15. Anh chị nhập sai số, hoặc link cũ rồi.</p>
       <a href="index.html" class="btn-primary" style="padding: 12px 28px; border-radius: 8px;">← Về lớp học</a>
     </div>
   `;
@@ -169,7 +169,7 @@ if (!lesson) {
     <div style="text-align: center; padding: 80px 20px; background: white; border-radius: 16px; margin-top: 20px;">
       <div style="font-size: 60px; margin-bottom: 16px;">🔒</div>
       <h1 style="font-size: 24px; margin-bottom: 12px;">Buổi ${lessonId} chưa mở</h1>
-      <p style="color: var(--text-muted); margin-bottom: 24px;">Bạn cần xong Buổi ${lessonId - 1} (đủ năm bước) thì Buổi này mới mở. Quy luật, không phải tôi đặt.</p>
+      <p style="color: var(--text-muted); margin-bottom: 24px;">Anh chị cần xong Buổi ${lessonId - 1} (đủ năm bước) thì Buổi này mới mở. Quy luật, không phải tôi đặt.</p>
       <a href="lesson.html?id=${lessonId - 1}" class="btn-primary" style="padding: 12px 28px; border-radius: 8px;">→ Đi tới Buổi ${lessonId - 1}</a>
     </div>
   `;
@@ -208,8 +208,8 @@ function capstonePicker() {
 
   return `
     <div class="capstone-picker">
-      <h2>🏆 Chọn Capstone Tự Do — bài HR riêng công ty bạn</h2>
-      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Năm lựa chọn theo mảng. <strong>Tôi xin được nói thẳng:</strong> capstone tốt nhất là bài CHÍNH BẠN đang đau, không phải bài generic. Mentor sẽ giúp bạn scope cho vừa một tuần — không tham, không sa lầy.</p>
+      <h2>🏆 Chọn Capstone Tự Do — bài HR riêng công ty anh chị</h2>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Năm lựa chọn theo mảng. <strong>Tôi xin được nói thẳng:</strong> capstone tốt nhất là bài CHÍNH anh chị đang đau, không phải bài generic. Mentor sẽ giúp anh chị scope cho vừa một tuần — không tham, không sa lầy.</p>
       <div class="capstone-grid">${cards}</div>
       <div style="margin-top: 16px; padding: 14px 18px; background: var(--surface-2); border-radius: 8px; font-size: 13.5px; line-height: 1.6;">
         <strong>💭 Có bài HR khác ngoài năm cái này không?</strong> Click nút "Bí? Hỏi Bạn đồng hành" → mô tả bài bạn muốn → Mentor sẽ giúp scope + spec chín nguyên lý cho bài đó.
@@ -254,7 +254,7 @@ function renderLesson(l, id) {
     ? `<div class="quiz-strip empty"><div class="quiz-icon">🧠</div><div class="quiz-text"><strong>Quiz 30 giây ôn bài cũ</strong><span>Chưa có — đây là buổi đầu. Từ Buổi 3 trở đi, mỗi buổi mở đầu tôi sẽ quiz lại tư duy hai buổi trước.</span></div></div>`
     : id === 2
     ? `<div class="quiz-strip empty"><div class="quiz-icon">🧠</div><div class="quiz-text"><strong>Quiz 30 giây ôn bài cũ</strong><span>Chưa có đâu — Buổi 3 mới bắt đầu có quiz.</span></div></div>`
-    : `<div class="quiz-strip"><div class="quiz-icon">🧠</div><div class="quiz-text"><strong>Quiz 30 giây — nhớ lại tư duy đã học</strong><span>Bạn còn nhớ "<strong>${LESSONS[id-2]?.principle.name || ''}</strong>" (buổi ${id-2}) không? Click làm quiz nhanh đã, rồi mới vào buổi mới.</span></div></div>`;
+    : `<div class="quiz-strip"><div class="quiz-icon">🧠</div><div class="quiz-text"><strong>Quiz 30 giây — nhớ lại tư duy đã học</strong><span>Anh chị còn nhớ "<strong>${LESSONS[id-2]?.principle.name || ''}</strong>" (buổi ${id-2}) không? Click làm quiz nhanh đã, rồi mới vào buổi mới.</span></div></div>`;
 
   // Hint progression — Buổi đang active hint 1, các bước sau mở dần
   const hintsHtml = l.hints.map((h, i) => {
@@ -292,7 +292,7 @@ function renderLesson(l, id) {
     if (isActive) {
       body = `
         <div class="cau-body">
-          <div class="task-prompt"><strong>Bạn làm gì:</strong> ${step.desc}</div>
+          <div class="task-prompt"><strong>Anh chị làm gì:</strong> ${step.desc}</div>
           ${step.samplePrompt ? `
             <div class="prompt-box">
               <div class="prompt-box-header">
@@ -308,8 +308,8 @@ function renderLesson(l, id) {
             </div>
           ` : ''}
           <div class="task-input-wrap">
-            <label>Câu trả lời của bạn (paste link, screenshot, hoặc gõ tự do — kể tôi nghe bạn đã làm gì):</label>
-            <textarea id="answerInput" placeholder="Bạn trả lời ở đây…" rows="4"></textarea>
+            <label>Câu trả lời của anh chị (paste link, screenshot, hoặc gõ tự do — kể tôi nghe anh chị đã làm gì):</label>
+            <textarea id="answerInput" placeholder="Anh chị trả lời ở đây…" rows="4"></textarea>
             <div class="task-actions">
               <button class="btn-submit" onclick="submitStep(${i})">Nộp bài · +${step.xp} XP</button>
               <button class="btn-help" onclick="openHelp()">Bí? Hỏi Bạn đồng hành</button>
@@ -358,18 +358,18 @@ function renderLesson(l, id) {
 
     ${(() => {
       const p = typeof getProfile === 'function' ? getProfile() : null;
-      if (!p) return `<div class="personalize-banner"><div class="pb-icon">🎯</div><div>Bạn chưa onboard. <a href="index.html">Quay về dashboard</a>.</div></div>`;
+      if (!p) return `<div class="personalize-banner"><div class="pb-icon">🎯</div><div>Anh chị chưa onboard. <a href="index.html">Quay về dashboard</a>.</div></div>`;
 
       let banners = `<div class="personalize-banner">
         <div class="pb-icon">🎯</div>
-        <div>Buổi này tôi đã điều chỉnh cho <strong>${p.name}</strong> — <strong>${p.role} mảng ${p.area} @ ${p.company}</strong>. Bài tập sẽ neo về cái khổ bạn đã khai, không bê giáo án dùng chung.</div>
+        <div>Buổi này tôi đã điều chỉnh cho <strong>${p.name}</strong> — <strong>${p.role} mảng ${p.area} @ ${p.company}</strong>. Bài tập sẽ neo vào cái khổ anh chị khai, không bê giáo án dùng chung.</div>
       </div>`;
 
       // Cảnh báo Buổi 4 nếu chưa có Claude Max
       if (id === 4 && p.claude_plan !== 'max') {
         banners += `<div class="personalize-banner" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b; margin-top: 8px;">
           <div class="pb-icon">⚠️</div>
-          <div><strong>Lưu ý — bạn đang dùng Claude ${p.claude_plan === 'pro' ? 'Pro $20' : '(chưa có gì)'}.</strong> Buổi này dạy <strong>Routines cloud</strong>, mà Routines chỉ có với gói Max $100. Đừng lo — bạn vẫn học được qua <strong>local hook</strong> (chạy trên máy bạn, máy mở thì agent chạy). Nguyên lý "Tự kích hoạt" giống nhau, không thiệt thòi gì. Cuối Buổi 4 bạn chọn một trong hai: (a) upgrade Max thử Routines thật, (b) làm local hook + bỏ qua Routines.</div>
+          <div><strong>Lưu ý — anh chị đang dùng Claude ${p.claude_plan === 'pro' ? 'Pro $20' : '(chưa có gì)'}.</strong> Buổi này dạy <strong>Routines cloud</strong>, mà Routines chỉ có với gói Max $100. Đừng lo — anh chị vẫn học được qua <strong>local hook</strong> (chạy trên máy anh chị, máy mở thì agent chạy). Nguyên lý "Tự kích hoạt" giống nhau, không thiệt thòi gì. Cuối Buổi 4 anh chị chọn một trong hai: (a) upgrade Max thử Routines thật, (b) làm local hook + bỏ qua Routines.</div>
         </div>`;
       }
 
@@ -377,7 +377,7 @@ function renderLesson(l, id) {
       if (id === 2 && (p.area === 'TA' || p.area === 'C&B')) {
         banners += `<div class="personalize-banner" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-color: #93c5fd; margin-top: 8px;">
           <div class="pb-icon">📦</div>
-          <div><strong>Sếp bạn chưa cho dùng data thật?</strong> Bạn cứ dùng <a href="sandbox-data/" style="color: var(--primary); font-weight: 700;">sandbox data fake</a> trong folder \`sandbox-data/ta-cv/\` (30 CV) — vẫn pass được Buổi 2 đàng hoàng.</div>
+          <div><strong>Sếp chưa cho dùng data thật?</strong> Anh chị cứ dùng <a href="sandbox-data/" style="color: var(--primary); font-weight: 700;">sandbox data fake</a> trong folder \`sandbox-data/ta-cv/\` (30 CV) — vẫn pass được Buổi 2 đàng hoàng.</div>
         </div>`;
       }
 
@@ -411,7 +411,7 @@ function renderLesson(l, id) {
     </div>
 
     <div class="outcome-card">
-      <h3>🎯 Cuối buổi bạn có gì trong tay</h3>
+      <h3>🎯 Cuối buổi anh chị có gì trong tay</h3>
       <div class="outcome-grid">
         <div>
           <h4>Tài sản cầm được</h4>
@@ -507,19 +507,19 @@ function simulateReveal() {
     dd.querySelectorAll('.dd-locked-desc').forEach(e => e.style.display = 'none');
     dd.querySelectorAll('.dd-unlocked-desc').forEach(e => e.style.display = 'block');
     confetti();
-    showNotif(`🎉 Bạn vừa khám phá ra: ${lesson.principle.name.toUpperCase()} · +50 XP`, '#10b981');
+    showNotif(`🎉 Anh chị vừa khám phá ra: ${lesson.principle.name.toUpperCase()} · +50 XP`, '#10b981');
     setTimeout(() => dd.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
   }, 2000);
 }
 
 async function submitStep(idx) {
   const a = document.getElementById('answerInput').value;
-  if (!a.trim()) { showNotif('⚠️ Bạn chưa điền câu trả lời. Tôi đợi.', '#f59e0b'); return; }
+  if (!a.trim()) { showNotif('⚠️ Anh chị chưa điền câu trả lời. Tôi đợi.', '#f59e0b'); return; }
 
   // Disable button
   const btns = document.querySelectorAll('.btn-submit');
   btns.forEach(b => { b.disabled = true; b.textContent = '⏳ Đang chấm…'; });
-  showNotif('⏳ Bạn đồng hành đang đọc bài của bạn…', '#2563eb');
+  showNotif('⏳ Tôi đang đọc bài của anh chị…', '#2563eb');
 
   try {
     const profile = getProfile();
@@ -542,7 +542,7 @@ async function submitStep(idx) {
     if (result.status === 'pass' || result.status === 'borderline') {
       markStepDone(lessonId, idx, result);
       confetti();
-      showNotif(`🎉 ${result.status === 'pass' ? 'Pass' : 'Đạt điều kiện'}! +${step.xp} XP. Bước tiếp đã mở rồi.`, '#10b981');
+      showNotif(`🎉 ${result.status === 'pass' ? 'Pass' : 'Đạt điều kiện'}! +${step.xp} XP. Bước tiếp đã sẵn sàng.`, '#10b981');
       updateXpDisplay();
       // Reload sau 3s để hiển thị step mới
       setTimeout(() => location.reload(), 3500);
@@ -580,9 +580,9 @@ function showGradeResult(idx, result, xp) {
         <div style="font-size: 16px; font-weight: 700; color: ${colorMap[result.status]};">${labelMap[result.status]}</div>
         <div style="font-size: 24px; font-weight: 800; color: ${colorMap[result.status]};">${result.score}/100</div>
       </div>
-      ${result.strengths?.length ? `<div style="margin-bottom: 10px;"><strong style="font-size: 13px;">💪 Bạn làm tốt chỗ này:</strong><ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">${result.strengths.map(s => `<li>${s}</li>`).join('')}</ul></div>` : ''}
-      ${result.improvements?.length ? `<div style="margin-bottom: 10px;"><strong style="font-size: 13px;">🔧 Lần tới cải thiện thêm:</strong><ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">${result.improvements.map(i => `<li>${i}</li>`).join('')}</ul></div>` : ''}
-      ${result.next_step_hint ? `<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 13.5px;"><strong>👉 Gợi ý cho bước sau:</strong> ${result.next_step_hint}</div>` : ''}
+      ${result.strengths?.length ? `<div style="margin-bottom: 10px;"><strong style="font-size: 13px;">💪 Bạn làm tốt chỗ này:</strong><ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">${result.strengths.map(s => `<li>${renderMarkdown(s)}</li>`).join('')}</ul></div>` : ''}
+      ${result.improvements?.length ? `<div style="margin-bottom: 10px;"><strong style="font-size: 13px;">🔧 Lần tới cải thiện thêm:</strong><ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">${result.improvements.map(i => `<li>${renderMarkdown(i)}</li>`).join('')}</ul></div>` : ''}
+      ${result.next_step_hint ? `<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 13.5px;"><strong>👉 Gợi ý cho bước sau:</strong> ${renderMarkdown(result.next_step_hint)}</div>` : ''}
     </div>
   `;
   inputWrap.insertAdjacentHTML('beforeend', html);
@@ -614,6 +614,27 @@ function loadChatHistory() {
   });
 }
 
+// Simple markdown → HTML, XSS-safe (escape trước rồi mới convert)
+function renderMarkdown(text) {
+  const escaped = String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+  // Inline code `code` → <code>
+  let html = escaped.replace(/`([^`\n]+)`/g, '<code style="background:rgba(0,0,0,0.06);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:0.92em;">$1</code>');
+  // Bold **xxx** → <strong>
+  html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  // Italic *xxx* → <em>  (chỉ match khi không phải bold)
+  html = html.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+  // Bullet "- item" hoặc "* item" đầu dòng → <li>
+  html = html.replace(/(^|<br>)\s*[-*]\s+(.+?)(?=<br>|$)/g, '$1• $2');
+  // Newlines → <br>
+  html = html.replace(/\n/g, '<br>');
+  return html;
+}
+
 function appendChatBubble(role, text) {
   const container = document.querySelector('.help-messages');
   const div = document.createElement('div');
@@ -621,7 +642,12 @@ function appendChatBubble(role, text) {
   div.style.cssText = role === 'user'
     ? 'background: var(--primary); color: white; padding: 10px 14px; border-radius: 14px 14px 4px 14px; margin-bottom: 12px; max-width: 85%; align-self: flex-end; font-size: 14px;'
     : 'background: var(--surface-2); padding: 10px 14px; border-radius: 14px 14px 14px 4px; margin-bottom: 12px; max-width: 85%; font-size: 14px; line-height: 1.5; border-left: 3px solid var(--purple);';
-  div.textContent = text;
+  // User message → plain text. Bot message → markdown rendered.
+  if (role === 'user') {
+    div.textContent = text;
+  } else {
+    div.innerHTML = renderMarkdown(text);
+  }
   container.appendChild(div);
   container.scrollTop = container.scrollHeight;
 }
@@ -744,10 +770,10 @@ setTimeout(() => { rotate(); setInterval(rotate, 8000); }, 3000);
 // Help quick prompts
 document.getElementById('helpQuick').innerHTML = `
   <button class="quick-btn">🤔 Máy đứng im sau khi tôi paste prompt</button>
-  <button class="quick-btn">❓ Bước này tôi không hiểu — bạn giải thích lại?</button>
+  <button class="quick-btn">❓ Bước này tôi không hiểu — anh chị giải thích lại?</button>
   <button class="quick-btn">🐛 Có lỗi đỏ trên màn hình, tôi sợ</button>
   <button class="quick-btn">💭 Prompt mẫu này tôi sửa cho công ty mình thế nào?</button>
-  <button class="quick-btn">🎙 Tôi muốn nói voice với Lan thay vì gõ</button>
+  <button class="quick-btn">🎙 Tôi muốn nói voice với anh Lan thay vì gõ</button>
 `;
 </script>
 

@@ -41,14 +41,14 @@
 
   <div class="settings-card">
     <h2>🔑 Gemini API Key</h2>
-    <p class="muted">Key dùng để Bạn đồng hành chat + chấm bài. Lưu chỉ ở máy bạn (localStorage), không gửi server, không gửi đâu cả.</p>
+    <p class="muted">Key dùng để tôi chat + chấm bài. Lưu chỉ ở máy anh chị (localStorage), không gửi server, không gửi đâu cả.</p>
     <input id="apikey-input" type="password" placeholder="AIzaSy…">
     <div style="display: flex; gap: 10px;">
       <button class="btn-primary" onclick="saveKey()">Lưu + Test</button>
       <button class="btn-secondary" onclick="showKey()">Xem key hiện tại</button>
     </div>
     <div id="test-result"></div>
-    <p class="muted" style="margin-top: 14px;">Chưa có key? Lấy free tại <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> — hai phút là xong.</p>
+    <p class="muted" style="margin-top: 14px;">Chưa có key? Lấy free tại <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> — hai phút xong.</p>
   </div>
 
   <div class="settings-card">
@@ -64,7 +64,7 @@
 
   <div class="settings-card" style="border-color: var(--danger-soft);">
     <h2 style="color: var(--danger);">⚠️ Vùng nguy hiểm — cẩn thận</h2>
-    <p class="muted">Reset toàn bộ sẽ xóa hồ sơ + tiến độ + chat history. Không hoàn lại được. Tôi xin nhắc thêm lần nữa: không hoàn lại được.</p>
+    <p class="muted">Reset toàn bộ sẽ xóa hồ sơ + tiến độ + chat history. Không hoàn lại được. Tôi nhắc thêm lần nữa: không hoàn lại được.</p>
     <button class="danger-btn" onclick="resetEverything()">Reset toàn bộ</button>
   </div>
 </div>
@@ -80,7 +80,7 @@ function renderProfile() {
   const p = getProfile();
   const el = document.getElementById('profile-display');
   if (!p) {
-    el.innerHTML = '<p style="color: var(--text-muted);">Chưa có hồ sơ. <a href="index.html">Về lớp học</a> onboard cái đã.</p>';
+    el.innerHTML = '<p style="color: var(--text-muted);">Chưa có hồ sơ. <a href="index.html">Về lớp học</a> onboard trước đã.</p>';
     return;
   }
   el.innerHTML = `
@@ -107,7 +107,7 @@ function renderProgress() {
 
 async function saveKey() {
   const key = document.getElementById('apikey-input').value.trim();
-  if (!key) { showResult('Bạn nhập key vào đã!', 'err'); return; }
+  if (!key) { showResult('Anh chị nhập key vào đã!', 'err'); return; }
   showResult('⏳ Đang test giúp bạn…', 'ok');
   const result = await testApiKey(key);
   if (result.ok) {
@@ -121,7 +121,7 @@ async function saveKey() {
 
 function showKey() {
   const key = getApiKey();
-  if (!key) { showResult('Chưa có key đâu nha', 'err'); return; }
+  if (!key) { showResult('Chưa có key đâu', 'err'); return; }
   alert('Key hiện tại: ' + key.substring(0, 10) + '…' + key.substring(key.length - 4));
 }
 
