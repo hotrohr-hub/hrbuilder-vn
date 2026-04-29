@@ -2,34 +2,21 @@
 // Phụ thuộc: firebase-client.js (load trước, expose window.fb).
 
 const STYLE = `
-.auth-pill {
-  position: fixed; top: 14px; right: 18px; z-index: 9000;
-  display: flex; align-items: center; gap: 8px;
-  background: transparent; border: none;
-  border-radius: 999px; padding: 4px;
-  font-size: 13px; font-weight: 600; cursor: pointer;
-  font-family: inherit; color: inherit;
-  transition: opacity 0.15s, transform 0.15s;
+/* Avatar header existing — gắn click + style khi chưa login */
+.topbar .avatar, .header .avatar, header .avatar {
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
-.auth-pill:hover { opacity: 0.85; transform: translateY(-1px); }
-.auth-pill .auth-avatar {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: linear-gradient(135deg, #0ea5e9, #6366f1);
-  color: white; display: grid; place-items: center;
-  font-size: 14px; font-weight: 700;
-  box-shadow: 0 2px 8px rgba(99,102,241,0.25);
-  transition: box-shadow 0.15s;
+.topbar .avatar:hover, .header .avatar:hover, header .avatar:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
 }
-.auth-pill:hover .auth-avatar {
-  box-shadow: 0 3px 12px rgba(99,102,241,0.35);
+.avatar.auth-unauth {
+  background: white !important;
+  color: #94a3b8 !important;
+  border: 2px dashed #cbd5e1 !important;
+  box-shadow: none !important;
 }
-.auth-pill.unauth .auth-avatar {
-  background: white;
-  border: 2px dashed #cbd5e1;
-  color: #94a3b8;
-  box-shadow: none;
-}
-.auth-pill .auth-label { display: none; }
 
 .auth-modal-bg {
   position: fixed; inset: 0; background: rgba(15,23,42,0.6);
@@ -278,40 +265,41 @@ function openModal(mode = 'signin') {
   setTimeout(() => $('amEmail').focus(), 50);
 }
 
-function injectPill(user) {
-  let pill = document.getElementById('authPill');
-  if (!pill) {
-    pill = document.createElement('button');
-    pill.id = 'authPill';
-    pill.className = 'auth-pill';
-    document.body.appendChild(pill);
-  }
-  if (user) {
-    pill.classList.remove('unauth');
-    const initials = getInitials(user);
-    const label = user.displayName || user.email?.split('@')[0] || 'Anh chị';
-    pill.title = `${label} · click để đăng xuất`;
-    pill.innerHTML = `<span class="auth-avatar">${initials}</span>`;
-    pill.onclick = async () => {
-      if (confirm(`Đăng xuất khỏi tài khoản ${label}?`)) {
-        try {
-          await window.fb.signOut();
-          setTimeout(() => location.reload(), 200);
-        } catch (e) { alert(e?.message || 'Lỗi đăng xuất'); }
-      }
-    };
-  } else {
-    pill.classList.add('unauth');
-    pill.title = 'Click để đăng nhập';
-    pill.innerHTML = `<span class="auth-avatar">↳</span>`;
-    pill.onclick = () => openModal('signin');
-  }
+function wireExistingAvatar(user) {
+  // Xóa pill float cũ nếu có (từ session trước)
+  const oldPill = document.getElementById('authPill');
+  if (oldPill) oldPill.remove();
+
+  // Tìm tất cả avatar trong header (topbar / header)
+  const avatars = document.querySelectorAll('.topbar .avatar, header .avatar, .header .avatar');
+  avatars.forEach(av => {
+    if (user) {
+      av.classList.remove('auth-unauth');
+      const initials = getInitials(user);
+      const label = user.displayName || user.email?.split('@')[0] || 'Anh chị';
+      av.textContent = initials;
+      av.title = `${label} · click để đăng xuất`;
+      av.onclick = async () => {
+        if (confirm(`Đăng xuất khỏi tài khoản ${label}?`)) {
+          try {
+            await window.fb.signOut();
+            setTimeout(() => location.reload(), 200);
+          } catch (e) { alert(e?.message || 'Lỗi đăng xuất'); }
+        }
+      };
+    } else {
+      av.classList.add('auth-unauth');
+      av.textContent = '↳';
+      av.title = 'Click để đăng nhập';
+      av.onclick = () => openModal('signin');
+    }
+  });
 }
 
 // Init
 injectStyle();
 document.addEventListener('fb-ready', (e) => {
-  injectPill(e.detail?.user || null);
+  wireExistingAvatar(e.detail?.user || null);
 });
 
 // Expose để các trang khác gọi mở modal
