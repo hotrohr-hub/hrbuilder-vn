@@ -18,7 +18,7 @@ function showOnboardingModal() {
 
         <div class="onboard-step" data-step="2" style="display:none;">
           <h3>1/5 — Anh chị tên là gì?</h3>
-          <input id="onb-name" type="text" placeholder="Họ tên của anh chị (ví dụ: Vũ Thị Hoài Lan)" />
+          <input id="onb-name" type="text" placeholder="Họ tên của anh chị (ví dụ: Nguyễn Thị Mai)" />
           <div class="onboard-actions">
             <button class="btn-secondary onboard-back">← Quay lại</button>
             <button class="btn-primary onboard-next" data-required="onb-name">Tiếp →</button>

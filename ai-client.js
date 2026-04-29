@@ -6,10 +6,10 @@
 
 const AI_CONFIG = {
   endpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
-  // Proxy URL — Lan setup Cloudflare Worker và điền vào đây sau khi deploy.
+  // Proxy URL — anh Lân setup Cloudflare Worker và điền vào đây sau khi deploy.
   // Nếu rỗng → Phase A bị disable, học viên buộc nhập key riêng.
   proxyUrl: '', // ví dụ: 'https://api.hrbuilder.vn/gemini'
-  cohortToken: 'COHORT1_TOKEN_PLACEHOLDER', // Lan thay bằng COHORT_TOKEN của Worker
+  cohortToken: 'COHORT1_TOKEN_PLACEHOLDER', // anh Lân thay bằng COHORT_TOKEN của Worker
   models: {
     chat: 'gemini-2.5-flash',
     grade: 'gemini-2.5-flash',
@@ -35,7 +35,7 @@ function getOrCreateUserId() {
   return id;
 }
 
-// Lấy API key từ localStorage (Lan tự nhập 1 lần)
+// Lấy API key từ localStorage (anh Lân tự nhập 1 lần)
 function getApiKey() {
   return localStorage.getItem('gemini_api_key') || '';
 }

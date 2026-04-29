@@ -194,12 +194,12 @@ if (!lesson) {
             <div style="background: #f8fafc; border-radius: 12px; padding: 18px 22px; margin-bottom: 24px; text-align: left; font-size: 14px;">
               <div style="font-weight: 700; margin-bottom: 8px;">📋 Anh chị cần làm:</div>
               <ol style="margin: 0; padding-left: 20px; color: #475569; line-height: 1.7;">
-                <li>Đóng học phí 9,9 triệu (chuyển khoản — Lan gửi info)</li>
-                <li>Lan add anh chị vào cohort trong 24h</li>
+                <li>Đóng học phí 9,9 triệu (chuyển khoản — anh Lân gửi info)</li>
+                <li>anh Lân add anh chị vào cohort trong 24h</li>
                 <li>Đăng nhập lại — cả 15 buổi mở khóa luôn</li>
               </ol>
             </div>
-            <a href="https://zalo.me/" class="btn-primary" style="padding: 12px 28px; border-radius: 8px; text-decoration: none;">💬 Nhắn Lan trên Zalo</a>
+            <a href="https://zalo.me/" class="btn-primary" style="padding: 12px 28px; border-radius: 8px; text-decoration: none;">💬 Nhắn anh Lân trên Zalo</a>
             <a href="lesson.html?id=3" style="margin-left: 12px; padding: 12px 20px; color: var(--text-muted); text-decoration: none;">← Quay lại Buổi 3 (free)</a>
           </div>
         `;
@@ -450,7 +450,7 @@ function renderLesson(l, id) {
     <div class="lan-voice">
       <div class="lan-avatar">VL</div>
       <div class="lan-content">
-        <div class="lan-name">Lan nói riêng với bạn</div>
+        <div class="lan-name">Anh Lân nói riêng với anh chị</div>
         <p class="lan-msg">${l.lanVoice}</p>
       </div>
     </div>
@@ -617,7 +617,7 @@ function showGradeResult(idx, result, xp) {
   if (!inputWrap) return;
 
   const colorMap = { pass: '#10b981', borderline: '#f59e0b', fail: '#ef4444' };
-  const labelMap = { pass: '✅ Đạt', borderline: '⚠️ Đạt điều kiện (Lan sẽ review thêm)', fail: '❌ Chưa đạt' };
+  const labelMap = { pass: '✅ Đạt', borderline: '⚠️ Đạt điều kiện (anh Lân sẽ xem lại)', fail: '❌ Chưa đạt' };
 
   const html = `
     <div class="grade-result-box" style="margin-top: 16px; padding: 18px 20px; border-radius: 12px; border-left: 4px solid ${colorMap[result.status]}; background: ${colorMap[result.status]}15;">
@@ -818,7 +818,7 @@ document.getElementById('helpQuick').innerHTML = `
   <button class="quick-btn">❓ Bước này tôi không hiểu — anh chị giải thích lại?</button>
   <button class="quick-btn">🐛 Có lỗi đỏ trên màn hình, tôi sợ</button>
   <button class="quick-btn">💭 Prompt mẫu này tôi sửa cho công ty mình thế nào?</button>
-  <button class="quick-btn">🎙 Tôi muốn nói voice với anh Lan thay vì gõ</button>
+  <button class="quick-btn">🎙 Tôi muốn nói voice với anh Lân thay vì gõ</button>
 `;
 </script>
 
