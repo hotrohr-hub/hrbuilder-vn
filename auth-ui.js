@@ -128,6 +128,9 @@ function openModal(mode = 'signin') {
         <div class="switch">
           <span id="amSwitchTxt"></span> <a id="amSwitch"></a>
         </div>
+        <div class="switch" id="amForgotRow" style="margin-top: 6px;">
+          <a id="amForgot">Quên mật khẩu?</a>
+        </div>
       </div>
     </div>
   `;
@@ -142,9 +145,25 @@ function openModal(mode = 'signin') {
       $('amName').parentElement.style.display = 'block';
       $('amNameLabel').style.display = 'block';
       $('amName').style.display = 'block';
+      $('amPwd').parentElement.style.display = 'block';
+      $('amPwd').style.display = 'block';
+      $('amPwd').previousElementSibling.style.display = 'block';
       $('amSwitchTxt').textContent = 'Đã có tài khoản?';
       $('amSwitch').textContent = 'Đăng nhập';
       $('amSwitch').onclick = () => setMode('signin');
+      $('amForgotRow').style.display = 'none';
+    } else if (m === 'forgot') {
+      $('amTitle').textContent = 'Quên mật khẩu';
+      $('amSub').textContent = 'Nhập email — em gửi link đặt lại mật khẩu cho anh chị.';
+      $('amSubmit').textContent = 'Gửi email đặt lại';
+      $('amName').style.display = 'none';
+      $('amNameLabel').style.display = 'none';
+      $('amPwd').style.display = 'none';
+      $('amPwd').previousElementSibling.style.display = 'none';
+      $('amSwitchTxt').textContent = 'Nhớ ra rồi?';
+      $('amSwitch').textContent = 'Đăng nhập';
+      $('amSwitch').onclick = () => setMode('signin');
+      $('amForgotRow').style.display = 'none';
     } else {
       $('amTitle').textContent = 'Đăng nhập';
       $('amSub').textContent = 'Mở khoá HR Builder VN của anh chị.';
@@ -152,13 +171,22 @@ function openModal(mode = 'signin') {
       $('amName').parentElement.style.display = 'block';
       $('amNameLabel').style.display = 'none';
       $('amName').style.display = 'none';
+      $('amPwd').style.display = 'block';
+      $('amPwd').previousElementSibling.style.display = 'block';
       $('amSwitchTxt').textContent = 'Chưa có tài khoản?';
       $('amSwitch').textContent = 'Đăng ký mới';
       $('amSwitch').onclick = () => setMode('signup');
+      $('amForgotRow').style.display = 'block';
     }
     $('amErr').style.display = 'none';
     bg.dataset.mode = m;
   };
+
+  // Click "Quên mật khẩu?" → chuyển sang chế độ forgot
+  setTimeout(() => {
+    const forgotEl = $('amForgot');
+    if (forgotEl) forgotEl.onclick = () => setMode('forgot');
+  }, 50);
 
   const close = () => {
     _modalOpen = false;
@@ -174,33 +202,51 @@ function openModal(mode = 'signin') {
     const name = $('amName').value.trim();
     const errEl = $('amErr');
     errEl.style.display = 'none';
-    if (!email || !pwd) {
-      errEl.textContent = 'Anh chị nhập đủ email và mật khẩu giùm em.';
+    if (!email) {
+      errEl.textContent = 'Anh chị nhập email giùm em.';
       errEl.style.display = 'block';
       return;
     }
-    if (pwd.length < 6) {
-      errEl.textContent = 'Mật khẩu cần tối thiểu 6 ký tự.';
-      errEl.style.display = 'block';
-      return;
+    if (m !== 'forgot') {
+      if (!pwd) {
+        errEl.textContent = 'Anh chị nhập mật khẩu giùm em.';
+        errEl.style.display = 'block';
+        return;
+      }
+      if (pwd.length < 6) {
+        errEl.textContent = 'Mật khẩu cần tối thiểu 6 ký tự.';
+        errEl.style.display = 'block';
+        return;
+      }
     }
     $('amSubmit').disabled = true;
+    const oldText = $('amSubmit').textContent;
     $('amSubmit').textContent = 'Đang xử lý…';
     try {
       if (m === 'signup') {
         await window.fb.signUp(email, pwd, name);
+        close();
+        setTimeout(() => location.reload(), 300);
+      } else if (m === 'forgot') {
+        await window.fb.resetPassword(email);
+        errEl.style.background = '#ecfdf5';
+        errEl.style.borderColor = '#a7f3d0';
+        errEl.style.color = '#065f46';
+        errEl.textContent = '✅ Em đã gửi email đặt lại mật khẩu rồi. Anh chị check hộp thư (cả Spam) trong 1-2 phút nhé.';
+        errEl.style.display = 'block';
+        $('amSubmit').textContent = oldText;
+        $('amSubmit').disabled = false;
       } else {
         await window.fb.signIn(email, pwd);
+        close();
+        setTimeout(() => location.reload(), 300);
       }
-      close();
-      // Reload để pull cloud data + render UI mới
-      setTimeout(() => location.reload(), 300);
     } catch (e) {
       const msg = (e?.message || 'Có lỗi xảy ra').replace('Firebase: ', '');
       errEl.textContent = msg;
       errEl.style.display = 'block';
       $('amSubmit').disabled = false;
-      $('amSubmit').textContent = m === 'signup' ? 'Đăng ký' : 'Đăng nhập';
+      $('amSubmit').textContent = oldText;
     }
   };
 

@@ -20,12 +20,18 @@ import {
   signOut as fbSignOut,
   onAuthStateChanged,
   updateProfile,
+  sendPasswordResetEmail,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js';
 import {
   getFirestore,
   doc,
   getDoc,
   setDoc,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -79,6 +85,10 @@ const fb = {
     await fbSignOut(auth);
   },
 
+  async resetPassword(email) {
+    await sendPasswordResetEmail(auth, email);
+  },
+
   async saveUserData(profile, progress) {
     if (!_currentUser) throw new Error('Chưa đăng nhập');
     const ref = doc(db, 'users', _currentUser.uid);
@@ -98,6 +108,59 @@ const fb = {
     const ref = doc(db, 'users', _currentUser.uid);
     const snap = await getDoc(ref);
     return snap.exists() ? snap.data() : null;
+  },
+
+  // Check user hiện tại có là cohort member không (đã trả tiền, được anh Lân add vào whitelist)
+  async isCohortMember() {
+    if (!_currentUser) return false;
+    try {
+      const ref = doc(db, 'cohort_members', _currentUser.uid);
+      const snap = await getDoc(ref);
+      return snap.exists();
+    } catch (e) {
+      return false;
+    }
+  },
+
+  // Check user hiện tại có là admin không (chỉ anh Lân + người được approve)
+  async isAdmin() {
+    if (!_currentUser) return false;
+    try {
+      const ref = doc(db, 'admins', _currentUser.uid);
+      const snap = await getDoc(ref);
+      return snap.exists();
+    } catch (e) {
+      return false;
+    }
+  },
+
+  // Admin: list tất cả users (chỉ admin gọi được, rules sẽ chặn nếu không phải admin)
+  async listAllUsers() {
+    const colRef = collection(db, 'users');
+    const q = query(colRef, orderBy('updatedAt', 'desc'), limit(200));
+    const snap = await getDocs(q);
+    const list = [];
+    snap.forEach(d => list.push({ uid: d.id, ...d.data() }));
+    return list;
+  },
+
+  // Admin: list cohort members
+  async listCohortMembers() {
+    const colRef = collection(db, 'cohort_members');
+    const snap = await getDocs(colRef);
+    const list = [];
+    snap.forEach(d => list.push({ uid: d.id, ...d.data() }));
+    return list;
+  },
+
+  // Admin: thêm 1 user vào cohort (set document cohort_members/{uid})
+  async addCohortMember(uid, info) {
+    const ref = doc(db, 'cohort_members', uid);
+    await setDoc(ref, {
+      ...info,
+      addedBy: _currentUser?.email || 'unknown',
+      addedAt: new Date().toISOString(),
+    });
   },
 };
 
