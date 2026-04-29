@@ -176,9 +176,52 @@ if (!lesson) {
     </div>
   `;
 } else {
-  renderLesson(lesson, lessonId);
-  loadChatHistory();
-  updateXpDisplay();
+  // Buổi 1-3 free cho mọi người. Buổi 4+ chỉ cohort member (đã trả 9.9M)
+  if (lessonId >= 4) {
+    // Wait fb-ready, check cohort membership
+    document.addEventListener('fb-ready', async () => {
+      const isCohort = window.fb && window.fb.currentUser?.()
+        ? await window.fb.isCohortMember()
+        : false;
+      if (!isCohort) {
+        document.getElementById('lessonRoot').innerHTML = `
+          <a href="index.html" class="back-link">← Về lớp học</a>
+          <div style="text-align: center; padding: 60px 30px; background: white; border-radius: 16px; margin-top: 20px; max-width: 640px; margin-left: auto; margin-right: auto;">
+            <div style="font-size: 60px; margin-bottom: 16px;">🎓</div>
+            <h1 style="font-size: 26px; margin-bottom: 14px; letter-spacing: -0.4px;">Buổi ${lessonId} dành cho cohort thành viên</h1>
+            <p style="color: var(--text-muted); margin-bottom: 8px; line-height: 1.6;">Buổi 1, 2, 3 thì free. Từ Buổi 4 trở đi mình bàn việc nặng — anh chị cần là thành viên cohort chính thức.</p>
+            <p style="color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;">Cohort 9,9 triệu một người, mười tuần. Hoàn 5 triệu nếu pass mốc Tuần 4.</p>
+            <div style="background: #f8fafc; border-radius: 12px; padding: 18px 22px; margin-bottom: 24px; text-align: left; font-size: 14px;">
+              <div style="font-weight: 700; margin-bottom: 8px;">📋 Anh chị cần làm:</div>
+              <ol style="margin: 0; padding-left: 20px; color: #475569; line-height: 1.7;">
+                <li>Đóng học phí 9,9 triệu (chuyển khoản — Lan gửi info)</li>
+                <li>Lan add anh chị vào cohort trong 24h</li>
+                <li>Đăng nhập lại — cả 15 buổi mở khóa luôn</li>
+              </ol>
+            </div>
+            <a href="https://zalo.me/" class="btn-primary" style="padding: 12px 28px; border-radius: 8px; text-decoration: none;">💬 Nhắn Lan trên Zalo</a>
+            <a href="lesson.html?id=3" style="margin-left: 12px; padding: 12px 20px; color: var(--text-muted); text-decoration: none;">← Quay lại Buổi 3 (free)</a>
+          </div>
+        `;
+        return;
+      }
+      // Là cohort → render bình thường
+      renderLesson(lesson, lessonId);
+      loadChatHistory();
+      updateXpDisplay();
+    }, { once: true });
+    // Render placeholder loading trong khi chờ check
+    document.getElementById('lessonRoot').innerHTML = `
+      <div style="text-align: center; padding: 80px; color: var(--text-muted);">
+        <div style="font-size: 30px;">⏳</div>
+        <p style="margin-top: 12px;">Đang kiểm tra quyền truy cập…</p>
+      </div>
+    `;
+  } else {
+    renderLesson(lesson, lessonId);
+    loadChatHistory();
+    updateXpDisplay();
+  }
 }
 
 // Capstone picker UI cho Lớp 10

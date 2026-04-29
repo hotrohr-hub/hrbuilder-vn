@@ -3,22 +3,33 @@
 
 const STYLE = `
 .auth-pill {
-  position: fixed; top: 18px; right: 22px; z-index: 9000;
-  display: flex; align-items: center; gap: 10px;
-  background: white; border: 1px solid var(--border, #e5e7eb);
-  border-radius: 999px; padding: 8px 14px;
+  position: fixed; top: 14px; right: 18px; z-index: 9000;
+  display: flex; align-items: center; gap: 8px;
+  background: transparent; border: none;
+  border-radius: 999px; padding: 4px;
   font-size: 13px; font-weight: 600; cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  transition: transform 0.15s, box-shadow 0.15s;
+  font-family: inherit; color: inherit;
+  transition: opacity 0.15s, transform 0.15s;
 }
-.auth-pill:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
+.auth-pill:hover { opacity: 0.85; transform: translateY(-1px); }
 .auth-pill .auth-avatar {
-  width: 26px; height: 26px; border-radius: 50%;
+  width: 36px; height: 36px; border-radius: 50%;
   background: linear-gradient(135deg, #0ea5e9, #6366f1);
   color: white; display: grid; place-items: center;
-  font-size: 12px; font-weight: 700;
+  font-size: 14px; font-weight: 700;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.25);
+  transition: box-shadow 0.15s;
 }
-.auth-pill.unauth .auth-avatar { background: #94a3b8; }
+.auth-pill:hover .auth-avatar {
+  box-shadow: 0 3px 12px rgba(99,102,241,0.35);
+}
+.auth-pill.unauth .auth-avatar {
+  background: white;
+  border: 2px dashed #cbd5e1;
+  color: #94a3b8;
+  box-shadow: none;
+}
+.auth-pill .auth-label { display: none; }
 
 .auth-modal-bg {
   position: fixed; inset: 0; background: rgba(15,23,42,0.6);
@@ -279,12 +290,10 @@ function injectPill(user) {
     pill.classList.remove('unauth');
     const initials = getInitials(user);
     const label = user.displayName || user.email?.split('@')[0] || 'Anh chị';
-    pill.innerHTML = `
-      <span class="auth-avatar">${initials}</span>
-      <span>${label}</span>
-    `;
+    pill.title = `${label} · click để đăng xuất`;
+    pill.innerHTML = `<span class="auth-avatar">${initials}</span>`;
     pill.onclick = async () => {
-      if (confirm('Đăng xuất khỏi tài khoản?')) {
+      if (confirm(`Đăng xuất khỏi tài khoản ${label}?`)) {
         try {
           await window.fb.signOut();
           setTimeout(() => location.reload(), 200);
@@ -293,10 +302,8 @@ function injectPill(user) {
     };
   } else {
     pill.classList.add('unauth');
-    pill.innerHTML = `
-      <span class="auth-avatar">?</span>
-      <span>Đăng nhập</span>
-    `;
+    pill.title = 'Click để đăng nhập';
+    pill.innerHTML = `<span class="auth-avatar">↳</span>`;
     pill.onclick = () => openModal('signin');
   }
 }

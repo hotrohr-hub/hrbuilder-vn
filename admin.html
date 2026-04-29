@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — HR Builder VN</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style-v2.css">
+<style>
+body { background: #f8fafc; }
+.admin-wrap { max-width: 1400px; margin: 0 auto; padding: 32px 24px 80px; }
+
+.admin-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 28px; padding-bottom: 18px; border-bottom: 2px solid #e2e8f0;
+}
+.admin-title h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.4px; }
+.admin-title .sub { color: #64748b; font-size: 13px; margin-top: 4px; }
+
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.kpi {
+  background: white; border: 1px solid #e2e8f0; border-radius: 14px;
+  padding: 18px 20px;
+}
+.kpi .num { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1; }
+.kpi .label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 6px; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; }
+.tab {
+  padding: 10px 16px; cursor: pointer; font-weight: 600; font-size: 14px;
+  color: #64748b; border-bottom: 2px solid transparent; margin-bottom: -2px;
+  transition: all 0.15s;
+}
+.tab.active { color: #0f172a; border-bottom-color: #0f172a; }
+
+.toolbar { display: flex; gap: 10px; margin-bottom: 14px; }
+.toolbar input {
+  flex: 1; padding: 10px 14px; border: 1.5px solid #e2e8f0;
+  border-radius: 10px; font-size: 14px; outline: none;
+}
+.toolbar button {
+  padding: 10px 16px; border: none; border-radius: 10px;
+  background: #0f172a; color: white; font-weight: 600; font-size: 13px; cursor: pointer;
+}
+.toolbar button.add { background: #16a34a; }
+
+table {
+  width: 100%; background: white; border: 1px solid #e2e8f0;
+  border-radius: 12px; border-collapse: separate; border-spacing: 0; overflow: hidden;
+}
+th, td { padding: 12px 16px; text-align: left; font-size: 13px; }
+th { background: #f1f5f9; font-weight: 700; color: #475569; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; }
+tr { border-bottom: 1px solid #f1f5f9; }
+tr:last-child { border-bottom: none; }
+tr:hover { background: #fafafa; }
+
+.badge {
+  display: inline-block; padding: 3px 10px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;
+}
+.badge-cohort { background: #dcfce7; color: #166534; }
+.badge-free { background: #fef3c7; color: #854d0e; }
+.badge-admin { background: #ede9fe; color: #5b21b6; }
+
+.progress-bar {
+  display: inline-block; width: 80px; height: 8px;
+  background: #e2e8f0; border-radius: 999px; overflow: hidden;
+  vertical-align: middle; margin-right: 6px;
+}
+.progress-fill { height: 100%; background: #0ea5e9; }
+
+.btn-mini {
+  padding: 4px 10px; border: 1px solid #e2e8f0; border-radius: 6px;
+  background: white; cursor: pointer; font-size: 12px; font-weight: 600;
+}
+.btn-mini.green { background: #16a34a; color: white; border-color: #16a34a; }
+.btn-mini.red { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+
+.empty {
+  text-align: center; padding: 60px 20px; color: #94a3b8;
+}
+.empty h3 { font-size: 18px; margin-bottom: 8px; color: #475569; }
+
+.uid-mono { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: #64748b; }
+
+#noAccess {
+  max-width: 500px; margin: 100px auto; text-align: center;
+  background: white; padding: 40px; border-radius: 16px;
+  border: 1px solid #e2e8f0;
+}
+#noAccess h2 { font-size: 22px; margin-bottom: 12px; }
+#noAccess p { color: #64748b; margin-bottom: 18px; }
+#noAccess code { background: #f1f5f9; padding: 6px 10px; border-radius: 6px; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div id="noAccess" style="display:none">
+  <h2>Trang dành cho admin</h2>
+  <p id="naMsg">Đang kiểm tra quyền truy cập…</p>
+  <a href="/" class="btn-mini">← Về trang lớp học</a>
+</div>
+
+<div id="adminMain" class="admin-wrap" style="display:none">
+  <div class="admin-header">
+    <div class="admin-title">
+      <h1>📊 Admin — HR Builder VN</h1>
+      <div class="sub">Theo dõi học viên + quản lý cohort access</div>
+    </div>
+    <a href="/" class="btn-mini">← Về lớp học</a>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="num" id="kTotal">—</div><div class="label">Tổng đăng ký</div></div>
+    <div class="kpi"><div class="num" id="kCohort">—</div><div class="label">Cohort thành viên</div></div>
+    <div class="kpi"><div class="num" id="kActive7">—</div><div class="label">Hoạt động 7 ngày</div></div>
+    <div class="kpi"><div class="num" id="kAvg">—</div><div class="label">Buổi trung bình</div></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="users">Tất cả học viên</div>
+    <div class="tab" data-tab="cohort">Cohort thành viên</div>
+  </div>
+
+  <div id="paneUsers">
+    <div class="toolbar">
+      <input id="searchUser" placeholder="Tìm theo tên hoặc email…">
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Học viên</th>
+          <th>Email</th>
+          <th>Buổi</th>
+          <th>Tiến độ</th>
+          <th>Hoạt động lần cuối</th>
+          <th>Loại</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="tbUsers">
+        <tr><td colspan="7" class="empty">Đang tải…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="paneCohort" style="display:none">
+    <div class="toolbar">
+      <input id="cohortNewUid" placeholder="UID học viên muốn thêm vào cohort">
+      <input id="cohortNewNote" placeholder="Ghi chú (tuỳ chọn) — vd: Đã trả 9.9M ngày 12/05">
+      <button class="add" id="btnAddCohort">+ Thêm vào cohort</button>
+    </div>
+    <table>
+      <thead>
+        <tr><th>UID</th><th>Note</th><th>Thêm bởi</th><th>Thời gian</th></tr>
+      </thead>
+      <tbody id="tbCohort">
+        <tr><td colspan="4" class="empty">Đang tải…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script type="module" src="firebase-client.js"></script>
+<script type="module" src="auth-ui.js"></script>
+<script>
+let _allUsers = [];
+let _cohortMembers = [];
+let _cohortUidSet = new Set();
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (isNaN(d)) return '—';
+  const now = Date.now();
+  const diffMin = Math.floor((now - d.getTime()) / 60000);
+  if (diffMin < 1) return 'vừa xong';
+  if (diffMin < 60) return `${diffMin} phút trước`;
+  if (diffMin < 1440) return `${Math.floor(diffMin / 60)} giờ trước`;
+  return `${Math.floor(diffMin / 1440)} ngày trước`;
+}
+
+function calcProgress(progress) {
+  if (!progress?.lessons) return { lesson: '—', percent: 0, lastDone: null };
+  let lastLesson = 0;
+  let totalSteps = 0;
+  let lastDoneAt = null;
+  for (const [id, l] of Object.entries(progress.lessons)) {
+    const stepCount = Object.values(l.steps || {}).filter(s => s.done).length;
+    totalSteps += stepCount;
+    if (stepCount > 0 && +id > lastLesson) lastLesson = +id;
+    Object.values(l.steps || {}).forEach(s => {
+      if (s.doneAt && (!lastDoneAt || s.doneAt > lastDoneAt)) lastDoneAt = s.doneAt;
+    });
+  }
+  const totalLessons = 15; // 10 Foundation + 5 Pro
+  const totalStepsMax = totalLessons * 5;
+  return {
+    lesson: lastLesson || '—',
+    percent: Math.round((totalSteps / totalStepsMax) * 100),
+    lastDone: lastDoneAt,
+  };
+}
+
+function renderUsers(filter = '') {
+  const tb = document.getElementById('tbUsers');
+  const filtered = _allUsers.filter(u => {
+    if (!filter) return true;
+    const f = filter.toLowerCase();
+    return (u.email || '').toLowerCase().includes(f)
+      || (u.displayName || '').toLowerCase().includes(f)
+      || (u.profile?.name || '').toLowerCase().includes(f);
+  });
+  if (filtered.length === 0) {
+    tb.innerHTML = '<tr><td colspan="7" class="empty"><h3>Chưa có học viên</h3><p>Khi có người đăng ký sẽ hiện ở đây.</p></td></tr>';
+    return;
+  }
+  tb.innerHTML = filtered.map(u => {
+    const p = calcProgress(u.progress);
+    const isCohort = _cohortUidSet.has(u.uid);
+    const name = u.profile?.name || u.displayName || '—';
+    return `<tr>
+      <td>
+        <div style="font-weight: 600">${name}</div>
+        <div class="uid-mono">${u.uid.substring(0, 16)}…</div>
+      </td>
+      <td>${u.email || '—'}</td>
+      <td>Buổi ${p.lesson}</td>
+      <td><div class="progress-bar"><div class="progress-fill" style="width:${p.percent}%"></div></div>${p.percent}%</td>
+      <td>${fmtDate(p.lastDone || u.updatedAt)}</td>
+      <td>${isCohort ? '<span class="badge badge-cohort">Cohort</span>' : '<span class="badge badge-free">Free</span>'}</td>
+      <td>${isCohort
+        ? `<button class="btn-mini red" onclick="removeCohort('${u.uid}')">Hạ cohort</button>`
+        : `<button class="btn-mini green" onclick="addCohort('${u.uid}', '${(name||'').replace(/'/g,'')}', '${(u.email||'').replace(/'/g,'')}')">+ Cohort</button>`}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCohort() {
+  const tb = document.getElementById('tbCohort');
+  if (_cohortMembers.length === 0) {
+    tb.innerHTML = '<tr><td colspan="4" class="empty"><h3>Chưa có cohort member nào</h3><p>Add UID học viên đã đóng tiền vào ô trên.</p></td></tr>';
+    return;
+  }
+  tb.innerHTML = _cohortMembers.map(m => `
+    <tr>
+      <td><div class="uid-mono">${m.uid}</div><div style="font-size:12px;color:#475569">${m.name || ''} ${m.email ? '· ' + m.email : ''}</div></td>
+      <td>${m.note || '—'}</td>
+      <td>${m.addedBy || '—'}</td>
+      <td>${fmtDate(m.addedAt)}</td>
+    </tr>
+  `).join('');
+}
+
+async function refreshKpis() {
+  const total = _allUsers.length;
+  const cohort = _cohortMembers.length;
+  const now = Date.now();
+  const sevenDays = 7 * 24 * 3600 * 1000;
+  let active7 = 0; let totalLesson = 0; let countLesson = 0;
+  _allUsers.forEach(u => {
+    const p = calcProgress(u.progress);
+    if (p.lastDone && (now - new Date(p.lastDone).getTime()) < sevenDays) active7++;
+    if (typeof p.lesson === 'number') { totalLesson += p.lesson; countLesson++; }
+  });
+  document.getElementById('kTotal').textContent = total;
+  document.getElementById('kCohort').textContent = cohort;
+  document.getElementById('kActive7').textContent = active7;
+  document.getElementById('kAvg').textContent = countLesson ? (totalLesson / countLesson).toFixed(1) : '—';
+}
+
+async function loadAll() {
+  try {
+    [_allUsers, _cohortMembers] = await Promise.all([
+      window.fb.listAllUsers(),
+      window.fb.listCohortMembers(),
+    ]);
+    _cohortUidSet = new Set(_cohortMembers.map(m => m.uid));
+    renderUsers();
+    renderCohort();
+    refreshKpis();
+  } catch (e) {
+    document.getElementById('tbUsers').innerHTML = `<tr><td colspan="7" class="empty"><h3>Lỗi tải dữ liệu</h3><p>${e.message}</p></td></tr>`;
+  }
+}
+
+async function addCohort(uid, name, email) {
+  const note = prompt(`Thêm ${name} (${email}) vào cohort?\n\nGhi chú (tuỳ chọn — vd: Đã trả 9.9M ngày 12/05):`, '');
+  if (note === null) return;
+  try {
+    await window.fb.addCohortMember(uid, { name, email, note });
+    alert('Đã thêm vào cohort. Học viên đăng nhập lại sẽ unlock buổi 4-15.');
+    await loadAll();
+  } catch (e) { alert('Lỗi: ' + e.message); }
+}
+async function removeCohort(uid) {
+  // TODO: cần endpoint delete — tạm thời edit Firestore tay
+  alert('Chưa có. Hiện anh xoá thủ công ở Firestore Console: cohort_members → ' + uid);
+}
+window.addCohort = addCohort;
+window.removeCohort = removeCohort;
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('paneUsers').style.display = t.dataset.tab === 'users' ? 'block' : 'none';
+    document.getElementById('paneCohort').style.display = t.dataset.tab === 'cohort' ? 'block' : 'none';
+  };
+});
+
+document.getElementById('searchUser').oninput = (e) => renderUsers(e.target.value);
+
+document.getElementById('btnAddCohort').onclick = async () => {
+  const uid = document.getElementById('cohortNewUid').value.trim();
+  const note = document.getElementById('cohortNewNote').value.trim();
+  if (!uid) return alert('Nhập UID giùm em.');
+  try {
+    await window.fb.addCohortMember(uid, { note });
+    alert('Đã thêm.');
+    document.getElementById('cohortNewUid').value = '';
+    document.getElementById('cohortNewNote').value = '';
+    await loadAll();
+  } catch (e) { alert('Lỗi: ' + e.message); }
+};
+
+// Wait for fb-ready, then check admin
+document.addEventListener('fb-ready', async (e) => {
+  const user = e.detail?.user;
+  const noAccess = document.getElementById('noAccess');
+  const adminMain = document.getElementById('adminMain');
+  const naMsg = document.getElementById('naMsg');
+
+  if (!user) {
+    noAccess.style.display = 'block';
+    naMsg.innerHTML = 'Anh chị cần đăng nhập trước. Click nút <b>Đăng nhập</b> ở góc phải trên.';
+    return;
+  }
+  const isAdmin = await window.fb.isAdmin();
+  if (!isAdmin) {
+    noAccess.style.display = 'block';
+    naMsg.innerHTML = `Tài khoản <code>${user.email}</code> không có quyền admin.<br><br>Anh Lân thêm UID này vào collection <code>admins</code> ở Firebase Console:<br><code style="word-break:break-all">${user.uid}</code>`;
+    return;
+  }
+  adminMain.style.display = 'block';
+  await loadAll();
+});
+</script>
+</body>
+</html>
