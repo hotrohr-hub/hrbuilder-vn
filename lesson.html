@@ -299,7 +299,7 @@ function renderLesson(l, id) {
                 <span>${
                   step.sampleType === 'prompt' ? '📋 Prompt mẫu — paste vào Claude Code' :
                   step.sampleType === 'instruction' ? '📖 Hướng dẫn từng bước' :
-                  step.sampleType === 'rubric' ? '📝 Cấu trúc bài viết của bạn' :
+                  step.sampleType === 'rubric' ? '📝 Cấu trúc bài viết của anh chị' :
                   '📋 Mẫu'
                 }</span>
                 <button class="btn-copy" onclick="copyPrompt(this)">📑 Copy</button>
@@ -346,8 +346,8 @@ function renderLesson(l, id) {
     <div class="principle-banner mystery" id="principleBanner">
       <div class="principle-content">
         <div class="principle-tag">🔮 TƯ DUY SỐ ${l.principle.num} — BÍ MẬT</div>
-        <h2 class="mystery-title">Bạn thử đoán xem buổi này dạy tư duy gì nào?</h2>
-        <p class="mystery-sub">Mỗi bước xong → mở thêm một gợi ý. Xong Bước 3 → tôi tiết lộ tên đầy đủ. Não bạn nhớ tốt hơn 30-40% khi tự đoán trước — số liệu thật, không phải tôi bịa.</p>
+        <h2 class="mystery-title">Anh chị thử đoán xem buổi này dạy tư duy gì nào?</h2>
+        <p class="mystery-sub">Mỗi bước xong tôi xin được mở thêm một gợi ý. Xong bước ba thì tôi tiết lộ luôn tên đầy đủ. Não mình nó nhớ tốt hơn ba bốn chục phần trăm khi tự đoán trước — con số có thật, không phải tôi bịa.</p>
         <h2 class="reveal-name">🎉 ${l.principle.name.toUpperCase()}</h2>
         <p class="reveal-msg">${l.revealMsg}</p>
         <div class="hints-row">${hintsHtml}</div>
@@ -470,7 +470,7 @@ function renderLesson(l, id) {
           return `<span></span><button class="btn-primary" disabled>Đã xong</button>`;
         }
 
-        return `<span class="lesson-nav-info">Bạn cần xong ${l.steps.length} bước thì ${nextExists ? 'Buổi ' + nextId : 'Specialty Lane'} mới mở</span>
+        return `<span class="lesson-nav-info">Anh chị cần xong ${l.steps.length} bước thì ${nextExists ? 'Buổi ' + nextId : 'Specialty Lane'} mới mở</span>
         <button class="btn-primary" disabled>${nextExists ? 'Buổi ' + nextId + ' →' : '🎓 Demo Day'}</button>`;
       })()}
     </div>
