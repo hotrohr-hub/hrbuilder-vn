@@ -83,6 +83,93 @@ tr:hover { background: #fafafa; }
 
 .uid-mono { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: #64748b; }
 
+tr.clickable { cursor: pointer; }
+tr.clickable:hover { background: #f1f5f9; }
+
+/* === MODAL CHI TIẾT HỌC VIÊN === */
+.detail-modal-bg {
+  position: fixed; inset: 0; background: rgba(15,23,42,0.65);
+  z-index: 9500; display: grid; place-items: center;
+  animation: fadeIn 0.18s; padding: 20px;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.detail-modal {
+  background: white; border-radius: 16px;
+  width: 100%; max-width: 1000px; max-height: 92vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+.detail-head {
+  padding: 22px 28px 18px; border-bottom: 1px solid #e2e8f0;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+}
+.detail-head h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 4px; }
+.detail-head .meta { font-size: 13px; color: #64748b; line-height: 1.6; }
+.detail-head .meta span { margin-right: 14px; }
+.detail-close {
+  background: transparent; border: none; cursor: pointer;
+  font-size: 28px; color: #94a3b8; line-height: 1; padding: 0 6px;
+}
+.detail-close:hover { color: #475569; }
+
+.detail-body { padding: 22px 28px; overflow-y: auto; flex: 1; }
+
+.detail-section { margin-bottom: 26px; }
+.detail-section h3 { font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+
+.profile-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 22px;
+  background: #f8fafc; border-radius: 10px; padding: 14px 18px;
+}
+.profile-grid .pf-item { font-size: 13px; }
+.profile-grid .pf-item .pf-label { color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px; }
+.profile-grid .pf-item .pf-value { font-weight: 600; color: #0f172a; }
+
+.lessons-table {
+  width: 100%; border: 1px solid #e2e8f0; border-radius: 10px;
+  border-collapse: separate; border-spacing: 0; overflow: hidden;
+}
+.lessons-table th { background: #f8fafc; font-size: 11px; padding: 8px 10px; }
+.lessons-table td { padding: 8px 10px; font-size: 13px; }
+.lessons-table .lesson-name { font-weight: 600; color: #0f172a; min-width: 220px; }
+
+.step-dots { display: flex; gap: 5px; }
+.step-dot {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 11px; font-weight: 700; cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.step-dot:hover { transform: scale(1.1); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.step-dot.done { background: #dcfce7; color: #166534; }
+.step-dot.fail { background: #fee2e2; color: #991b1b; }
+.step-dot.todo { background: #f1f5f9; color: #cbd5e1; }
+.step-dot.active { box-shadow: 0 0 0 2px #0ea5e9; }
+
+.lesson-summary {
+  font-size: 12px; color: #64748b; margin-top: 4px;
+}
+
+.step-detail {
+  background: #f8fafc; border-radius: 10px; padding: 16px 20px;
+  margin-top: 14px; border: 1px solid #e2e8f0;
+  font-size: 13px; line-height: 1.6;
+}
+.step-detail h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+.step-detail .sd-meta { color: #64748b; font-size: 12px; margin-bottom: 10px; }
+.step-detail .sd-feedback {
+  background: white; border-left: 3px solid #0ea5e9;
+  padding: 10px 14px; border-radius: 6px; margin-top: 8px;
+  white-space: pre-wrap; font-size: 12px;
+}
+.step-detail .empty-detail { color: #94a3b8; font-style: italic; }
+
+.lesson-row {
+  border-top: 1px solid #f1f5f9;
+}
+.lesson-row:first-child { border-top: none; }
+
 #noAccess {
   max-width: 500px; margin: 100px auto; text-align: center;
   background: white; padding: 40px; border-radius: 16px;
@@ -219,7 +306,7 @@ function renderUsers(filter = '') {
     const p = calcProgress(u.progress);
     const isCohort = _cohortUidSet.has(u.uid);
     const name = u.profile?.name || u.displayName || '—';
-    return `<tr>
+    return `<tr class="clickable" data-uid="${u.uid}">
       <td>
         <div style="font-weight: 600">${name}</div>
         <div class="uid-mono">${u.uid.substring(0, 16)}…</div>
@@ -230,11 +317,185 @@ function renderUsers(filter = '') {
       <td>${fmtDate(p.lastDone || u.updatedAt)}</td>
       <td>${isCohort ? '<span class="badge badge-cohort">Cohort</span>' : '<span class="badge badge-free">Free</span>'}</td>
       <td>${isCohort
-        ? `<button class="btn-mini red" onclick="removeCohort('${u.uid}')">Hạ cohort</button>`
-        : `<button class="btn-mini green" onclick="addCohort('${u.uid}', '${(name||'').replace(/'/g,'')}', '${(u.email||'').replace(/'/g,'')}')">+ Cohort</button>`}</td>
+        ? `<button class="btn-mini red" onclick="event.stopPropagation();removeCohort('${u.uid}')">Hạ cohort</button>`
+        : `<button class="btn-mini green" onclick="event.stopPropagation();addCohort('${u.uid}', '${(name||'').replace(/'/g,'')}', '${(u.email||'').replace(/'/g,'')}')">+ Cohort</button>`}</td>
     </tr>`;
   }).join('');
+  // Bind click cho từng row
+  tb.querySelectorAll('tr.clickable').forEach(tr => {
+    tr.addEventListener('click', () => openUserDetail(tr.dataset.uid));
+  });
 }
+
+// === MODAL CHI TIẾT HỌC VIÊN ===
+const LESSON_NAMES = {
+  1: 'Tự học cùng máy',
+  2: 'Chia nhỏ việc',
+  3: 'Tả việc rõ',
+  4: 'Tự kích hoạt',
+  5: 'Đưa công cụ',
+  6: 'Phối hợp nhiều agent',
+  7: 'Máy biết học',
+  8: 'Cò nâng cao',
+  9: 'Đặt rào trước',
+  10: 'Chuyển mảng (Capstone)',
+  11: 'Vector RAG (Pro)',
+  12: 'Đo chất lượng (Pro)',
+  13: 'Tiết kiệm tiền (Pro)',
+  14: 'Đa giác quan (Pro)',
+  15: 'Vận hành sản phẩm (Pro)',
+};
+
+let _detailUser = null;
+let _detailSelectedKey = null; // "lessonId-stepIdx"
+
+function openUserDetail(uid) {
+  const u = _allUsers.find(x => x.uid === uid);
+  if (!u) return;
+  _detailUser = u;
+  _detailSelectedKey = null;
+  renderDetailModal();
+}
+function closeDetail() {
+  document.querySelector('.detail-modal-bg')?.remove();
+  _detailUser = null;
+}
+
+function renderDetailModal() {
+  const u = _detailUser;
+  if (!u) return;
+  const isCohort = _cohortUidSet.has(u.uid);
+  const name = u.profile?.name || u.displayName || '—';
+  const profileFields = [
+    ['Vai trò', u.profile?.role],
+    ['Công ty', u.profile?.company],
+    ['Mảng HR', u.profile?.area],
+    ['Pain point', u.profile?.pain],
+    ['Quy mô công ty', u.profile?.companySize],
+    ['Cập nhật lần cuối', u.updatedAt ? fmtDate(u.updatedAt) : '—'],
+  ];
+
+  // Build lesson rows
+  let lessonRowsHtml = '';
+  for (let lid = 1; lid <= 15; lid++) {
+    const lp = u.progress?.lessons?.[lid] || { steps: {} };
+    const steps = lp.steps || {};
+    let dotsHtml = '';
+    let doneCount = 0;
+    for (let s = 0; s < 5; s++) {
+      const step = steps[s];
+      let cls = 'todo'; let label = s + 1;
+      if (step?.done) {
+        if (step.status === 'fail' || (step.score != null && step.score < 60)) {
+          cls = 'fail'; label = '✕';
+        } else {
+          cls = 'done'; label = '✓'; doneCount++;
+        }
+      }
+      const key = `${lid}-${s}`;
+      const activeCls = _detailSelectedKey === key ? ' active' : '';
+      dotsHtml += `<div class="step-dot ${cls}${activeCls}" data-key="${key}" title="Buổi ${lid} · Bước ${s+1}">${label}</div>`;
+    }
+    lessonRowsHtml += `
+      <tr class="lesson-row">
+        <td class="lesson-name">
+          <div>Buổi ${lid} · ${LESSON_NAMES[lid] || ''}</div>
+          <div class="lesson-summary">${doneCount}/5 bước · ${lp.doneAt ? '✅ Đã xong ' + fmtDate(lp.doneAt) : 'Đang dở'}</div>
+        </td>
+        <td><div class="step-dots">${dotsHtml}</div></td>
+      </tr>`;
+  }
+
+  // Selected step detail
+  let stepDetailHtml = '';
+  if (_detailSelectedKey) {
+    const [lid, sidx] = _detailSelectedKey.split('-').map(Number);
+    const step = u.progress?.lessons?.[lid]?.steps?.[sidx];
+    if (step) {
+      const fb = step.feedback || {};
+      const summary = fb.summary || step.summary || '';
+      const what = Array.isArray(fb.whatWorked) ? fb.whatWorked.join('\n• ') : '';
+      const improve = Array.isArray(fb.improve) ? fb.improve.join('\n• ') : '';
+      stepDetailHtml = `
+        <div class="step-detail">
+          <h4>Buổi ${lid} · Bước ${sidx + 1}</h4>
+          <div class="sd-meta">
+            ${step.doneAt ? '⏰ ' + fmtDate(step.doneAt) + ' · ' : ''}
+            ${step.score != null ? '⭐ ' + step.score + '/100 · ' : ''}
+            ${step.status ? 'Trạng thái: ' + step.status : ''}
+          </div>
+          ${summary ? `<div class="sd-feedback"><b>Tóm tắt:</b> ${summary}</div>` : ''}
+          ${what ? `<div class="sd-feedback" style="border-left-color:#16a34a"><b>Làm tốt:</b>\n• ${what}</div>` : ''}
+          ${improve ? `<div class="sd-feedback" style="border-left-color:#dc2626"><b>Cần cải thiện:</b>\n• ${improve}</div>` : ''}
+          ${(!summary && !what && !improve) ? '<div class="empty-detail">Bước này không có feedback chi tiết (có thể là bước thủ công không qua AI grade).</div>' : ''}
+        </div>`;
+    } else {
+      stepDetailHtml = `<div class="step-detail empty-detail">Bước này học viên chưa làm.</div>`;
+    }
+  }
+
+  let modal = document.querySelector('.detail-modal-bg');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.className = 'detail-modal-bg';
+    modal.onclick = (e) => { if (e.target === modal) closeDetail(); };
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div class="detail-modal">
+      <div class="detail-head">
+        <div>
+          <h2>${name} ${isCohort ? '<span class="badge badge-cohort" style="margin-left:8px">Cohort</span>' : '<span class="badge badge-free" style="margin-left:8px">Free</span>'}</h2>
+          <div class="meta">
+            <span>📧 ${u.email || '—'}</span>
+            <span>🆔 <code style="font-size:11px">${u.uid}</code></span>
+          </div>
+        </div>
+        <button class="detail-close" id="dCloseBtn">×</button>
+      </div>
+      <div class="detail-body">
+        <div class="detail-section">
+          <h3>Hồ sơ học viên</h3>
+          <div class="profile-grid">
+            ${profileFields.map(([k, v]) => `
+              <div class="pf-item">
+                <div class="pf-label">${k}</div>
+                <div class="pf-value">${v || '—'}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Tiến độ 15 buổi (click chấm tròn xem chi tiết)</h3>
+          <table class="lessons-table">
+            <thead>
+              <tr><th>Buổi</th><th>5 bước</th></tr>
+            </thead>
+            <tbody>${lessonRowsHtml}</tbody>
+          </table>
+          ${stepDetailHtml}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Bind close + step-dot click
+  document.getElementById('dCloseBtn').onclick = closeDetail;
+  modal.querySelectorAll('.step-dot').forEach(d => {
+    d.addEventListener('click', () => {
+      _detailSelectedKey = d.dataset.key;
+      renderDetailModal();
+      // Scroll detail vào view
+      setTimeout(() => {
+        const el = document.querySelector('.step-detail');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+    });
+  });
+}
+
+window.openUserDetail = openUserDetail;
 
 function renderCohort() {
   const tb = document.getElementById('tbCohort');
