@@ -1,11 +1,56 @@
-// Progress — quản lý tiến độ học viên qua localStorage
-// Path A: localStorage. Path B: chuyển sang Supabase backend.
+// Progress — quản lý tiến độ học viên.
+// Lưu trữ: localStorage (cache local) + Firestore (cloud, đồng bộ qua máy).
+// Quy ước: localStorage là nguồn nhanh. Firestore đồng bộ ngầm khi user đăng nhập.
 
 const KEYS = {
   profile: 'hrbuilder_profile',
   progress: 'hrbuilder_progress',
   history: 'hrbuilder_history', // lưu chat history per lesson
 };
+
+// === FIRESTORE SYNC ===
+// Đẩy {profile, progress} lên Firestore (debounced ~1s).
+let _saveTimer = null;
+function _scheduleCloudSync() {
+  if (typeof window === 'undefined' || !window.fb || !window.fb.currentUser?.()) return;
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(async () => {
+    try {
+      await window.fb.saveUserData(getProfile(), getProgress());
+      console.log('[progress] cloud sync OK');
+    } catch (e) {
+      console.warn('[progress] cloud sync FAIL — sẽ thử lại khi save tiếp:', e?.message);
+    }
+  }, 1000);
+}
+
+// Pull dữ liệu từ Firestore về localStorage (gọi 1 lần khi user vừa đăng nhập).
+async function pullFromCloud() {
+  if (typeof window === 'undefined' || !window.fb || !window.fb.currentUser?.()) return null;
+  try {
+    const data = await window.fb.loadUserData();
+    if (!data) return null;
+    // Merge: cloud có dữ liệu thì ưu tiên cloud (vì máy mới đăng nhập, localStorage rỗng).
+    if (data.profile) localStorage.setItem(KEYS.profile, JSON.stringify(data.profile));
+    if (data.progress) localStorage.setItem(KEYS.progress, JSON.stringify(data.progress));
+    console.log('[progress] pulled from cloud');
+    return data;
+  } catch (e) {
+    console.warn('[progress] pull cloud FAIL:', e?.message);
+    return null;
+  }
+}
+
+// Push toàn bộ localStorage hiện tại lên cloud (gọi khi cần force sync).
+async function pushToCloud() {
+  if (typeof window === 'undefined' || !window.fb || !window.fb.currentUser?.()) return;
+  try {
+    await window.fb.saveUserData(getProfile(), getProgress());
+    console.log('[progress] pushed to cloud');
+  } catch (e) {
+    console.warn('[progress] push cloud FAIL:', e?.message);
+  }
+}
 
 // === PROFILE ===
 
@@ -19,6 +64,7 @@ function saveProfile(profile) {
     ...profile,
     onboardedAt: profile.onboardedAt || new Date().toISOString(),
   }));
+  _scheduleCloudSync();
 }
 
 function isOnboarded() {
@@ -34,6 +80,7 @@ function getProgress() {
 
 function saveProgress(p) {
   localStorage.setItem(KEYS.progress, JSON.stringify(p));
+  _scheduleCloudSync();
 }
 
 function markStepDone(lessonId, stepIdx, gradeResult) {
@@ -146,4 +193,23 @@ function resetAll() {
   localStorage.removeItem(KEYS.profile);
   localStorage.removeItem(KEYS.progress);
   localStorage.removeItem(KEYS.history);
+}
+
+// Khi auth state đổi: nếu user vừa đăng nhập + localStorage rỗng → pull từ cloud
+if (typeof window !== 'undefined' && document) {
+  document.addEventListener('fb-ready', async (e) => {
+    const user = e.detail?.user;
+    if (!user) return;
+    const hasLocal = !!getProfile() || !!localStorage.getItem(KEYS.progress);
+    if (!hasLocal) {
+      const cloud = await pullFromCloud();
+      if (cloud && (cloud.profile || cloud.progress)) {
+        // Reload trang để UI re-render với data mới pull về
+        setTimeout(() => location.reload(), 200);
+      }
+    } else {
+      // Có local rồi → push lên cloud cho chắc
+      pushToCloud();
+    }
+  });
 }
