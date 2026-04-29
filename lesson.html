@@ -719,15 +719,27 @@ function showGradeResult(idx, result, xp) {
   const colorMap = { pass: '#10b981', borderline: '#f59e0b', fail: '#ef4444' };
   const labelMap = { pass: '✅ Đạt', borderline: '⚠️ Đạt điều kiện (anh Lân sẽ xem lại)', fail: '❌ Chưa đạt' };
 
+  // Normalise — AI có thể dùng tên field khác nhau, tự map về 1 chuẩn
+  const status = ['pass','borderline','fail'].includes(result.status) ? result.status : 'fail';
+  const color = colorMap[status];
+  const label = labelMap[status];
+  const score = (result.score != null) ? result.score : '—';
+  const strengths = result.strengths || result.whatWorked || result.diem_tot || [];
+  const improvements = result.improvements || result.improve || result.can_cai_thien || [];
+  const summary = result.summary || result.next_step_hint || result.feedback || '';
+
+  // Đã có sẵn 1 box rồi (khi nộp lại) → xoá đi
+  inputWrap.querySelectorAll('.grade-result-box').forEach(el => el.remove());
+
   const html = `
-    <div class="grade-result-box" style="margin-top: 16px; padding: 18px 20px; border-radius: 12px; border-left: 4px solid ${colorMap[result.status]}; background: ${colorMap[result.status]}15;">
+    <div class="grade-result-box" style="margin-top: 16px; padding: 18px 20px; border-radius: 12px; border-left: 4px solid ${color}; background: ${color}15;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <div style="font-size: 16px; font-weight: 700; color: ${colorMap[result.status]};">${labelMap[result.status]}</div>
-        <div style="font-size: 24px; font-weight: 800; color: ${colorMap[result.status]};">${result.score}/100</div>
+        <div style="font-size: 16px; font-weight: 700; color: ${color};">${label}</div>
+        <div style="font-size: 24px; font-weight: 800; color: ${color};">${score}/100</div>
       </div>
-      ${result.strengths?.length ? `<div style="margin-bottom: 10px;"><strong style="font-size: 13px;">💪 Bạn làm tốt chỗ này:</strong><ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">${result.strengths.map(s => `<li>${renderMarkdown(s)}</li>`).join('')}</ul></div>` : ''}
-      ${result.improvements?.length ? `<div style="margin-bottom: 10px;"><strong style="font-size: 13px;">🔧 Lần tới cải thiện thêm:</strong><ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">${result.improvements.map(i => `<li>${renderMarkdown(i)}</li>`).join('')}</ul></div>` : ''}
-      ${result.next_step_hint ? `<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.1); font-size: 13.5px;"><strong>👉 Gợi ý cho bước sau:</strong> ${renderMarkdown(result.next_step_hint)}</div>` : ''}
+      ${summary ? `<div style="margin-bottom: 12px; font-size: 14px; line-height: 1.6; font-style: italic; color: #374151;">${renderMarkdown(summary)}</div>` : ''}
+      ${strengths.length ? `<div style="margin-bottom: 10px;"><strong style="font-size: 13px;">💪 Anh chị làm tốt:</strong><ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">${strengths.map(s => `<li>${renderMarkdown(s)}</li>`).join('')}</ul></div>` : ''}
+      ${improvements.length ? `<div style="margin-bottom: 0;"><strong style="font-size: 13px;">🔧 Lần tới cải thiện thêm:</strong><ul style="margin-left: 20px; font-size: 14px; line-height: 1.6;">${improvements.map(i => `<li>${renderMarkdown(i)}</li>`).join('')}</ul></div>` : ''}
     </div>
   `;
   inputWrap.insertAdjacentHTML('beforeend', html);
