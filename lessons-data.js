@@ -5,7 +5,7 @@ const LESSONS = {
   1: {
     week: 'TUẦN 1', duration: '90-150 phút tuỳ tốc độ',
     title: 'Tuần 1 — Cổng HR và tuyệt chiêu "Tự học cùng máy"',
-    sub: 'Thưa các anh chị, ở đời cái gì không biết thì ta hay tra Google. Nhưng Google bây giờ nó giống cái chợ trời, ném cho mình mười cái link rồi để mình tự bơi, có khi bơi mãi không thấy bờ. Vậy nên tuần này ta áp dụng triết lý đơn giản: không biết thì hỏi thẳng. Người làm nhanh xong trong chín mươi phút, người mới lần đầu đụng Cline thì đôi ba tiếng cũng chẳng sao.',
+    sub: 'Thưa các anh chị, ở đời cái gì không biết thì ta hay tra Google. Nhưng Google bây giờ nó giống cái chợ trời, ném cho mình mười cái link rồi để mình tự bơi, có khi bơi mãi không thấy bờ. Vậy nên tuần này ta áp dụng triết lý đơn giản: không biết thì hỏi thẳng máy. Người làm nhanh xong trong chín mươi phút, người mới lần đầu cài đặt thì đôi ba tiếng cũng chẳng sao.',
     principle: { num: 1, name: 'Tự học cùng máy' },
     hints: [
       'Cứ chân thành mà khai báo: "Em ơi, anh mù tịt code, em dựng cho anh cái cổng xin nghỉ phép". Thật thà như đếm thế lại hay!',
@@ -18,7 +18,7 @@ const LESSONS = {
       { name: 'Vì sao trúng', text: 'Lý do, kỳ thực, chẳng có gì cao siêu. Máy nó đã đọc giúp anh chị rồi, đọc xong tóm gọn lại thành câu trả lời. Tôi xin nhấn mạnh một ý mà nhiều người hay nhầm: máy không thông minh hơn anh chị đâu. Nó chỉ chăm hơn. Mà chăm, đôi khi, lại hơn thông minh. Các cụ chắc cũng đồng ý — chỉ là quên không ghi vào ca dao.' },
       { name: 'Khi nào đừng hỏi máy', text: 'Có lúc anh chị nên cất máy đi mà mở văn bản gốc ra. Chuyện luật chẳng hạn — bảo hiểm xã hội, hợp đồng lao động — máy mà lỡ phịa con số, sếp hỏi lại anh chị không cãi nổi đâu. Hợp đồng quan trọng cũng vậy: luật sư học bảy năm chứ có ít, không phải để máy thay. À, còn một ý nữa — dữ liệu nhạy cảm. Cái này tôi không nói dài: đừng quăng vào prompt. Mất thì khổ, có khi không phải mỗi mình anh chị khổ.' },
     ],
-    lanVoice: 'Tôi đoán các anh chị đang lo: "Em chưa biết HTML thì dựng cổng HR kiểu gì?" Câu hỏi rất hay. Câu trả lời ngắn hơn câu hỏi — không cần biết. Năm 2026 rồi, chuyện viết mã là việc của máy, việc của các anh chị là mở miệng ra mà ra lệnh. Chín mươi phút nữa cái đường dẫn nó nằm trên Zalo bio rồi, ai vào cũng tưởng anh chị mới đi du học thung lũng Silicon ba tháng về. Kỳ thực, máy nó làm cả. Cái em phụ tên là Cline, ngoan lắm — tôi xin cam đoan với các anh chị.',
+    lanVoice: 'Tôi đoán các anh chị đang lo: "Em chưa biết HTML thì dựng cổng HR kiểu gì?" Câu hỏi rất hay. Câu trả lời ngắn hơn câu hỏi — không cần biết. Năm 2026 rồi, chuyện viết mã là việc của máy, việc của các anh chị là mở miệng ra mà ra lệnh. Chín mươi phút nữa cái đường dẫn nó nằm trên Zalo bio rồi, ai vào cũng tưởng anh chị mới đi du học thung lũng Silicon ba tháng về. Kỳ thực, máy nó làm cả. Mấy em phụ giúp anh chị giờ nhiều lắm: Google Antigravity, VSCode chat, Cursor, Cline... cái nào cũng được, miễn anh chị cảm thấy thuận tay.',
     outcomes: {
       cam: [
         'Cổng HR chạy ngon ở máy mình, có ba nút tử tế: xin nghỉ phép, hỏi luật công ty, đăng ký team building',
@@ -26,28 +26,48 @@ const LESSONS = {
         'Đường dẫn công khai sẽ dựng ở Buổi 1.5 — chuyện đó mình bàn sau, đừng vội',
       ],
       tuduy: [
-        'Cline khác ChatGPT — nó tự tạo file, tự chạy mã, không bắt anh chị cứ copy với paste mãi',
+        'AI agent (Antigravity, VSCode chat, Cline...) khác ChatGPT — nó tự tạo file, tự chạy mã, không bắt anh chị cứ copy với paste mãi',
         'Tả việc cho máy y như viết bản mô tả công việc cho nhân viên mới: rõ thì việc xong, mơ hồ thì khỏi bàn',
         'Bí cái gì hỏi thẳng nó. Đừng quay sang Google nữa, mất thì giờ mà nhiều khi cũng chẳng ra',
       ],
     },
     steps: [
       {
-        title: 'Cài VSCode rồi gắn Cline vào', xp: 20,
-        desc: 'Cái này thực ra là Buổi 0 — chưa paste prompt vội đâu. Anh chị cứ theo sáu bước dưới đây mà làm, tất cả đều miễn phí, không mất một đồng.',
+        title: 'Cài 1 IDE có chat AI — chọn 1 trong 4 cái', xp: 20,
+        desc: 'Cái này thực ra là Buổi 0 — chưa paste prompt vội đâu. Anh chị chọn 1 trong 4 cái dưới đây, cài xong là sẵn sàng. Tất cả đều miễn phí.',
         sampleType: 'instruction',
-        samplePrompt: `1. Tải VSCode về từ code.visualstudio.com — cài như app thường, không có gì phức tạp
-2. Mở VSCode lên, tìm Extensions ở thanh bên trái (cái biểu tượng hình lập phương)
-3. Gõ "Cline" rồi bấm Install — nhớ chọn của Cline team, đừng cài nhầm bản nhái, hàng nhái nhiều lắm
-4. Cài xong reload VSCode lại một cái cho chắc
-5. Click vào biểu tượng Cline ở thanh bên trái, chọn "New chat session"
-6. Khi thấy ô chat hỏi "Bạn cần làm gì?" thì là anh chị đã sẵn sàng, sang bước hai
+        samplePrompt: `Chọn 1 trong 4 cái — cái nào sẵn thì lấy:
 
-⚠ Kẹt ở đâu đừng quay sang Google nữa, hỏi thẳng Cline luôn: "Em kẹt cài Cline, lỗi là ...". Nó tự sửa cho anh chị.`,
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🅰 GOOGLE ANTIGRAVITY (đề xuất cho người mới)
+   • Vào antigravity.google → tải về → cài như app
+   • Login Google (gmail nào cũng được) — free, không cần thẻ
+   • Tạo project mới → ô chat hiện ra ở phải → sẵn sàng
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🅱 VSCode + GITHUB COPILOT CHAT
+   • Tải VSCode từ code.visualstudio.com
+   • Mở VSCode → Sign in bằng tài khoản GitHub (góc trái dưới)
+   • Bấm icon Chat ở sidebar (hình bong bóng) — chat hiện ngay
+   • (Free tier có hạn, nếu hết hạn thì chuyển qua C hoặc D)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🅲 CURSOR (cũng kiểu VSCode, free tier rộng hơn)
+   • Tải từ cursor.com → cài như app
+   • Login Google/GitHub → free 14 ngày Pro, hết thì còn free tier
+   • Bấm Ctrl+L → chat hiện ngay
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🅳 VSCode + CLINE (free hoàn toàn, nhưng cần API key riêng)
+   • Tải VSCode → mở Extensions → tìm "Cline" → Install
+   • Cline cần anh chị có Anthropic / OpenAI / Gemini API key (có cái free)
+   • Đặt key trong cài đặt Cline → New chat session
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Cài xong + thấy ô chat "Bạn cần làm gì?" / "How can I help?" — sang bước 2.
+
+⚠ Kẹt ở đâu đừng quay sang Google nữa, hỏi thẳng AI vừa cài: "Em mới cài, lỗi là ...". Nó tự sửa cho anh chị.`,
       },
       {
         title: 'Một câu — máy dựng nguyên cái cổng', xp: 50,
-        desc: 'Paste prompt mẫu dưới đây vào ô chat Cline, điền chỗ [...] rồi nhấn Enter. Anh chị ngồi xem mã chữ tự nhảy ra, không phải đụng tay gì cả.',
+        desc: 'Paste prompt mẫu dưới đây vào ô chat AI (Antigravity / VSCode chat / Cursor / Cline — tuỳ anh chị cài cái nào ở Bước 1), điền chỗ [...] rồi nhấn Enter. Anh chị ngồi xem mã chữ tự nhảy ra, không phải đụng tay gì cả.',
         sampleType: 'prompt',
         samplePrompt: `Tôi tên là [TÊN BẠN — ví dụ: Nguyễn Thị Tuyền].
 Tôi làm [VAI TRÒ — ví dụ: HR Executive] tại [CÔNG TY — ví dụ: An Nam Retail].
