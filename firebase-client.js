@@ -32,6 +32,10 @@ import {
   query,
   orderBy,
   limit,
+  where,
+  onSnapshot,
+  serverTimestamp,
+  updateDoc,
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -160,6 +164,74 @@ const fb = {
       ...info,
       addedBy: _currentUser?.email || 'unknown',
       addedAt: new Date().toISOString(),
+    });
+  },
+
+  // === SUBMISSIONS ===
+  // Học viên nộp bài. Doc id = `${uid}_${lessonId}_${stepIdx}`
+  // → mỗi step chỉ có 1 submission active, nộp lại sẽ overwrite.
+  async saveSubmission(lessonId, stepIdx, payload) {
+    if (!_currentUser) throw new Error('Chưa đăng nhập');
+    const subId = `${_currentUser.uid}_${lessonId}_${stepIdx}`;
+    const ref = doc(db, 'submissions', subId);
+    const data = {
+      uid: _currentUser.uid,
+      email: _currentUser.email || '',
+      displayName: _currentUser.displayName || '',
+      lessonId: Number(lessonId),
+      stepIdx: Number(stepIdx),
+      text: payload.text || '',
+      images: payload.images || [],     // Array base64 data URLs
+      submittedAt: new Date().toISOString(),
+      status: 'pending',                 // pending → graded (pass/borderline/fail)
+      gradeResult: null,                 // {score, status, summary, whatWorked[], improve[]}
+      gradedAt: null,
+      gradedBy: null,                    // 'human:<email>' or 'ai:claude-cli'
+    };
+    await setDoc(ref, data);
+    return data;
+  },
+
+  // Lấy submission của user hiện tại cho 1 step
+  async getMySubmission(lessonId, stepIdx) {
+    if (!_currentUser) return null;
+    const subId = `${_currentUser.uid}_${lessonId}_${stepIdx}`;
+    const snap = await getDoc(doc(db, 'submissions', subId));
+    return snap.exists() ? snap.data() : null;
+  },
+
+  // Listen real-time: khi worker chấm xong, frontend update ngay
+  listenMySubmission(lessonId, stepIdx, cb) {
+    if (!_currentUser) return () => {};
+    const subId = `${_currentUser.uid}_${lessonId}_${stepIdx}`;
+    return onSnapshot(doc(db, 'submissions', subId), (snap) => {
+      cb(snap.exists() ? snap.data() : null);
+    });
+  },
+
+  // Admin: list submissions theo status
+  async listSubmissions(filterStatus = null) {
+    const colRef = collection(db, 'submissions');
+    let q;
+    if (filterStatus) {
+      q = query(colRef, where('status', '==', filterStatus), orderBy('submittedAt', 'desc'), limit(200));
+    } else {
+      q = query(colRef, orderBy('submittedAt', 'desc'), limit(200));
+    }
+    const snap = await getDocs(q);
+    const list = [];
+    snap.forEach(d => list.push({ id: d.id, ...d.data() }));
+    return list;
+  },
+
+  // Admin: chấm bài
+  async gradeSubmission(subId, result) {
+    const ref = doc(db, 'submissions', subId);
+    await updateDoc(ref, {
+      status: result.status,        // 'pass' | 'borderline' | 'fail'
+      gradeResult: result,
+      gradedAt: new Date().toISOString(),
+      gradedBy: result.gradedBy || `human:${_currentUser?.email || 'admin'}`,
     });
   },
 };

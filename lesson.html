@@ -353,12 +353,23 @@ function renderLesson(l, id) {
             </div>
           ` : ''}
           <div class="task-input-wrap">
-            <label>Câu trả lời của anh chị (paste link, screenshot, hoặc gõ tự do — kể tôi nghe anh chị đã làm gì):</label>
-            <textarea id="answerInput" placeholder="Anh chị trả lời ở đây…" rows="4"></textarea>
-            <div class="task-actions">
+            <label>Câu trả lời của anh chị — kể tôi nghe đã làm gì:</label>
+            <textarea id="answerInput" placeholder="Anh chị trả lời ở đây…" rows="5"></textarea>
+
+            <label style="margin-top: 14px; display: block; font-weight: 600; font-size: 13px; color: #475569;">📷 Ảnh chứng minh (chụp màn hình kết quả · tối đa 3 ảnh)</label>
+            <div class="image-upload-area" style="margin-top: 6px;">
+              <input type="file" id="imageInput" multiple accept="image/*" style="display: none" onchange="handleImageUpload(event)">
+              <button type="button" class="btn-upload" onclick="document.getElementById('imageInput').click()" style="padding: 8px 14px; border: 1.5px dashed #cbd5e1; border-radius: 8px; background: #f8fafc; cursor: pointer; font-weight: 600; font-size: 13px; color: #475569;">📷 Chọn ảnh từ máy</button>
+              <span style="font-size: 11px; color: #94a3b8; margin-left: 8px;">Em sẽ tự nén ảnh xuống dưới 700KB cho mỗi tấm</span>
+              <div id="imagePreviews" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;"></div>
+            </div>
+
+            <div class="task-actions" style="margin-top: 16px;">
               <button class="btn-submit" onclick="submitStep(${i})">Nộp bài · +${step.xp} XP</button>
               <button class="btn-help" onclick="openHelp()">Bí? Hỏi Bạn đồng hành</button>
             </div>
+
+            <div id="submissionStatus" style="display: none; margin-top: 16px; padding: 14px 18px; border-radius: 10px;"></div>
           </div>
           <div class="task-community">
             <div class="avatars">
@@ -557,57 +568,146 @@ function simulateReveal() {
   }, 2000);
 }
 
+// === SUBMISSION + UPLOAD IMAGES ===
+let _stepImages = []; // base64 array
+
+// Nén ảnh xuống ~700KB max bằng canvas resize + JPEG quality
+function compressImage(file, maxBytes = 700000) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        const maxSide = 1600;
+        if (width > maxSide || height > maxSide) {
+          if (width > height) { height = Math.round(height * maxSide / width); width = maxSide; }
+          else { width = Math.round(width * maxSide / height); height = maxSide; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        // Thử quality giảm dần để fit dưới maxBytes
+        let quality = 0.85;
+        let dataUrl = canvas.toDataURL('image/jpeg', quality);
+        while (dataUrl.length > maxBytes * 1.37 && quality > 0.4) {
+          quality -= 0.1;
+          dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+        resolve(dataUrl);
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleImageUpload(event) {
+  const files = Array.from(event.target.files || []);
+  if (!files.length) return;
+  if (_stepImages.length + files.length > 3) {
+    showNotif('Tối đa 3 ảnh thôi anh chị, chọn ảnh tinh hoa nhất.', '#f59e0b');
+    return;
+  }
+  showNotif('📷 Em đang nén ảnh...', '#2563eb');
+  for (const f of files) {
+    try {
+      const dataUrl = await compressImage(f);
+      _stepImages.push(dataUrl);
+    } catch (e) {
+      showNotif('Ảnh ' + f.name + ' bị lỗi, anh chị thử ảnh khác.', '#ef4444');
+    }
+  }
+  renderImagePreviews();
+  event.target.value = ''; // reset input để có thể chọn lại cùng file
+}
+
+function renderImagePreviews() {
+  const c = document.getElementById('imagePreviews');
+  if (!c) return;
+  c.innerHTML = _stepImages.map((src, i) => `
+    <div style="position: relative; width: 100px; height: 100px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+      <img src="${src}" style="width: 100%; height: 100%; object-fit: cover;">
+      <button onclick="removeStepImage(${i})" style="position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; background: rgba(0,0,0,0.65); color: white; border: none; cursor: pointer; font-size: 14px; line-height: 1;">×</button>
+    </div>
+  `).join('');
+}
+
+function removeStepImage(idx) {
+  _stepImages.splice(idx, 1);
+  renderImagePreviews();
+}
+window.removeStepImage = removeStepImage;
+window.handleImageUpload = handleImageUpload;
+
 async function submitStep(idx) {
   const a = document.getElementById('answerInput').value;
-  if (!a.trim()) { showNotif('⚠️ Anh chị chưa điền câu trả lời. Tôi đợi.', '#f59e0b'); return; }
+  if (!a.trim() && _stepImages.length === 0) {
+    showNotif('⚠️ Anh chị chưa điền gì cả. Gõ ít chữ hoặc up tấm ảnh giùm em.', '#f59e0b');
+    return;
+  }
 
-  // Disable button
+  // Phải đăng nhập mới nộp được
+  if (!window.fb || !window.fb.currentUser?.()) {
+    showNotif('⚠️ Anh chị đăng nhập tài khoản trước (avatar góc phải). Lưu vào tài khoản mới đổi máy không mất bài.', '#f59e0b');
+    return;
+  }
+
   const btns = document.querySelectorAll('.btn-submit');
-  btns.forEach(b => { b.disabled = true; b.textContent = '⏳ Đang chấm…'; });
-  showNotif('⏳ Tôi đang đọc bài của anh chị…', '#2563eb');
+  btns.forEach(b => { b.disabled = true; b.textContent = '⏳ Đang gửi…'; });
 
   try {
-    const profile = getProfile();
     const step = lesson.steps[idx];
-    const result = await aiGrade({
-      lessonId,
-      stepIdx: idx,
-      stepTitle: step.title,
-      stepDesc: step.desc,
-      principleName: lesson.principle.name,
-      submission: a,
-      profile,
-      gradingCriteria: step.gradingCriteria,
-    });
+    await window.fb.saveSubmission(lessonId, idx, { text: a, images: _stepImages });
 
-    // Hiển thị kết quả
-    showGradeResult(idx, result, step.xp);
-
-    // Lưu progress nếu pass
-    if (result.status === 'pass' || result.status === 'borderline') {
-      markStepDone(lessonId, idx, result);
-      confetti();
-      showNotif(`🎉 ${result.status === 'pass' ? 'Pass' : 'Đạt điều kiện'}! +${step.xp} XP. Bước tiếp đã sẵn sàng.`, '#10b981');
-      updateXpDisplay();
-      // Reload sau 3s để hiển thị step mới
-      setTimeout(() => location.reload(), 3500);
-    } else {
-      showNotif('Chưa đạt — bạn đọc feedback rồi sửa. Nộp lại được, không giới hạn.', '#f59e0b');
-      btns.forEach(b => { b.disabled = false; b.textContent = `Nộp lại · +${step.xp} XP`; });
+    // Hiển thị trạng thái chờ
+    const statusEl = document.getElementById('submissionStatus');
+    if (statusEl) {
+      statusEl.style.display = 'block';
+      statusEl.style.background = '#eff6ff';
+      statusEl.style.borderLeft = '4px solid #3b82f6';
+      statusEl.innerHTML = `
+        <div style="font-weight: 700; color: #1e40af; font-size: 14px; margin-bottom: 6px;">📬 Bài đã gửi!</div>
+        <div style="font-size: 13px; color: #1e3a8a; line-height: 1.6;">
+          Anh Lân + bộ máy chấm bài đang xem giúp anh chị. Có kết quả sẽ hiện ở đây liền — anh chị cứ uống ngụm trà rồi quay lại sau ít phút. Trang này tự cập nhật, không cần F5.
+        </div>
+      `;
     }
+    btns.forEach(b => { b.disabled = true; b.textContent = '⏳ Đang chờ chấm…'; });
+
+    // Listen real-time: khi worker/admin chấm xong → hiện kết quả
+    if (window._unsubSub) window._unsubSub();
+    window._unsubSub = window.fb.listenMySubmission(lessonId, idx, (sub) => {
+      if (!sub) return;
+      if (sub.status === 'pending') return;
+
+      // Đã có kết quả
+      const result = sub.gradeResult || { status: sub.status, summary: 'Đã chấm.' };
+      showGradeResult(idx, result, step.xp);
+      if (result.status === 'pass' || result.status === 'borderline') {
+        markStepDone(lessonId, idx, result);
+        confetti();
+        showNotif(`🎉 ${result.status === 'pass' ? 'Đạt' : 'Đạt điều kiện'}! +${step.xp} XP. Bước tiếp mở rồi.`, '#10b981');
+        updateXpDisplay();
+        setTimeout(() => location.reload(), 3500);
+      } else {
+        // fail → cho nộp lại
+        if (statusEl) {
+          statusEl.style.background = '#fef2f2';
+          statusEl.style.borderLeft = '4px solid #ef4444';
+          statusEl.innerHTML = `
+            <div style="font-weight: 700; color: #991b1b; font-size: 14px; margin-bottom: 6px;">❌ Chưa đạt</div>
+            <div style="font-size: 13px; color: #7f1d1d;">Anh chị đọc phản hồi rồi sửa lại. Nộp bao nhiêu lần cũng được, không giới hạn.</div>
+          `;
+        }
+        btns.forEach(b => { b.disabled = false; b.textContent = `Nộp lại · +${step.xp} XP`; });
+      }
+    });
   } catch (err) {
-    // err.userMessage là message thân thiện do ai-client tạo; fallback sang err.message nếu chưa có
-    const friendly = err.userMessage || (
-      err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')
-        ? 'Mất mạng rồi. Bạn check Wifi xong nộp lại giúp tôi.'
-        : err.message?.includes('429') || err.message?.includes('quota')
-        ? 'Gemini đang bận (rate limit). Đợi ba mươi giây rồi nộp lại.'
-        : err.message?.includes('401') || err.message?.includes('403') || err.message?.includes('API key')
-        ? 'API key Gemini có vấn đề. Bạn vào Cài đặt kiểm tra lại.'
-        : 'Lỗi chấm bài: ' + (err.message || 'không rõ').slice(0, 120)
-    );
-    showNotif('❌ ' + friendly, '#ef4444');
-    if (err.raw) console.warn('[grade] raw response:', err.raw);
+    showNotif('❌ Lỗi gửi bài: ' + (err.message || 'không rõ').slice(0, 120), '#ef4444');
     btns.forEach(b => { b.disabled = false; b.textContent = `Nộp lại · +${lesson.steps[idx].xp} XP`; });
   }
 }

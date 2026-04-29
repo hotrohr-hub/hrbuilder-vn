@@ -207,6 +207,7 @@ tr.clickable:hover { background: #f1f5f9; }
   <div class="tabs">
     <div class="tab active" data-tab="users">Tất cả học viên</div>
     <div class="tab" data-tab="cohort">Cohort thành viên</div>
+    <div class="tab" data-tab="submissions">📬 Bài chờ chấm <span id="pendingBadge" style="display:none; background:#dc2626; color:white; padding:2px 8px; border-radius:999px; font-size:11px; margin-left:6px;">0</span></div>
   </div>
 
   <div id="paneUsers">
@@ -243,6 +244,35 @@ tr.clickable:hover { background: #f1f5f9; }
       </thead>
       <tbody id="tbCohort">
         <tr><td colspan="4" class="empty">Đang tải…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="paneSubmissions" style="display:none">
+    <div class="toolbar">
+      <select id="subFilter" style="padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 14px; background: white;">
+        <option value="pending">Chờ chấm</option>
+        <option value="all">Tất cả</option>
+        <option value="pass">Đã đạt</option>
+        <option value="borderline">Đạt điều kiện</option>
+        <option value="fail">Chưa đạt</option>
+      </select>
+      <button onclick="reloadSubmissions()" style="padding: 10px 16px; border: none; border-radius: 10px; background: #0f172a; color: white; font-weight: 600; font-size: 13px; cursor: pointer;">⟳ Làm mới</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Học viên</th>
+          <th>Buổi · Bước</th>
+          <th>Bài viết (rút gọn)</th>
+          <th>Ảnh</th>
+          <th>Nộp lúc</th>
+          <th>Trạng thái</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="tbSubmissions">
+        <tr><td colspan="7" class="empty">Đang tải…</td></tr>
       </tbody>
     </table>
   </div>
@@ -567,8 +597,154 @@ document.querySelectorAll('.tab').forEach(t => {
     t.classList.add('active');
     document.getElementById('paneUsers').style.display = t.dataset.tab === 'users' ? 'block' : 'none';
     document.getElementById('paneCohort').style.display = t.dataset.tab === 'cohort' ? 'block' : 'none';
+    document.getElementById('paneSubmissions').style.display = t.dataset.tab === 'submissions' ? 'block' : 'none';
+    if (t.dataset.tab === 'submissions') reloadSubmissions();
   };
 });
+
+// === SUBMISSIONS TAB ===
+let _submissions = [];
+
+async function reloadSubmissions() {
+  const filter = document.getElementById('subFilter').value;
+  const tb = document.getElementById('tbSubmissions');
+  tb.innerHTML = '<tr><td colspan="7" class="empty">Đang tải…</td></tr>';
+  try {
+    _submissions = await window.fb.listSubmissions(filter === 'all' ? null : filter);
+    renderSubmissions();
+  } catch (e) {
+    tb.innerHTML = `<tr><td colspan="7" class="empty"><h3>Lỗi tải</h3><p>${e.message}</p></td></tr>`;
+  }
+}
+
+function renderSubmissions() {
+  const tb = document.getElementById('tbSubmissions');
+  if (!_submissions.length) {
+    tb.innerHTML = '<tr><td colspan="7" class="empty"><h3>Chưa có bài</h3><p>Khi học viên nộp sẽ hiện ở đây.</p></td></tr>';
+    document.getElementById('pendingBadge').style.display = 'none';
+    return;
+  }
+  // Update badge số bài chờ
+  const pendingCount = _submissions.filter(s => s.status === 'pending').length;
+  const badge = document.getElementById('pendingBadge');
+  if (pendingCount > 0) {
+    badge.textContent = pendingCount;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  tb.innerHTML = _submissions.map(s => {
+    const name = s.displayName || s.email || s.uid.substring(0, 8);
+    const lessonName = LESSON_NAMES[s.lessonId] || '';
+    const textSnippet = (s.text || '').substring(0, 80) + ((s.text || '').length > 80 ? '…' : '');
+    const imgCount = (s.images || []).length;
+    const statusBadge = ({
+      pending: '<span class="badge" style="background:#fef3c7;color:#854d0e">Chờ chấm</span>',
+      pass: '<span class="badge badge-cohort">Đạt</span>',
+      borderline: '<span class="badge" style="background:#fef3c7;color:#854d0e">Đạt điều kiện</span>',
+      fail: '<span class="badge" style="background:#fee2e2;color:#991b1b">Chưa đạt</span>',
+    })[s.status] || s.status;
+    return `<tr>
+      <td>
+        <div style="font-weight:600">${name}</div>
+        <div class="uid-mono">${s.email || s.uid.substring(0, 16)}</div>
+      </td>
+      <td>Buổi ${s.lessonId} · Bước ${s.stepIdx + 1}<div style="font-size:11px; color:#94a3b8">${lessonName}</div></td>
+      <td style="max-width:240px; font-size:12px; color:#475569">${textSnippet}</td>
+      <td>${imgCount > 0 ? `📷 ${imgCount} ảnh` : '—'}</td>
+      <td>${fmtDate(s.submittedAt)}</td>
+      <td>${statusBadge}</td>
+      <td><button class="btn-mini green" onclick="openSubmissionDetail('${s.id}')">Xem · Chấm</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function openSubmissionDetail(subId) {
+  const s = _submissions.find(x => x.id === subId);
+  if (!s) return;
+  const name = s.displayName || s.email || s.uid.substring(0, 8);
+  const lessonName = LESSON_NAMES[s.lessonId] || '';
+  const imgsHtml = (s.images || []).map(src => `<a href="${src}" target="_blank"><img src="${src}" style="max-width:200px;max-height:200px;border-radius:8px;border:1px solid #e2e8f0;cursor:zoom-in;"></a>`).join('');
+
+  let modal = document.querySelector('.detail-modal-bg');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.className = 'detail-modal-bg';
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    document.body.appendChild(modal);
+  }
+  const existingResult = s.gradeResult || {};
+  modal.innerHTML = `
+    <div class="detail-modal">
+      <div class="detail-head">
+        <div>
+          <h2>${name} · Buổi ${s.lessonId} · Bước ${s.stepIdx + 1}</h2>
+          <div class="meta">
+            <span>📧 ${s.email || '—'}</span>
+            <span>🎯 ${lessonName}</span>
+            <span>⏰ ${fmtDate(s.submittedAt)}</span>
+          </div>
+        </div>
+        <button class="detail-close" onclick="document.querySelector('.detail-modal-bg').remove()">×</button>
+      </div>
+      <div class="detail-body">
+        <div class="detail-section">
+          <h3>Câu trả lời</h3>
+          <div style="background:#f8fafc; padding:14px 18px; border-radius:10px; white-space:pre-wrap; font-size:13px; line-height:1.6; border:1px solid #e2e8f0;">${(s.text||'(không có)').replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}</div>
+        </div>
+        ${imgsHtml ? `
+          <div class="detail-section">
+            <h3>Ảnh chứng minh (${(s.images||[]).length} tấm)</h3>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">${imgsHtml}</div>
+          </div>
+        ` : ''}
+        <div class="detail-section">
+          <h3>Chấm bài</h3>
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
+            <button class="btn-mini green" onclick="quickGrade('${s.id}','pass')" style="padding:10px;font-size:14px;">✅ Đạt</button>
+            <button class="btn-mini" onclick="quickGrade('${s.id}','borderline')" style="background:#fef3c7;color:#854d0e;border-color:#fde68a;padding:10px;font-size:14px;">⚠️ Đạt điều kiện</button>
+            <button class="btn-mini red" onclick="quickGrade('${s.id}','fail')" style="padding:10px;font-size:14px;">❌ Chưa đạt</button>
+          </div>
+          <label style="display:block;font-weight:600;font-size:13px;margin-top:12px;color:#475569;">Tóm tắt phản hồi (sẽ hiện cho học viên)</label>
+          <textarea id="gradeSummary" rows="2" style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;margin-top:6px;font-size:13px;font-family:inherit;">${existingResult.summary || ''}</textarea>
+          <label style="display:block;font-weight:600;font-size:13px;margin-top:12px;color:#475569;">Làm tốt (mỗi dòng 1 ý)</label>
+          <textarea id="gradeWhat" rows="3" style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;margin-top:6px;font-size:13px;font-family:inherit;">${(existingResult.whatWorked||[]).join('\n')}</textarea>
+          <label style="display:block;font-weight:600;font-size:13px;margin-top:12px;color:#475569;">Cần cải thiện (mỗi dòng 1 ý)</label>
+          <textarea id="gradeImprove" rows="3" style="width:100%;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;margin-top:6px;font-size:13px;font-family:inherit;">${(existingResult.improve||[]).join('\n')}</textarea>
+          <label style="display:block;font-weight:600;font-size:13px;margin-top:12px;color:#475569;">Điểm (0-100)</label>
+          <input type="number" id="gradeScore" min="0" max="100" value="${existingResult.score || 80}" style="width:100px;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;margin-top:6px;font-size:13px;">
+        </div>
+      </div>
+    </div>
+  `;
+}
+window.openSubmissionDetail = openSubmissionDetail;
+window.reloadSubmissions = reloadSubmissions;
+
+async function quickGrade(subId, status) {
+  const s = _submissions.find(x => x.id === subId);
+  if (!s) return;
+  const summary = document.getElementById('gradeSummary')?.value?.trim() || '';
+  const what = (document.getElementById('gradeWhat')?.value || '').split('\n').map(x=>x.trim()).filter(Boolean);
+  const improve = (document.getElementById('gradeImprove')?.value || '').split('\n').map(x=>x.trim()).filter(Boolean);
+  const score = parseInt(document.getElementById('gradeScore')?.value || (status === 'pass' ? 90 : status === 'borderline' ? 70 : 50));
+  if (status !== 'pass' && !summary) {
+    alert('Phải có tóm tắt phản hồi cho học viên.');
+    return;
+  }
+  try {
+    await window.fb.gradeSubmission(subId, { status, score, summary, whatWorked: what, improve, gradedBy: `human:${window.fb.currentUser().email}` });
+    document.querySelector('.detail-modal-bg')?.remove();
+    alert('Đã chấm. Học viên sẽ thấy kết quả ngay (real-time).');
+    reloadSubmissions();
+  } catch (e) {
+    alert('Lỗi: ' + e.message);
+  }
+}
+window.quickGrade = quickGrade;
+
+document.getElementById('subFilter').onchange = reloadSubmissions;
 
 document.getElementById('searchUser').oninput = (e) => renderUsers(e.target.value);
 
