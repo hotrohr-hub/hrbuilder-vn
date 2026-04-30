@@ -148,30 +148,33 @@ body { background: #0f172a; min-height: 100vh; padding: 40px 20px; }
     <div class="cert-header">
       <div class="cert-logo">HR BUILDER VIỆT NAM</div>
       <div class="cert-divider"></div>
-      <h1 class="cert-title">Chứng chỉ Hoàn thành</h1>
-      <div class="cert-subtitle">CỘT MỐC #1 — KHÓA TIÊN PHONG</div>
+      <h1 class="cert-title">CHỨNG CHỈ HOÀN THÀNH</h1>
+      <div class="cert-subtitle">COHORT #1 — KHÓA TIÊN PHONG (PIONEER COHORT)</div>
     </div>
 
     <div class="cert-body">
-      <div class="cert-presented">Cấp cho</div>
+      <div class="cert-presented">Trân trọng cấp cho:</div>
       <div class="cert-name" id="certName">[Tên học viên]</div>
 
       <p class="cert-desc">
-        đã hoàn thành khoá học <strong>AI HR Builder</strong> mười tuần — thuộc vững <strong>mười nguyên lý tư duy AI Agent</strong> và đã <strong>tự build + vận hành ba AI agent chạy thật</strong> ở công ty. Không phải demo, không phải lý thuyết — chạy thực tế hằng ngày.
+        Đã xuất sắc hoàn thành chương trình huấn luyện thực chiến <strong>AI HR Builder</strong> cường độ cao trong <strong>10 tuần</strong>. Học viên đã thấm nhuần hệ thống <strong>10 Nguyên lý Tư duy AI Agent</strong> cốt lõi, đồng thời tự tay thiết kế, lập trình (no-code) và đưa vào vận hành thành công <strong>ít nhất 03 AI Agent</strong> tại doanh nghiệp. Đây là các hệ thống thực tế đã <strong>Go-live</strong> và mang lại hiệu suất đo lường được hằng ngày, hoàn toàn không dừng lại ở mức độ lý thuyết hay demo.
       </p>
 
+      <div class="cert-principles-heading" style="text-align: center; font-weight: 700; color: #1e3a8a; margin: 16px 0 8px; font-size: 14px; letter-spacing: 0.4px;">
+        Hệ thống 10 Nguyên lý Tư duy AI Agent đã làm chủ:
+      </div>
       <div class="cert-principles" id="certPrinciples">
         <!-- 10 principles -->
       </div>
 
       <p class="cert-desc">
-        Người sở hữu chứng chỉ này được công nhận có đủ năng lực <strong>tự thiết kế, tự build và tự triển khai AI agent giải bài toán HR</strong> trong môi trường doanh nghiệp Việt Nam. Không phụ thuộc dev. Không phụ thuộc agency.
+        Chứng chỉ này là minh chứng khẳng định người sở hữu có toàn quyền và đủ năng lực thực chiến để: <strong>Tự thiết kế, tự xây dựng, và tự triển khai các hệ thống AI Agent</strong> nhằm giải quyết triệt để các bài toán Nhân sự (HR) trong môi trường doanh nghiệp Việt Nam. Hoàn toàn tự chủ công nghệ, không phụ thuộc vào đội ngũ IT/Dev nội bộ hay Agency bên ngoài.
       </p>
 
       <div class="cert-footer">
         <div class="cert-sign">
           <div class="cert-sign-line">Vũ Hoài Lân</div>
-          <div class="cert-sign-name">VŨ HOÀI LAN</div>
+          <div class="cert-sign-name">VŨ HOÀI LÂN</div>
           <div class="cert-sign-role">Founder, HR Builder VN</div>
         </div>
         <div class="cert-sign">
@@ -185,7 +188,7 @@ body { background: #0f172a; min-height: 100vh; padding: 40px 20px; }
         <div>
           <div>Ngày cấp: <strong id="certDate">[ngày]</strong></div>
           <div>Mã chứng chỉ: <span class="cert-id" id="certId">HBV-001-XXXXX</span></div>
-          <div>Verify: <strong id="certVerifyUrl">[verify URL]</strong></div>
+          <div>Xác thực (Verify): <strong id="certVerifyUrl">[verify URL]</strong></div>
         </div>
         <div class="cert-qr"><img id="certQR" src="" alt="QR verify"></div>
       </div>
@@ -204,8 +207,16 @@ body { background: #0f172a; min-height: 100vh; padding: 40px 20px; }
 <script type="module" src="auth-ui.js"></script>
 <script>
 const PRINCIPLES = [
-  'Tự học cùng máy', 'Chia nhỏ việc', 'Tả việc rõ', 'Tự kích hoạt', 'Đưa công cụ',
-  'Nhiều agent phối hợp', 'Agent biết học', 'Tự kích hoạt nâng cao', 'Đặt rào trước', 'Chuyển mảng'
+  'Tự học cùng Agent',
+  'Chia nhỏ việc (Task Breakdown)',
+  'Viết JD cho Agent (Prompt Engineering)',
+  'Tự động kích hoạt (Triggers)',
+  'Lắp "tay chân" cho Agent (MCP Integration)',
+  'Phối hợp một team Agent (Multi-agent)',
+  'Dạy Agent ghi nhớ (Memory Layer)',
+  'Tự động hóa toàn trình (Advanced Triggers)',
+  'Đặt rào chắn an toàn (Proactive Compliance)',
+  'Linh hoạt chuyển mảng (Transferability)',
 ];
 
 function formatDateVN(isoDate) {
