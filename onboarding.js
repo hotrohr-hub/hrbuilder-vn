@@ -208,6 +208,15 @@ function attachOnboardingEvents() {
     currentIdx = STEP_SEQ.indexOf(stepKey);
   }
 
+  // Pain placeholder theo area — set khi user chọn xong area + chuyển step.
+  const PAIN_BY_AREA = {
+    TA:    'Ví dụ: Tuần nào cũng đọc 100+ CV cho 5 vị trí dev, mất 12-15 tiếng. Phản hồi ứng viên chậm 3-5 ngày, mất người giỏi sang đối thủ...',
+    'C&B': 'Ví dụ: Mỗi đợt review lương quý phải xử lý Excel cho 800 nhân sự mất 2 tuần. Sếp không cho IT động vào data lương, nên không tích hợp HRIS được. Mỗi lần nhân viên hỏi "sao lương tôi vậy?" tôi tra ngược công thức mất nửa buổi...',
+    'L&D': 'Ví dụ: Mỗi quý tổ chức 5 khoá training nhưng sau 3 tháng đo lại không thấy KPI thay đổi. Báo cáo training với sếp toàn nói về số giờ học, không nói được ROI...',
+    HRBP:  'Ví dụ: Sếp BU đòi headcount tăng 20% mà không đưa được forecast revenue. Conflict giữa các phòng ban về promotion case, mỗi lần phải họp 5-6 cuộc mới gỡ được...',
+    Ops:   'Ví dụ: Tuần nào cũng tay 6h chuyển payroll, làm offer letter, gửi email mời PV — toàn việc lặt vặt nhưng cộng dồn 20h/tuần, không còn thời gian cho project chiến lược...',
+  };
+
   document.querySelectorAll('.onboard-next').forEach(btn => {
     btn.addEventListener('click', () => {
       const required = btn.dataset.required;
@@ -216,6 +225,12 @@ function attachOnboardingEvents() {
           const checked = document.querySelector(`input[name="${required}"]:checked`);
           if (!checked) { alert('Anh chị chọn một mục cái đã!'); return; }
           data[required] = checked.value;
+          // Sau khi chọn area xong, update placeholder của pain textarea cho khớp mảng
+          if (required === 'area') {
+            const painEl = document.getElementById('onb-pain');
+            const tip = PAIN_BY_AREA[checked.value];
+            if (painEl && tip) painEl.placeholder = tip;
+          }
         } else {
           const el = document.getElementById(required);
           if (!el.value.trim()) { alert('Anh chị điền vào trước đã!'); el.focus(); return; }

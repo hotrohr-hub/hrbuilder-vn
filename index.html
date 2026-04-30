@@ -692,10 +692,48 @@
 <script src="onboarding.js"></script>
 <script type="module" src="auth-ui.js"></script>
 <script>
-// Trigger onboarding nếu chưa
-if (!isOnboarded()) {
-  showOnboardingModal();
+// === Init flow ===
+// PRIORITY: đợi Firebase auth ready trước khi quyết định show modal hay dashboard.
+// Lý do: localStorage trên domain mới sẽ trống → KHÔNG được show onboarding ngay
+// nếu user đã có profile ở Firestore (đã onboard từ máy/session khác).
+
+let _initDone = false;
+async function initApp(user) {
+  if (_initDone) return;
+  _initDone = true;
+
+  // Nếu có user signed-in nhưng localStorage trống → load profile từ Firestore xuống
+  if (user && !isOnboarded()) {
+    try {
+      const data = await window.fb.loadUserData();
+      if (data && data.profile) {
+        saveProfile(data.profile);
+        if (data.progress) saveProgress(data.progress);
+      }
+    } catch (err) {
+      console.warn('[init] loadUserData fail:', err && err.message);
+    }
+  }
+
+  if (isOnboarded()) {
+    refreshDashboard();
+  } else {
+    // Chưa onboard → hiện modal + ẩn nút "Vào Buổi 1"
+    const cb = document.getElementById('continueBtn');
+    if (cb) cb.style.display = 'none';
+    showOnboardingModal();
+  }
 }
+
+// Hook fb-ready (firebase-client phát ra mỗi khi auth state đổi)
+document.addEventListener('fb-ready', (e) => {
+  initApp(e.detail && e.detail.user);
+});
+
+// Fallback: nếu Firebase chưa load sau 6 giây (offline / CDN fail) → vẫn init theo localStorage
+setTimeout(() => {
+  if (!_initDone) initApp(null);
+}, 6000);
 
 // Render progress thực tế
 function refreshDashboard() {
@@ -786,13 +824,6 @@ function refreshDashboard() {
   });
 }
 
-if (isOnboarded()) {
-  refreshDashboard();
-} else {
-  // Chưa onboard → ẩn nút "Vào Buổi 1" để không gây ảo tưởng có thể click qua overlay
-  const cb = document.getElementById('continueBtn');
-  if (cb) cb.style.display = 'none';
-}
 </script>
 
 </body>

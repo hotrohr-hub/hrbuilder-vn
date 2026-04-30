@@ -104,13 +104,13 @@ function openModal(mode = 'signin') {
 
         <div id="amFields">
           <label id="amNameLabel">Họ và tên (anh chị muốn được gọi sao?)</label>
-          <input type="text" id="amName" placeholder="Nguyễn Văn A">
+          <input type="text" id="amName" placeholder="Nguyễn Văn A" autocomplete="off">
 
           <label>Email</label>
-          <input type="email" id="amEmail" placeholder="ten@congty.com">
+          <input type="email" id="amEmail" placeholder="ten@congty.com" autocomplete="off">
 
           <label>Mật khẩu</label>
-          <input type="password" id="amPwd" placeholder="Tối thiểu 6 ký tự">
+          <input type="password" id="amPwd" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password">
         </div>
 
         <button class="btn-primary" id="amSubmit">Đăng ký</button>
