@@ -1,6 +1,6 @@
 # HR Builder VN — Webapp khóa học
 
-Webapp khóa học AI HR Builder, vận hành bằng Gemini AI. Dành cho Stage 0 dry-run miễn phí + roadmap nâng cấp Path B (paid cohort).
+Webapp khóa học AI HR Builder, vận hành bằng **Claude Code CLI của Lân** thông qua một bridge nhỏ chạy trên máy Lân (architecture A). Dành cho Stage 0 dry-run miễn phí + roadmap nâng cấp Path B (paid cohort) sang API trực tiếp.
 
 ## Cấu trúc file
 
@@ -12,62 +12,86 @@ prototype-khoa-hoc-site/
 ├── cert.html               # Chứng chỉ cuối khóa
 │
 ├── lessons-data.js         # Dữ liệu 10 buổi (nguyên lý + bước + hint + deep dive)
-├── ai-client.js            # Gọi Gemini API (chat + grade + onboarding)
-├── progress.js             # Lưu profile + tiến độ vào localStorage
-├── onboarding.js           # Modal Day 0 lấy profile + API key
+├── ai-client.js            # Enqueue prompt vào Firestore queue, listen response
+├── firebase-client.js      # Firebase Auth + Firestore (users, submissions, claude_requests)
+├── progress.js             # Lưu profile + tiến độ vào localStorage + sync Firestore
+├── onboarding.js           # Modal Day 0 lấy profile (KHÔNG còn nhập API key)
 │
-├── style-v2.css            # Style polished (Skool-like + đỉnh hơn)
+├── claude-bridge/          # Script Lan chạy local để xử lý Claude requests
+│   ├── bridge.js           #   - Listen Firestore queue
+│   ├── package.json        #   - Spawn `claude --print` subprocess
+│   └── README.md           #   - Hướng dẫn setup cho Lan
+│
+├── cloudflare-worker.js    # (DEPRECATED) Proxy Gemini cũ — không dùng nữa
+├── wrangler.toml           # Cloudflare static hosting (vẫn dùng để host site)
+├── style-v2.css            # Style polished
 └── README.md               # File bạn đang đọc
 ```
 
+## Kiến trúc AI (architecture A — Claude CLI bridge)
+
+```
+Học viên (browser) ──▶ Firestore.claude_requests/{id} (status=pending)
+                                     │
+                                     │ snapshot listener
+                                     ▼
+                           bridge.js (máy Lân)
+                                     │
+                                     │ spawn: claude --print --append-system-prompt ...
+                                     ▼
+                           Claude Code CLI (Pro $20 / Max)
+                                     │
+                                     │ stdout
+                                     ▼
+            Firestore.claude_requests/{id} (status=done, response=...)
+                                     │
+                                     │ snapshot listener
+                                     ▼
+                            Học viên thấy response
+```
+
+**Hệ quả:** Học viên không cần API key, không trả tiền AI. Lân dùng đúng subscription Claude Code đã có. Trade-off: tester chờ 5-30 giây/prompt thay vì realtime.
+
 ## Cách chạy local (dry-run)
 
-### 1. Lấy Gemini API key (FREE)
+### 1. Cài + chạy bridge AI (1 lần setup, sau đó bật mỗi khi cohort hoạt động)
 
-1. Vào https://aistudio.google.com/apikey
-2. Đăng nhập tài khoản Google
-3. Click "Create API Key" → chọn project (hoặc tạo mới)
-4. Copy key dạng `AIzaSy...`
+Xem chi tiết ở [`claude-bridge/README.md`](claude-bridge/README.md). Tóm gọn:
 
-Free tier: 15 request/phút cho gemini-2.0-flash. Đủ cho cá nhân + 5 tester.
+```bash
+cd claude-bridge
+npm install
+# Lấy service-account.json từ Firebase Console → bỏ vào folder này
+npm start
+```
+
+Bridge phải đang chạy thì học viên mới chat / nộp bài được.
 
 ### 2. Mở webapp
 
-Cách đơn giản nhất:
+Cách đơn giản nhất cho dev local:
 
 ```bash
-# Vào folder
 cd prototype-khoa-hoc-site
-
-# Chạy server local (Python)
 python -m http.server 8000
-
-# Mở browser
-http://localhost:8000
+# Mở: http://localhost:8000
 ```
 
-Hoặc:
-
-```bash
-# Node.js
-npx serve .
-```
-
-Hoặc kéo `index.html` thẳng vào browser (Chrome/Edge) — vẫn chạy.
+Hoặc `npx serve .`. Hoặc kéo thẳng `index.html` vào browser (Chrome/Edge).
 
 ### 3. Onboarding Day 0
 
 - Lần đầu vào → modal hiện ra
 - Điền 5 câu (tên, vai trò, công ty, mảng HR, pain point)
-- Paste Gemini API key → Test → Lưu
-- Bạn đồng hành sinh roadmap riêng cho bạn
+- Bấm "Lưu + Bắt đầu khóa" → bridge sinh welcome message cá nhân hóa qua Claude
+- (Không còn bước nhập API key)
 
 ### 4. Học buổi 1-10
 
 - Click buổi trên dashboard
 - Mỗi buổi 5 bước tuần tự
-- Bí thì click "💡 Hỏi bạn đồng hành" — Gemini reply real-time
-- Nộp bài → Gemini chấm tự động + feedback cụ thể
+- Bí thì click "💡 Hỏi bạn đồng hành" — bridge xử lý, ~5-30s sau có reply
+- Nộp bài → bridge chấm tự động + feedback cụ thể
 - Pass → unlock bước sau / buổi sau
 
 ### 5. Demo features
@@ -80,22 +104,23 @@ Hoặc kéo `index.html` thẳng vào browser (Chrome/Edge) — vẫn chạy.
 
 ### Setup cho 5 tester
 
-1. Deploy webapp lên hosting free:
-   - **GitHub Pages** (đề xuất): push folder lên GitHub repo public → bật Pages
-   - Hoặc Vercel: drag-drop folder, deploy 1-click
-   - Hoặc Netlify: drag-drop
+1. Deploy webapp:
+   - **Cloudflare Workers static** (đang dùng): xem [`DEPLOY-CLOUDFLARE.md`](DEPLOY-CLOUDFLARE.md)
+   - Hoặc GitHub Pages / Vercel / Netlify (drag-drop folder)
 
-2. URL public xong → gửi 5 tester:
+2. Lan chạy `claude-bridge/bridge.js` trên máy mình (giờ cohort hoạt động)
+
+3. URL public xong → gửi 5 tester:
    ```
    Em ơi, đăng ký Cohort #1 HR Builder VN dry-run free 4 tuần:
-   - Mở: https://[ten-cua-ban].github.io/hr-builder-vn/
-   - Lấy Gemini API key tại aistudio.google.com/apikey (free)
-   - Onboarding 5 câu, lưu key
+   - Mở: https://hrbuilder-vn.hotrocvscanner.workers.dev/
+   - Đăng ký tài khoản (Google login hoặc email)
+   - Onboarding 5 câu (KHÔNG cần API key — Lan đã setup AI sẵn)
    - Bắt đầu Buổi 1 ngay
    - Bí ping Lan Zalo
    ```
 
-3. Mỗi tester chi phí Gemini: ~$0.50-2 cho 4 tuần (tester tự trả) hoặc Lan share key (Lan trả ~$5)
+4. Chi phí AI cho dry-run: $0 (Lan đã có sẵn Claude Code subscription) — KHÔNG trả thêm
 
 ### Theo dõi tester
 
@@ -138,11 +163,11 @@ Khi launch paid (cohort #1, 30 student):
 
 ## Test nhanh (developer note)
 
-### Test API key + grade
+### Smoke test bridge
 
-1. Mở settings.html
-2. Paste key → Test → confirm OK
-3. Vào Buổi 1 → nộp bài thử với câu trả lời ngắn → xem feedback Gemini
+1. `cd claude-bridge && npm start` → thấy "Đang lắng nghe claude_requests..."
+2. Mở webapp → onboarding → finish step 6 → quan sát terminal bridge có log "▶ ... done"
+3. Nếu có response trong UI → pipeline OK
 
 ### Reset state (dev)
 
@@ -156,31 +181,29 @@ Khi launch paid (cohort #1, 30 student):
 3. Lặp lại 5 bước → Buổi 1 done → Buổi 2 unlock
 4. Cuối khóa: cert.html hiển thị tên + ngày
 
-## Cost ước tính (sau optimization)
+## Cost ước tính
 
-### Stage 0 (Path A) — 5 tester × 4 tuần
-- Gemini API: ~$5-10 (Lan trả)
-- Hosting: $0 (GitHub Pages)
-- **Total: ~250K VND**
+### Stage 0 (Path A — Claude bridge) — 5 tester × 4 tuần
+- AI: $0 (Claude Code subscription Lan đã có sẵn)
+- Hosting Cloudflare Workers: $0 (free tier static)
+- Firebase Auth + Firestore: $0 (free tier dư xài)
+- **Total: 0 VND** (chi phí ẩn: thời gian Lan giữ máy bật)
 
-### Path B — Cohort #1 paid 30 student × 10 tuần
-- Vertex AI grading: ~$50
-- Vertex AI chat: ~$20
-- Cloud Run + DB + DNS: ~$15
-- **Total: ~$85 / cohort = ~2,1M VND**
+### Path B — Cohort #1 paid 30 student × 10 tuần (sau dry-run)
+- Anthropic API trực tiếp: ~$50-80 (chat + grade ~30 user × 10 tuần)
+- Hosting + Firebase: $0 (vẫn free tier)
+- Domain hrbuilder.vn: ~$15/năm
+- **Total: ~$80 / cohort ≈ 2M VND**
 - Doanh thu: 30 × 5M = 150M
-- **Margin: 98.6%**
+- **Margin: 98.7%**
 
 ## Roadmap tiếp theo
 
-Sau khi user gửi Gemini API key + GCP project ID:
-
-1. **[Path A]** Test end-to-end với chính Lan trước → fix bug
-2. Deploy GitHub Pages → URL public
-3. Mời 3-5 HR friends test 4 tuần
-4. Collect feedback → iterate
-5. **[Path B preparation]** Setup Supabase + Cloud Run khi có 3 case study
-6. Launch paid cohort #1 mid-July 2026
+1. **[Stage 0]** Lan smoke test end-to-end với bridge → fix bug
+2. Mời 5 HR friends test 4 tuần (URL public hiện có)
+3. Collect feedback → iterate
+4. **[Path B preparation]** Migrate bridge → Cloudflare Worker call Anthropic API trực tiếp khi có 3 case study
+5. Launch paid cohort #1 mid-July 2026
 
 ## Liên hệ
 
