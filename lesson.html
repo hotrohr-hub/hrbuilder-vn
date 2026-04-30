@@ -688,9 +688,14 @@ async function submitStep(idx) {
     window._unsubSub = window.fb.listenMySubmission(lessonId, idx, (sub) => {
       if (!sub) return;
       if (sub.status === 'pending') return;
+      // Đợi gradeResult về cùng status terminal — tránh race condition render
+      // nửa vời rồi hiển thị "Chưa đạt" giả khi gradeResult chưa kịp set.
+      if (!sub.gradeResult) return;
 
-      // Đã có kết quả
-      const result = sub.gradeResult || { status: sub.status, summary: 'Đã chấm.' };
+      const result = sub.gradeResult;
+      // Ẩn statusEl "Bài đã gửi" — tránh chồng 2 box mâu thuẫn (statusEl giữ
+      // text cũ + box grade-result-box mới hiển thị cùng lúc).
+      if (statusEl) statusEl.style.display = 'none';
       showGradeResult(idx, result, step.xp);
       if (result.status === 'pass' || result.status === 'borderline') {
         markStepDone(lessonId, idx, result);
@@ -699,15 +704,7 @@ async function submitStep(idx) {
         updateXpDisplay();
         setTimeout(() => location.reload(), 3500);
       } else {
-        // fail → cho nộp lại
-        if (statusEl) {
-          statusEl.style.background = '#fef2f2';
-          statusEl.style.borderLeft = '4px solid #ef4444';
-          statusEl.innerHTML = `
-            <div style="font-weight: 700; color: #991b1b; font-size: 14px; margin-bottom: 6px;">❌ Chưa đạt</div>
-            <div style="font-size: 13px; color: #7f1d1d;">Anh chị đọc phản hồi rồi sửa lại. Nộp bao nhiêu lần cũng được, không giới hạn.</div>
-          `;
-        }
+        // fail → cho nộp lại (KHÔNG dùng statusEl nữa, đã hide; box grade-result-box đã hiển thị "Chưa đạt" với feedback chi tiết rồi)
         btns.forEach(b => { b.disabled = false; b.textContent = `Nộp lại · +${step.xp} XP`; });
       }
     });
