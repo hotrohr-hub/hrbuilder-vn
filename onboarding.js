@@ -169,8 +169,28 @@ function injectOnboardingStyles() {
       font-size: 14.5px; line-height: 1.7;
       color: #78350f;
       margin-bottom: 24px;
-      white-space: pre-wrap;
+      max-height: 60vh; overflow-y: auto;
     }
+    /* Markdown render styling cho welcome message từ Claude */
+    .onboard-welcome-msg h1,
+    .onboard-welcome-msg h2,
+    .onboard-welcome-msg h3 { color: #78350f; font-weight: 700; margin: 14px 0 8px; line-height: 1.3; }
+    .onboard-welcome-msg h1 { font-size: 18px; }
+    .onboard-welcome-msg h2 { font-size: 16px; }
+    .onboard-welcome-msg h3 { font-size: 14.5px; }
+    .onboard-welcome-msg p { margin: 8px 0; }
+    .onboard-welcome-msg ul,
+    .onboard-welcome-msg ol { margin: 8px 0; padding-left: 22px; }
+    .onboard-welcome-msg li { margin: 4px 0; }
+    .onboard-welcome-msg strong { color: #5c2c0c; }
+    .onboard-welcome-msg em { color: #92400e; font-style: italic; }
+    .onboard-welcome-msg hr { border: 0; border-top: 1px dashed #d97706; margin: 14px 0; }
+    .onboard-welcome-msg table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+    .onboard-welcome-msg th,
+    .onboard-welcome-msg td { border: 1px solid #f59e0b; padding: 6px 10px; text-align: left; vertical-align: top; }
+    .onboard-welcome-msg th { background: rgba(217, 119, 6, 0.12); font-weight: 700; }
+    .onboard-welcome-msg code { background: rgba(217, 119, 6, 0.15); padding: 1px 5px; border-radius: 3px; font-size: 12.5px; }
+    .onboard-welcome-msg blockquote { border-left: 3px solid #d97706; margin: 10px 0; padding: 4px 12px; color: #92400e; }
   `;
   document.head.appendChild(style);
 }
@@ -264,7 +284,14 @@ function attachOnboardingEvents() {
       });
 
       document.getElementById('welcome-name').textContent = data.name.split(' ').pop();
-      document.getElementById('welcome-msg').textContent = welcome;
+      // Render markdown nếu marked.js có mặt — Claude thường trả về markdown (table, headings, list).
+      // Fallback textContent nếu marked chưa load.
+      const msgEl = document.getElementById('welcome-msg');
+      if (typeof marked !== 'undefined' && marked.parse) {
+        msgEl.innerHTML = marked.parse(welcome);
+      } else {
+        msgEl.textContent = welcome;
+      }
       showStep(9);
     } catch (e) {
       // Fallback nếu bridge offline / timeout — vẫn cho học viên vào lớp với welcome generic
