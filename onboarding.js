@@ -65,62 +65,18 @@ function showOnboardingModal() {
           <textarea id="onb-pain" rows="4" placeholder="Ví dụ: Tuần nào cũng đọc 100+ CV cho 5 vị trí dev, mất 12-15 tiếng. Phản hồi ứng viên chậm 3-5 ngày, mất người giỏi sang đối thủ..."></textarea>
           <div class="onboard-actions">
             <button class="btn-secondary onboard-back">← Quay lại</button>
-            <button class="btn-primary onboard-next" data-required="onb-pain">Tiếp →</button>
-          </div>
-        </div>
-
-        <!-- Bước 6_5 (Claude plan) đã bỏ — không hỏi ngay onboarding nữa. Buổi 1 sẽ hướng dẫn cài Claude Code và bàn plan ở đó. -->
-
-        <div class="onboard-step" data-step="7" style="display:none;">
-          <h3>🔑 Bước cuối — Lấy Gemini API key</h3>
-          <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 14px;">
-            Để tôi chat với anh chị 24/7 + chấm bài tự động, tôi cần một cái Gemini API key. <strong>Free, mất hai phút lấy.</strong>
-          </p>
-
-          <div style="background: var(--primary-soft); border: 1px solid var(--primary-light); border-radius: 8px; padding: 14px 16px; margin-bottom: 14px;">
-            <div style="font-weight: 700; color: var(--primary-dark); margin-bottom: 8px;">📺 Hướng dẫn từng bước (cho người lần đầu)</div>
-            <ol style="margin-left: 18px; font-size: 13.5px; line-height: 1.7;">
-              <li>Bấm vào link xanh: <a href="https://aistudio.google.com/apikey" target="_blank" style="color: var(--primary); font-weight: 600;">aistudio.google.com/apikey ↗</a></li>
-              <li>Đăng nhập <strong>Google</strong> (Gmail bạn đang dùng cũng được)</li>
-              <li>Click cái nút màu xanh <strong>"Create API Key"</strong></li>
-              <li>Có khi nó hỏi "Create new project" → cứ click <strong>"OK"</strong></li>
-              <li>Hiện ra một chuỗi dài bắt đầu <code>AIzaSy...</code> → bấm icon copy</li>
-              <li>Paste vào ô dưới đây — xong</li>
-            </ol>
-          </div>
-
-          <div style="background: var(--surface-2); border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; font-size: 13px;">
-            <strong>❓ Những nỗi sợ thường gặp, tôi xin trả lời trước:</strong>
-            <ul style="margin-top: 6px; margin-left: 18px; line-height: 1.7;">
-              <li><strong>"Có tốn tiền không?"</strong> → Free tier dùng cả khóa vẫn còn dư hết.</li>
-              <li><strong>"Lỡ key bị lộ thì sao?"</strong> → Key lưu chỉ ở máy anh chị (localStorage), không gửi server, không gửi đâu cả.</li>
-              <li><strong>"Tôi có biết Google Cloud đâu?"</strong> → Không cần biết. Aistudio.google.com là sản phẩm riêng cho người mới, dễ dùng lắm, không phải Google Cloud phức tạp.</li>
-            </ul>
-          </div>
-
-          <input id="onb-apikey" type="password" placeholder="AIzaSy..." />
-          <div style="display: flex; align-items: center; gap: 12px; margin: 12px 0; font-size: 13px; color: var(--text-muted);">
-            <hr style="flex: 1; border: 0; border-top: 1px solid var(--border);" />
-            <span>HOẶC</span>
-            <hr style="flex: 1; border: 0; border-top: 1px solid var(--border);" />
-          </div>
-          <label style="display: block; padding: 12px 14px; border: 1px dashed var(--border-strong); border-radius: 8px; cursor: pointer; font-size: 13.5px; line-height: 1.5;" id="onb-cohort-key-wrap">
-            <input type="checkbox" id="onb-use-cohort-key" style="margin-right: 8px;" />
-            <strong>Dùng key tạm của khóa (Phase A — Buổi 1-3)</strong>
-            <div style="margin-top: 6px; color: var(--text-muted);">Quota free 50 call/ngày. Đủ dùng Buổi 1-3 cảm nhận khóa. Từ Buổi 4 anh chị cần lấy key riêng — lúc đó tôi hướng dẫn 1-1 lấy nhanh.</div>
-          </label>
-          <div class="onboard-actions">
-            <button class="btn-secondary onboard-back">← Quay lại</button>
-            <button class="btn-primary" id="onb-finish">Lưu + Bắt đầu khóa</button>
+            <button class="btn-primary" id="onb-finish" data-required="onb-pain">Lưu + Bắt đầu khóa</button>
           </div>
           <div id="onb-test-result" style="margin-top: 10px; font-size: 13px;"></div>
         </div>
+
+        <!-- Step 7 (API key) đã bỏ — kiến trúc mới dùng Claude CLI bridge của Lân, học viên không cần key riêng. -->
 
         <div class="onboard-step" data-step="8" style="display:none;">
           <div class="onboard-loading">
             <div class="spinner"></div>
             <h3>Tôi đang vẽ lộ trình riêng cho anh chị — chờ tôi một lát…</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">Khoảng mười giây, không lâu đâu</p>
+            <p style="font-size: 13px; color: var(--text-muted);">Khoảng năm tới ba mươi giây — bridge đang xử lý qua Claude.</p>
           </div>
         </div>
 
@@ -220,8 +176,8 @@ function injectOnboardingStyles() {
 }
 
 function attachOnboardingEvents() {
-  // Step sequence (đặt rõ vì có step "6_5")
-  const STEP_SEQ = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  // Step 7 (API key) đã bỏ — kiến trúc Claude CLI bridge không yêu cầu key riêng.
+  const STEP_SEQ = [1, 2, 3, 4, 5, 6, 8, 9];
   let currentIdx = 0;
   const data = {};
 
@@ -258,86 +214,25 @@ function attachOnboardingEvents() {
     });
   });
 
-  // Step 7: API key + finish
+  // Step 6 — Lưu hồ sơ + chào (không còn step API key nữa)
   document.getElementById('onb-finish').addEventListener('click', async () => {
     const finishBtn = document.getElementById('onb-finish');
-    const key = document.getElementById('onb-apikey').value.trim();
-    const useCohortKey = document.getElementById('onb-use-cohort-key').checked;
     const resultEl = document.getElementById('onb-test-result');
 
-    // Path A: Học viên chọn dùng key của khoá (Phase A) — không cần nhập key riêng
-    if (useCohortKey && !key) {
-      const proxyConfigured = typeof AI_CONFIG !== 'undefined' && AI_CONFIG.proxyUrl;
-      if (!proxyConfigured) {
-        resultEl.innerHTML = '⚠ Khoá chưa setup proxy. Bạn vẫn cần lấy key Gemini riêng — lấy ở <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> (free 2 phút).';
+    // Validate pain (last required field)
+    const painEl = document.getElementById('onb-pain');
+    const painVal = painEl.value.trim();
+    if (!painVal) {
+      if (resultEl) {
+        resultEl.innerHTML = '⚠ Anh chị mô tả cái khổ vào ô trên trước đã.';
         resultEl.style.color = 'var(--danger)';
-        return;
       }
-      finishBtn.disabled = true;
-      finishBtn.textContent = '⏳ Đang setup…';
-      localStorage.setItem('use_cohort_proxy', '1');
-      resultEl.innerHTML = '✅ Dùng key tạm của khóa — bắt đầu khóa ngay!';
-      resultEl.style.color = 'var(--success)';
-      // Skip key test, save profile, lên loading
-      saveProfile({
-        name: data.name, role: data.role, company: data.company,
-        area: data.area, pain: data.pain, claude_plan: 'none',
-      });
-      showStep(8);
-      // Mock welcome (proxy mode)
-      setTimeout(() => {
-        document.getElementById('welcome-name').textContent = data.name.split(' ').pop();
-        document.getElementById('welcome-msg').textContent =
-          `Tôi đã ghi nhớ anh chị là ${data.role} mảng ${data.area} @ ${data.company}.\n\n` +
-          `Anh chị đã chọn dùng key tạm của khóa cho Buổi 1-3 — quota free 50 call/ngày, đủ dùng hết. Từ Buổi 4, tôi sẽ hướng dẫn anh chị lấy key riêng — chỉ 2 phút.\n\n` +
-          `Sẵn sàng rồi hả? Click bắt đầu, tôi đợi.`;
-        showStep(9);
-      }, 800);
+      painEl.focus();
       return;
     }
+    data.pain = painVal;
 
-    if (!key) {
-      resultEl.innerHTML = '⚠ Anh chị chưa điền API key vào ô trên — hoặc tick chọn "Dùng key tạm của khóa" ở dưới.';
-      resultEl.style.color = 'var(--danger)';
-      document.getElementById('onb-apikey').focus();
-      return;
-    }
-
-    // Frontend pattern check trước khi gọi API — Gemini key dạng "AIzaSy..." 39 ký tự
-    if (!/^AIzaSy[A-Za-z0-9_-]{33}$/.test(key)) {
-      resultEl.innerHTML = '⚠ Key không đúng format Gemini. Key thật phải bắt đầu "AIzaSy..." và dài 39 ký tự. Bạn check lại — hoặc lấy lại từ <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>.';
-      resultEl.style.color = 'var(--danger)';
-      return;
-    }
-
-    // Disable button + đổi text + scroll vào view kết quả
-    finishBtn.disabled = true;
-    const originalBtnText = finishBtn.textContent;
-    finishBtn.textContent = '⏳ Đang test key…';
-    resultEl.innerHTML = '⏳ Đang test thử API key (3-5 giây)…';
-    resultEl.style.color = 'var(--primary)';
-    resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-    let test;
-    try {
-      test = await testApiKey(key);
-    } catch (e) {
-      test = { ok: false, message: 'Lỗi mạng: ' + (e.message || 'không kết nối được Gemini') };
-    }
-
-    if (!test.ok) {
-      resultEl.innerHTML = `❌ Key chưa hợp lệ: ${test.message}<br><small>Bạn check key có đúng không, hoặc tạo key mới <a href="https://aistudio.google.com/apikey" target="_blank">tại đây</a>.</small>`;
-      resultEl.style.color = 'var(--danger)';
-      finishBtn.disabled = false;
-      finishBtn.textContent = originalBtnText;
-      return;
-    }
-    resultEl.innerHTML = '✅ API key OK rồi! Tôi đang vẽ lộ trình…';
-    resultEl.style.color = 'var(--success)';
-
-    setApiKey(key);
-
-    // Save profile (bao gồm Claude plan)
+    // Save profile (Claude bridge architecture — không cần API key)
     saveProfile({
       name: data.name,
       role: data.role,
@@ -347,10 +242,18 @@ function attachOnboardingEvents() {
       claude_plan: data.claude_plan || 'none',
     });
 
-    // Move to loading
+    finishBtn.disabled = true;
+    const originalBtnText = finishBtn.textContent;
+    finishBtn.textContent = '⏳ Đang vẽ lộ trình…';
+    if (resultEl) {
+      resultEl.innerHTML = '⏳ Tôi đang nhờ Bạn đồng hành chào anh chị (5-30 giây) — bridge của Lân xử lý qua Claude CLI…';
+      resultEl.style.color = 'var(--primary)';
+    }
+
+    // Move to loading screen
     showStep(8);
 
-    // Generate welcome message via Gemini
+    // Generate welcome message qua Claude bridge
     try {
       const welcome = await aiOnboarding({
         name: data.name,
@@ -364,13 +267,18 @@ function attachOnboardingEvents() {
       document.getElementById('welcome-msg').textContent = welcome;
       showStep(9);
     } catch (e) {
-      // Fallback nếu API lỗi
+      // Fallback nếu bridge offline / timeout — vẫn cho học viên vào lớp với welcome generic
+      console.warn('[onboarding] aiOnboarding failed, dùng fallback message:', e.message);
       document.getElementById('welcome-name').textContent = data.name.split(' ').pop();
       document.getElementById('welcome-msg').textContent =
         `Tôi đã ghi nhớ anh chị là ${data.role} mảng ${data.area} @ ${data.company}. Đầy đủ.\n\n` +
-        `Lộ trình mười tuần đã được điều chỉnh theo cái khổ của anh chị. Buổi 1 — chưa dính HR ngay, anh chị build một cổng HR công ty có ba nút (xin nghỉ, hỏi luật, đăng ký team building). Lý do: làm quen "Bạn đồng hành" qua project an toàn, không sợ làm sai.\n\n` +
+        `(Bạn đồng hành đang hơi bận chút — lộ trình cá nhân hóa sẽ hiện ra khi tôi rảnh tay. Bạn vào Buổi 1 trước nhé.)\n\n` +
+        `Buổi 1 — chưa dính HR ngay, anh chị build một cổng HR công ty có ba nút (xin nghỉ, hỏi luật, đăng ký team building). Lý do: làm quen "Bạn đồng hành" qua project an toàn, không sợ làm sai.\n\n` +
         `Sẵn sàng rồi hả? Click bắt đầu, tôi đợi.`;
       showStep(9);
+    } finally {
+      finishBtn.disabled = false;
+      finishBtn.textContent = originalBtnText;
     }
   });
 }

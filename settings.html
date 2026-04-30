@@ -40,15 +40,16 @@
   <a href="index.html" class="back-link" style="display: inline-block; margin-bottom: 16px; color: var(--text-muted);">← Về lớp học</a>
 
   <div class="settings-card">
-    <h2>🔑 Gemini API Key</h2>
-    <p class="muted">Key dùng để tôi chat + chấm bài. Lưu chỉ ở máy anh chị (localStorage), không gửi server, không gửi đâu cả.</p>
-    <input id="apikey-input" type="password" placeholder="AIzaSy…">
-    <div style="display: flex; gap: 10px;">
-      <button class="btn-primary" onclick="saveKey()">Lưu + Test</button>
-      <button class="btn-secondary" onclick="showKey()">Xem key hiện tại</button>
-    </div>
-    <div id="test-result"></div>
-    <p class="muted" style="margin-top: 14px;">Chưa có key? Lấy free tại <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> — hai phút xong.</p>
+    <h2>🤖 AI hoạt động thế nào trong khóa này</h2>
+    <p class="muted" style="margin-bottom: 0;">
+      Khóa cohort #1 (dry-run) dùng Claude Code của Lân làm "engine" AI — thông qua một bridge nhỏ chạy trên máy Lân.
+      Anh chị <strong>không cần nhập API key</strong>, không cần cài thêm gì. Chỉ cần đăng nhập là Bạn đồng hành đã sẵn sàng.
+    </p>
+    <ul style="margin-top: 10px; margin-left: 18px; font-size: 13.5px; color: var(--text-muted); line-height: 1.7;">
+      <li>Mỗi prompt mất ~5-30 giây (bridge xử lý sequential).</li>
+      <li>Nếu thấy thông báo "đợi quá 4 phút" — bridge của Lân đang offline. Nhắn nhóm Zalo, Lân bật lại.</li>
+      <li>Từ Cohort #2 trở đi, kiến trúc có thể đổi sang API trực tiếp để tăng tốc.</li>
+    </ul>
   </div>
 
   <div class="settings-card">
@@ -105,32 +106,6 @@ function renderProgress() {
     <div class="profile-row"><span class="label">Tiến độ tổng</span><span class="value">${stats.percentComplete}%</span></div>
     <div class="profile-row"><span class="label">Streak</span><span class="value">🔥 ${stats.streak} ngày</span></div>
   `;
-}
-
-async function saveKey() {
-  const key = document.getElementById('apikey-input').value.trim();
-  if (!key) { showResult('Anh chị nhập key vào đã!', 'err'); return; }
-  showResult('⏳ Đang test giúp bạn…', 'ok');
-  const result = await testApiKey(key);
-  if (result.ok) {
-    showResult('✅ Key OK! Đã lưu. Mọi tính năng AI đã sẵn sàng.', 'ok');
-    setApiKey(key);
-    document.getElementById('apikey-input').value = '';
-  } else {
-    showResult(`❌ ${result.message}`, 'err');
-  }
-}
-
-function showKey() {
-  const key = getApiKey();
-  if (!key) { showResult('Chưa có key đâu', 'err'); return; }
-  alert('Key hiện tại: ' + key.substring(0, 10) + '…' + key.substring(key.length - 4));
-}
-
-function showResult(msg, type) {
-  const el = document.getElementById('test-result');
-  el.className = 'test-result ' + type;
-  el.textContent = msg;
 }
 
 function editProfile() {

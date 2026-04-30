@@ -234,6 +234,38 @@ const fb = {
       gradedBy: result.gradedBy || `human:${_currentUser?.email || 'admin'}`,
     });
   },
+
+  // === CLAUDE REQUEST QUEUE ===
+  // Webapp ghi 1 doc vào claude_requests/{auto-id}, bridge.js (chạy trên máy Lân)
+  // listen, gọi `claude --print`, ghi response back. Webapp listen snapshot doc đó.
+  // Doc structure: {uid, email, payload, status, response, error, createdAt, ...}
+  async enqueueClaudeRequest(payload) {
+    if (!_currentUser) throw new Error('Bạn chưa đăng nhập — đăng nhập để dùng AI.');
+    const colRef = collection(db, 'claude_requests');
+    const newDocRef = doc(colRef); // auto-id
+    await setDoc(newDocRef, {
+      uid: _currentUser.uid,
+      email: _currentUser.email || '',
+      payload,                 // {system, user, history, model, temperature, maxTokens}
+      status: 'pending',       // pending → processing → done | error
+      response: '',
+      error: '',
+      workerId: '',
+      createdAt: new Date().toISOString(),
+      startedAt: null,
+      completedAt: null,
+    });
+    return newDocRef.id;
+  },
+
+  // Listen 1 request cụ thể — callback nhận {status, response, error, ...} mỗi khi đổi
+  // Trả về unsubscribe function. Webapp gọi unsubscribe khi resolve/reject xong.
+  listenClaudeRequest(requestId, cb) {
+    const ref = doc(db, 'claude_requests', requestId);
+    return onSnapshot(ref, (snap) => {
+      cb(snap.exists() ? snap.data() : null);
+    });
+  },
 };
 
 // Expose ra window để các script không-module dùng được
