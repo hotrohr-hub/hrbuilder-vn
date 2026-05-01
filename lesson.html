@@ -966,8 +966,10 @@ document.addEventListener('click', (e) => {
   const cta = e.target.closest('.auth-required-banner .auth-cta');
   if (!cta) return;
   e.preventDefault();
-  const av = document.querySelector('.topbar .avatar.auth-unauth, header .avatar.auth-unauth');
-  if (av) av.click();
+  // Tìm avatar header bằng nhiều selector — auth-ui.js wire onclick động
+  // tuỳ trang; cứ click avatar nào tìm được là mở modal/menu auth.
+  const av = document.querySelector('#userAvatar, .user .avatar, .topbar .avatar, header .avatar');
+  if (av && typeof av.click === 'function') av.click();
 });
 </script>
 

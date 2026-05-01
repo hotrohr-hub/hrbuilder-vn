@@ -270,8 +270,8 @@ function wireExistingAvatar(user) {
   const oldPill = document.getElementById('authPill');
   if (oldPill) oldPill.remove();
 
-  // Tìm tất cả avatar trong header (topbar / header)
-  const avatars = document.querySelectorAll('.topbar .avatar, header .avatar, .header .avatar');
+  // Tìm tất cả avatar trong header (topbar / header / user wrapper trong lesson page)
+  const avatars = document.querySelectorAll('.topbar .avatar, header .avatar, .header .avatar, .user .avatar, #userAvatar');
   avatars.forEach(av => {
     if (user) {
       av.classList.remove('auth-unauth');
