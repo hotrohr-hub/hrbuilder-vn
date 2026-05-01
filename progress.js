@@ -204,11 +204,14 @@ function resetAll() {
 }
 
 // Khi auth state đổi:
-//   - Đổi tk (lastUid != user.uid) → CLEAR local trước rồi pull cloud user mới.
-//     Tránh bug "tạo tk mới mà bài lưu về tk cũ" do localStorage là key global.
-//   - Cùng uid + local rỗng → pull cloud (lần đầu / đổi máy).
+//   - Logout → CLEAR local hết.
+//   - Đổi tk (lastUid != user.uid) → CLEAR local + pull cloud user mới.
+//   - Cùng uid (lastUid == user.uid) + local rỗng → pull cloud (đổi máy).
 //   - Cùng uid + có local → push để chắc.
-//   - Logout → CLEAR local để máy không còn data của user trước.
+//   - LẦN ĐẦU AUTH (lastUid null) + có local → CLOUD-FIRST: pull cloud.
+//     - Cloud có data → cloud là source of truth (user cũ login lại) → đè local
+//     - Cloud rỗng → user vừa signup, giữ local + push (happy path onboard-rồi-signup)
+//   Tránh bug "tạo tk mới mà bài lưu về tk cũ" do localStorage là key global.
 if (typeof window !== 'undefined' && document) {
   document.addEventListener('fb-ready', async (e) => {
     const user = e.detail?.user;
@@ -236,6 +239,8 @@ if (typeof window !== 'undefined' && document) {
       return;
     }
 
+    // Cùng uid hoặc lần đầu (lastUid null)
+    const isFirstAuth = !lastUid;
     localStorage.setItem(KEYS.lastUid, user.uid);
 
     if (!hasLocal) {
@@ -243,7 +248,28 @@ if (typeof window !== 'undefined' && document) {
       if (cloud && (cloud.profile || cloud.progress)) {
         setTimeout(() => location.reload(), 200);
       }
+      return;
+    }
+
+    // Có local
+    if (isFirstAuth) {
+      // LẦN ĐẦU AUTH với local có sẵn — không phân biệt được local thuộc user
+      // này hay session trước. Cloud-first: pull cloud xem có data không.
+      const cloudData = await window.fb.loadUserData?.();
+      if (cloudData && (cloudData.profile || cloudData.progress)) {
+        // Cloud có → user đã từng dùng tk này, ưu tiên cloud
+        console.log('[progress] first auth + cloud has data — cloud wins, clearing local');
+        clearLocalUserData();
+        if (cloudData.profile) localStorage.setItem(KEYS.profile, JSON.stringify(cloudData.profile));
+        if (cloudData.progress) localStorage.setItem(KEYS.progress, JSON.stringify(cloudData.progress));
+        setTimeout(() => location.reload(), 200);
+      } else {
+        // Cloud rỗng → tk mới, push local lên (user vừa onboard rồi signup)
+        console.log('[progress] first auth + cloud empty — pushing local to cloud');
+        pushToCloud();
+      }
     } else {
+      // Cùng uid như lần trước → push để chắc
       pushToCloud();
     }
   });
