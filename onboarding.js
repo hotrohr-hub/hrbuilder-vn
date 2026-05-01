@@ -84,7 +84,18 @@ function showOnboardingModal() {
           <div class="onboard-emoji">🎉</div>
           <h2>Chào <span id="welcome-name">anh chị</span>!</h2>
           <div class="onboard-welcome-msg" id="welcome-msg"></div>
-          <button class="btn-primary" onclick="closeOnboarding()">Bắt đầu Buổi 1 →</button>
+
+          <div style="margin-top: 18px; padding: 14px 16px; background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #f59e0b; border-radius: 10px; color: #78350f; font-size: 14px; line-height: 1.55;" id="onboard-auth-cta-block">
+            <strong>📝 Đăng ký tài khoản để lưu tiến độ học</strong>
+            <div style="margin-top: 6px; font-size: 13px; color: #92400e;">
+              Khoá 10 tuần — không có tài khoản thì bài làm chỉ lưu trên máy này, đổi máy là mất. Đăng ký ngay (1 phút) để bài + chứng chỉ cuối khoá đi theo anh/chị.
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: center; margin-top: 14px; flex-wrap: wrap; justify-content: center;">
+            <button class="btn-primary" id="onb-signup-cta">Đăng ký ngay →</button>
+            <button class="btn-secondary" id="onb-skip-auth" style="background: transparent; color: #64748b; padding: 11px 16px; font-size: 13px; border: 0; cursor: pointer; text-decoration: underline;">Tôi xem trước, đăng ký sau</button>
+          </div>
         </div>
       </div>
     </div>
@@ -323,10 +334,53 @@ function attachOnboardingEvents() {
       finishBtn.textContent = originalBtnText;
     }
   });
+
+  // Wire 2 nút ở step 9 (welcome step):
+  //   - "Đăng ký ngay" → mở modal đăng nhập (auth-ui.js wire onclick avatar)
+  //     User signup xong sẽ tự reload, vào lesson với data đã sync cloud.
+  //   - "Tôi xem trước, đăng ký sau" → closeOnboarding (vào lesson dạng guest)
+  //     Lesson page có banner cam nhắc đăng nhập trước khi nộp bài.
+  document.body.addEventListener('click', (e) => {
+    if (e.target.id === 'onb-signup-cta') {
+      // Click avatar header để trigger openModal (auth-ui đã wire)
+      // Cần chuyển onboarding modal về background trước
+      const overlay = document.getElementById('onboardOverlay');
+      if (overlay) overlay.style.display = 'none';
+      const av = document.querySelector('#userAvatar, .user .avatar, .topbar .avatar, header .avatar');
+      if (av) av.click();
+      // Sau khi user đóng login modal, hiện lại onboarding overlay (nếu user
+      // bỏ qua login). Listen Esc / click outside / Đăng nhập thành công.
+      const restoreOnboardOverlay = () => {
+        // Nếu user vừa login Firebase → close onboarding luôn (data sẽ pull cloud)
+        if (window.fb?.currentUser?.()) {
+          if (overlay) overlay.remove();
+          if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+            setTimeout(() => window.location.href = 'lesson.html?id=1', 200);
+          } else {
+            setTimeout(() => window.location.reload(), 200);
+          }
+        } else {
+          // Chưa login → restore overlay onboarding để user tiếp tục
+          if (overlay) overlay.style.display = '';
+        }
+      };
+      // Poll mỗi 500ms để detect modal login đã close
+      const poll = setInterval(() => {
+        const authModal = document.querySelector('.auth-modal-bg');
+        if (!authModal || authModal.offsetHeight === 0) {
+          clearInterval(poll);
+          restoreOnboardOverlay();
+        }
+      }, 500);
+    } else if (e.target.id === 'onb-skip-auth') {
+      closeOnboarding();
+    }
+  });
 }
 
 function closeOnboarding() {
-  document.getElementById('onboardOverlay').remove();
+  const ov = document.getElementById('onboardOverlay');
+  if (ov) ov.remove();
   // Refresh page hoặc đi đến lesson 1
   if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
     window.location.href = 'lesson.html?id=1';

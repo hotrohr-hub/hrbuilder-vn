@@ -260,11 +260,28 @@ if (typeof window !== 'undefined' && document) {
         // Cloud có → user đã từng dùng tk này, ưu tiên cloud
         console.log('[progress] first auth + cloud has data — cloud wins, clearing local');
         clearLocalUserData();
-        if (cloudData.profile) localStorage.setItem(KEYS.profile, JSON.stringify(cloudData.profile));
+        if (cloudData.profile) {
+          // Sync displayName Firebase vào profile.name nếu khác
+          // (tránh mismatch avatar "E" vs greeting "Chào Three")
+          const p = { ...cloudData.profile };
+          if (user.displayName && p.name !== user.displayName) {
+            p.name = user.displayName;
+          }
+          localStorage.setItem(KEYS.profile, JSON.stringify(p));
+        }
         if (cloudData.progress) localStorage.setItem(KEYS.progress, JSON.stringify(cloudData.progress));
         setTimeout(() => location.reload(), 200);
       } else {
         // Cloud rỗng → tk mới, push local lên (user vừa onboard rồi signup)
+        // Đồng bộ displayName Firebase vào profile.name nếu user vừa đăng ký
+        // với tên khác tên onboard.
+        if (user.displayName) {
+          const p = getProfile();
+          if (p && p.name !== user.displayName) {
+            p.name = user.displayName;
+            saveProfile(p);
+          }
+        }
         console.log('[progress] first auth + cloud empty — pushing local to cloud');
         pushToCloud();
       }
