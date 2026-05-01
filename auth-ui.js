@@ -301,6 +301,14 @@ injectStyle();
 document.addEventListener('fb-ready', (e) => {
   wireExistingAvatar(e.detail?.user || null);
 });
+// Fallback: nếu fb-ready đã fire trước khi auth-ui.js mount listener (race
+// condition phổ biến với ESM module load), wire ngay với state hiện tại.
+// Chạy sau microtask để đảm bảo window.fb đã được attach từ firebase-client.js.
+queueMicrotask(() => {
+  if (window.fb && typeof window.fb.currentUser === 'function') {
+    wireExistingAvatar(window.fb.currentUser());
+  }
+});
 
 // Expose để các trang khác gọi mở modal
 window.openAuthModal = openModal;
