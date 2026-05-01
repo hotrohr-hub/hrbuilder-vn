@@ -281,10 +281,13 @@ function updateXpDisplay() {
   if (el) el.textContent = `⚡ ${stats.totalXp} XP`;
   const streakEl = document.getElementById('streakDisplay');
   if (streakEl) streakEl.textContent = `🔥 ${stats.streak} ngày`;
-  // Avatar
+  // Avatar — CHỈ override text khi đã Firebase login.
+  // Nếu chưa login, để auth-ui.js giữ '↳' + onclick mở modal.
+  // Tránh race condition: lesson init override mất onclick wire của auth-ui.
   const profile = getProfile();
   const ava = document.getElementById('userAvatar');
-  if (ava && profile) {
+  const fbUser = window.fb && window.fb.currentUser ? window.fb.currentUser() : null;
+  if (ava && profile && fbUser) {
     const initials = profile.name.split(' ').map(w => w[0]).join('').slice(-2).toUpperCase();
     ava.textContent = initials;
   }
