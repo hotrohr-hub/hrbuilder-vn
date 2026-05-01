@@ -364,6 +364,14 @@ function renderLesson(l, id) {
               <div id="imagePreviews" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;"></div>
             </div>
 
+            <div class="auth-required-banner" data-step="${i}">
+              <strong>🔒 Cần đăng nhập trước khi nộp bài.</strong> Bài giờ đang lưu tạm trên máy này — đăng nhập rồi mới chấm + đồng bộ qua tài khoản (đổi máy không mất).
+              <div class="auth-cta-row">
+                <button class="auth-cta" type="button">Đăng nhập ngay</button>
+                <span style="font-size: 12px; color: #9a3412;">hoặc bấm avatar góc phải</span>
+              </div>
+            </div>
+
             <div class="task-actions" style="margin-top: 16px;">
               <button class="btn-submit" onclick="submitStep(${i})">Nộp bài · +${step.xp} XP</button>
               <button class="btn-help" onclick="openHelp()">Bí? Hỏi Bạn đồng hành</button>
@@ -657,7 +665,10 @@ async function submitStep(idx) {
 
   // Phải đăng nhập mới nộp được
   if (!window.fb || !window.fb.currentUser?.()) {
-    showNotif('⚠️ Anh chị đăng nhập tài khoản trước (avatar góc phải). Lưu vào tài khoản mới đổi máy không mất bài.', '#f59e0b');
+    document.body.setAttribute('data-auth', 'out');
+    const banner = document.querySelector('.auth-required-banner');
+    if (banner) banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    showNotif('🔒 Đăng nhập trước khi nộp bài — banner cam phía trên có nút "Đăng nhập ngay".', '#f97316');
     return;
   }
 
@@ -934,6 +945,30 @@ document.getElementById('helpQuick').innerHTML = `
   <button class="quick-btn">💭 Prompt mẫu này tôi sửa cho công ty mình thế nào?</button>
   <button class="quick-btn">🎙 Tôi muốn nói voice với anh Lân thay vì gõ</button>
 `;
+
+// ── AUTH GATE ─────────────────────────────────────────────────────────
+// Bug fix: trước đây chưa login Firebase mà click "Nộp bài" chỉ hiện toast nhỏ
+// → newbie miss. Giờ:
+//   1) body[data-auth="out"] → CSS hiện banner cam inline ngay trên nút Nộp bài.
+//   2) Lock nút submit (🔒, không click được).
+//   3) auth-cta button → click avatar header để mở modal login (auth-ui.js wire sẵn).
+function applyAuthGate(user) {
+  const isIn = !!user;
+  document.body.setAttribute('data-auth', isIn ? 'in' : 'out');
+  document.querySelectorAll('.btn-submit').forEach(btn => {
+    if (isIn) btn.removeAttribute('data-locked');
+    else btn.setAttribute('data-locked', '1');
+  });
+}
+applyAuthGate(null);
+document.addEventListener('fb-ready', (e) => applyAuthGate(e.detail?.user || null));
+document.addEventListener('click', (e) => {
+  const cta = e.target.closest('.auth-required-banner .auth-cta');
+  if (!cta) return;
+  e.preventDefault();
+  const av = document.querySelector('.topbar .avatar.auth-unauth, header .avatar.auth-unauth');
+  if (av) av.click();
+});
 </script>
 
 </body>

@@ -6,11 +6,10 @@ const KEYS = {
   profile: 'hrbuilder_profile',
   progress: 'hrbuilder_progress',
   history: 'hrbuilder_history', // lưu chat history per lesson
-  lastUid: 'hrbuilder_last_uid', // user uid của lần auth gần nhất — để detect đổi tài khoản
+  lastUid: 'hrbuilder_last_uid', // user uid của lần auth gần nhất — detect đổi tài khoản
 };
 
-// Clear toàn bộ data local — gọi khi đổi tài khoản hoặc logout.
-// KHÔNG xoá lastUid vì đó là marker tracking.
+// Clear local data — gọi khi đổi tài khoản hoặc logout. KHÔNG xoá lastUid.
 function clearLocalUserData() {
   localStorage.removeItem(KEYS.profile);
   localStorage.removeItem(KEYS.progress);
@@ -205,11 +204,11 @@ function resetAll() {
 }
 
 // Khi auth state đổi:
-//   - Đổi tài khoản (uid khác lần trước) → CLEAR local trước rồi pull cloud của user mới.
-//     Tránh bug "tạo tk mới nhưng bài vẫn lưu về tk cũ" do localStorage là key global.
-//   - Cùng uid + local rỗng → pull từ cloud (lần đầu hoặc đổi máy).
+//   - Đổi tk (lastUid != user.uid) → CLEAR local trước rồi pull cloud user mới.
+//     Tránh bug "tạo tk mới mà bài lưu về tk cũ" do localStorage là key global.
+//   - Cùng uid + local rỗng → pull cloud (lần đầu / đổi máy).
 //   - Cùng uid + có local → push để chắc.
-//   - Logout (user = null) → CLEAR local để ng kế tiếp dùng máy này không thấy data riêng tư.
+//   - Logout → CLEAR local để máy không còn data của user trước.
 if (typeof window !== 'undefined' && document) {
   document.addEventListener('fb-ready', async (e) => {
     const user = e.detail?.user;
@@ -225,32 +224,26 @@ if (typeof window !== 'undefined' && document) {
       return;
     }
 
-    // Login: xác định scenario
     const hasLocal = !!getProfile() || !!localStorage.getItem(KEYS.progress);
     const switchedAccount = lastUid && lastUid !== user.uid;
 
     if (switchedAccount) {
-      // Đổi account → CLEAR local của user cũ trước
-      console.log('[progress] account switched (' + lastUid + ' → ' + user.uid + ') — clearing local');
+      console.log('[progress] account switched ' + lastUid + ' → ' + user.uid + ' — clearing local');
       clearLocalUserData();
       localStorage.setItem(KEYS.lastUid, user.uid);
-      const cloud = await pullFromCloud();
-      // Reload luôn để UI hiển thị data của user mới (XP, profile, progress)
+      await pullFromCloud();
       setTimeout(() => location.reload(), 200);
       return;
     }
 
-    // Cùng user
     localStorage.setItem(KEYS.lastUid, user.uid);
 
     if (!hasLocal) {
-      // Lần đầu / máy mới → pull
       const cloud = await pullFromCloud();
       if (cloud && (cloud.profile || cloud.progress)) {
         setTimeout(() => location.reload(), 200);
       }
     } else {
-      // Có local rồi → push để chắc
       pushToCloud();
     }
   });

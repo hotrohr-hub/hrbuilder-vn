@@ -416,6 +416,41 @@ button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 }
 .btn-submit::before { content: '📤'; }
 .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); }
+.btn-submit[data-locked="1"] {
+  background: linear-gradient(135deg, #94a3b8, #64748b);
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.85;
+}
+.btn-submit[data-locked="1"]:hover { transform: none; box-shadow: none; }
+.btn-submit[data-locked="1"]::before { content: '🔒'; }
+
+/* Auth-required banner — hiện khi chưa login Firebase, ngay phía trên nút Nộp bài */
+.auth-required-banner {
+  display: none;
+  margin: 12px 0 0;
+  padding: 12px 16px;
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  border-left: 4px solid #f97316;
+  border-radius: 10px;
+  color: #9a3412;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.auth-required-banner strong { color: #7c2d12; }
+.auth-required-banner .auth-cta-row {
+  display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap;
+}
+.auth-required-banner button.auth-cta {
+  background: #f97316; color: white; border: 0;
+  padding: 8px 14px; border-radius: 8px;
+  font-weight: 700; font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.auth-required-banner button.auth-cta:hover { background: #ea580c; }
+body[data-auth="out"] .auth-required-banner { display: block; }
 
 .btn-help {
   background: var(--purple-soft);
