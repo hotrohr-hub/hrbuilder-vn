@@ -427,7 +427,7 @@ Tạo một file FEEDBACK-[ten-dong-nghiep].md đính kèm vào Repo — đây l
 
   4: {
     week: 'TUẦN 4', duration: '90 phút · ⭐ MỐC HOÀN 5M',
-    prereqWarning: '⚠ Buổi này có 2 hướng (Paths) để setup: (a) Dùng tài khoản Claude Code Max ($100/tháng) để chạy Routines tự động trên Cloud, hoặc (b) Dùng bản Pro ($20/tháng) và setup chạy cron job (hẹn giờ) trên máy tính cá nhân (Anh Lân sẽ có hướng dẫn 1-1). Bắt buộc phải thực hiện 1 trong 2 path này để qua mốc hoàn học phí 5 triệu.',
+    prereqWarning: '💰 Buổi này CÓ THỂ phát sinh chi phí Claude Code (ngoài học phí cohort 9.9M). 3 PATHS để chọn theo túi tiền:\n  • PATH A — Cloud Pro ($20/tháng ~ 480k/tháng): Có gói Pro của Claude, chạy Routine bằng cron job trên máy cá nhân. Phù hợp HR có laptop ở nhà bật 24/7.\n  • PATH B — Cloud Max ($100/tháng ~ 2.4M/tháng): Routines tự động chạy trên Cloud Anthropic, máy tắt vẫn chạy. Phù hợp HR có ngân sách rộng.\n  • PATH C — Bridge Lan host miễn phí (RECOMMENDED): Dùng bridge của anh Lân chạy sẵn trên server cohort. Anh/chị KHÔNG cần Pro/Max riêng, KHÔNG cần máy 24/7. Anh Lân add anh/chị vào bridge khi onboard cohort.\n\n⚠ Bắt buộc thực hiện 1 trong 3 paths để pass mốc hoàn 5 triệu — anh/chị có thể đổi path bất cứ lúc nào.',
     title: 'Automation và quyền năng "Tự kích hoạt" (Triggers)',
     sub: 'Đỉnh cao của làm việc hiệu quả là: Mình đang ngủ mà hệ thống vẫn tự động cày cuốc. Suốt 3 tuần đầu, anh/chị vẫn phải "nhấn nút" thì AI mới chạy. Tuần này chúng ta nâng cấp lối chơi. 6h sáng, khi anh/chị còn đang ngủ, con AI agent đã lặng lẽ khởi động, tự động quét thư mục CV ứng viên mới gửi đêm qua, chấm điểm tóm tắt rồi tổng hợp thành 1 bản tin vắn (Brief) bắn thẳng vào Telegram của anh/chị.',
     principle: { num: 4, name: 'Tự kích hoạt (Triggers)' },
@@ -458,30 +458,44 @@ Tạo một file FEEDBACK-[ten-dong-nghiep].md đính kèm vào Repo — đây l
     },
     steps: [
       {
-        title: 'Setup Trigger (chọn Cloud Max HOẶC Local Cron)', xp: 40,
-        desc: 'Tuỳ thuộc vào gói plan anh/chị đang có (Max = Cloud, Pro $20 = Local). Cả 2 cách đều hợp lệ để pass mốc 5M.',
+        title: 'Setup Trigger (chọn 1 trong 3 paths)', xp: 30,
+        desc: 'Tuỳ ngân sách + setup máy của anh/chị, chọn 1 path. 3 paths đều hợp lệ để pass mốc 5M.',
         sampleType: 'instruction',
-        samplePrompt: `📋 CHỌN 1 TRONG 2 PATH:
+        samplePrompt: `📋 CHỌN 1 TRONG 3 PATHS:
 
-PATH A — DÀNH CHO CLAUDE CODE MAX ($100/tháng):
-1. Truy cập claude.ai/code → Tab "Routines" (Icon bánh răng)
-2. Bấm + New Routine → Đặt tên: "Daily HR Briefing 6AM"
-3. Set Trigger: Schedule → 06:00 daily (Timezone: Asia/Ho_Chi_Minh)
-4. Bấm Save (Lúc này chưa Activate vội)
-
-PATH B — DÀNH CHO CLAUDE CODE PRO $20 (Phương án thay thế):
-1. Trên máy tính cá nhân (yêu cầu máy phải luôn bật hoặc có cloud sync), mở app Terminal/Command Prompt
-2. Gõ lệnh: \`crontab -e\` (đối với Mac/Linux) hoặc dùng Task Scheduler (trên Windows)
-3. Thêm cấu hình dòng lệnh sau:
-   \`0 6 * * * cd ~/hr-builder-lan-1 && claude run prompt-routine.md > log-\$(date +%Y%m%d).txt\`
-4. Save file → Kiểm tra lại bằng lệnh: \`crontab -l\`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🅰 PATH A — CLAUDE PRO $20/THÁNG (~480K/THÁNG)
+   Cần: Có gói Pro của Anthropic + máy cá nhân bật 24/7 lúc 6h sáng
+   1. Mở Terminal (Mac/Linux) hoặc PowerShell (Windows)
+   2. Mac/Linux: gõ \`crontab -e\` rồi thêm dòng:
+      \`0 6 * * * cd ~/hr-builder-lan-1 && claude run prompt-routine.md > log-\$(date +%Y%m%d).txt\`
+   3. Windows: dùng Task Scheduler → Create Task → Daily 6:00 AM → Action: Run \`claude run prompt-routine.md\`
+   4. Save + verify: Mac \`crontab -l\` / Win xem trong Task Scheduler list
+   ⚠ Máy tắt 6h sáng = cron miss = mất chuỗi 7 ngày
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🅱 PATH B — CLAUDE MAX $100/THÁNG (~2.4M/THÁNG)
+   Cần: Có gói Max — máy tắt vẫn chạy được vì cloud Anthropic host
+   1. Truy cập claude.ai/code → Tab "Routines" (Icon bánh răng)
+   2. Bấm + New Routine → Đặt tên: "Daily HR Briefing 6AM"
+   3. Set Trigger: Schedule → 06:00 daily (Timezone: Asia/Ho_Chi_Minh)
+   4. Bấm Save (chưa Activate vội)
+   ✅ Tiện lợi nhất, đắt tiền nhất
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🅲 PATH C — BRIDGE COHORT (MIỄN PHÍ, ĐỀ XUẤT) ⭐
+   Cần: KHÔNG cần Pro/Max, KHÔNG cần máy 24/7. Anh Lân host bridge sẵn.
+   1. Đăng nhập vào dashboard cohort của anh/chị
+   2. Vào "Cài đặt → Routines (Cohort Bridge)" → Add new routine
+   3. Đặt tên + chọn schedule "06:00 daily" → Save
+   4. Bridge sẽ chạy sẵn, anh/chị KHÔNG cần làm gì thêm
+   ⚠ Lưu ý: cohort bridge giới hạn 5 routines/người, đủ cho học hết 10 tuần
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Bất kể chọn Path nào, anh/chị đều phải làm Bước 2 (Viết prompt routine + Thiết lập guardrails).
 
-⚠ Lưu ý cho Path B ($20): Máy tính của anh/chị phải ở trạng thái "Wake" lúc 6h sáng. Nếu tắt máy → Cron job không chạy → Mất chuỗi "7 ngày liên tiếp" để xét pass mốc.`,
+🆘 Nếu vướng setup → nhắn nhóm Zalo cohort hoặc anh Lan hỗ trợ 1-1.`,
       },
       {
-        title: 'Setup Prompt cho Routine + 5 Guardrails bảo vệ', xp: 80,
+        title: 'Setup Prompt cho Routine + 5 Guardrails bảo vệ', xp: 70,
         desc: 'Viết file prompt định nghĩa luồng chạy (8 bước) và BẮT BUỘC phải thiết lập 5 lớp rào chắn an toàn (Guardrails).',
         sampleType: 'prompt',
         samplePrompt: `📋 Hãy tạo file \`prompt-routine.md\` trong repo với nội dung sau:
@@ -515,7 +529,7 @@ Sau khi lưu file, hãy test thử bằng cách gõ prompt này cho Claude Code:
 "Đọc file prompt-routine.md, hãy validate giúp tôi xem 8 bước thực thi và 5 guardrails đã đầy đủ, chặt chẽ và khả thi chưa. Báo cáo nếu thiếu sót."`,
       },
       {
-        title: 'Test Run (Chạy thử) → Nhận tin nhắn Telegram', xp: 50,
+        title: 'Test Run (Chạy thử) → Nhận tin nhắn Telegram', xp: 40,
         desc: 'Chạy thử hệ thống (Dry-run) trước khi bật công tắc Activate chính thức. Phải đảm bảo Telegram nhận được bản tin chuẩn.',
         sampleType: 'instruction',
         samplePrompt: `1. Chuẩn bị data: Đảm bảo có sẵn ≥ 3 file CV trong folder \`./cvs-incoming/\` (Lấy CV mẫu từ Buổi 2 để test).
@@ -531,7 +545,7 @@ Sau khi lưu file, hãy test thử bằng cách gõ prompt này cho Claude Code:
 - Cảnh báo vượt Cost cap → Kiểm tra Guardrail số 3 + Giảm bớt số lượng CV nạp vào trong 1 batch.`,
       },
       {
-        title: 'Kích hoạt (Activate) Routine và vận hành 7 ngày liên tiếp', xp: 100,
+        title: 'Kích hoạt (Activate) Routine và vận hành 7 ngày liên tiếp', xp: 80,
         desc: 'Bật công tắc và theo dõi nhật ký hoạt động (log) mỗi sáng trong vòng 1 tuần.',
         sampleType: 'instruction',
         samplePrompt: `1. Path A (Max): Gạt nút toggle sang trạng thái "Active" (Màu xanh) trên trình quản lý Routines.
@@ -549,12 +563,15 @@ Việc cần làm mỗi sáng trong 7 ngày tới:
   □ Day 6: ...
   □ Day 7: ...
 
-⚠ NGUYÊN TẮC: Ngày nào hệ thống Failed (không có brief/không có log) → Bắt buộc ghi rõ nguyên nhân + Fix lỗi ngay lập tức. Đừng để dính Failed 2 ngày liên tiếp.
+⚠ NGUYÊN TẮC: Ngày nào hệ thống Failed (không có brief/không có log) → ghi rõ nguyên nhân (máy tắt, wifi rớt, Anthropic API down, đi công tác…) + fix nếu có thể. Anh Lân hiểu lý do thực tế, không khắt khe ngày-nào-cũng-phải-có nếu không phải lỗi học viên.
 
-Tiêu chí pass mốc: 7/7 ngày vận hành có đủ Brief + Log. Nếu 6/7 ngày = Borderline (sẽ do anh Lân xem xét từng case). Dưới 5/7 ngày = Fail mốc.`,
+Tiêu chí pass mốc:
+- ✅ 5/7+ ngày có Brief + Log → PASS, hoàn 5M
+- 🟡 3-4/7 ngày → BORDERLINE — anh Lân review evidence + lý do, đa số vẫn pass nếu nguyên nhân hợp lý
+- ❌ Dưới 3/7 ngày + không lý do → FAIL mốc`,
       },
       {
-        title: 'Báo cáo Before/After (Nộp bài duyệt mốc hoàn 5M)', xp: 130,
+        title: 'Báo cáo Before/After (Nộp bài duyệt mốc hoàn 5M)', xp: 60,
         desc: 'Báo cáo bằng số liệu định lượng (Measurable). KHÔNG ép buộc phải ra số ảo "Tiết kiệm 5h/tuần" — Điều quan trọng là biết cách đo lường thực tế và có đủ evidence (Log files).',
         sampleType: 'rubric',
         samplePrompt: `📝 Bảng báo cáo Before/After Buổi 4 — Copy và điền vào textarea bên dưới:
