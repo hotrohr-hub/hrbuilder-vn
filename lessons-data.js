@@ -5,21 +5,21 @@ const LESSONS = {
   1: {
     week: 'TUẦN 1', duration: '90-150 phút tuỳ tốc độ',
     title: 'Cổng HR Portal và tư duy "Tự học cùng AI"',
-    sub: 'Các anh/chị thân mến, bình thường khi gặp vấn đề không biết, chúng ta hay tra Google. Nhưng Google bây giờ thông tin rất nhiễu, ném cho mình hàng chục cái link rồi để mình tự bơi, nhiều khi tốn thời gian mà không chốt được việc. Tuần này chúng ta sẽ áp dụng một tư duy mới: không biết thì hỏi thẳng AI. Người làm nhanh có thể xong trong 90 phút, người mới setup lần đầu mất vài tiếng cũng là chuyện hết sức bình thường.',
+    sub: 'Anh em thân mến, bình thường gặp ca khó là mình hay lên Google. Nhưng Google giờ như cái chợ, ném cho mình một đống link rồi bắt mình tự bơi. Tuần này, mình đổi bài: Không biết thì nắm áo AI mà hỏi. AI không thông minh hơn mình đâu, nhưng nó là đứa trợ lý "trâu bò" nhất mà anh em từng thấy. Người làm nhanh có thể xong trong 90 phút, người mới setup lần đầu mất vài tiếng cũng là chuyện thường.',
     principle: { num: 1, name: 'Tự học cùng AI' },
     hints: [
-      'Cứ prompt một cách chân thành: "Tôi không biết code, hãy dựng giúp tôi một cái cổng xin nghỉ phép cho nhân viên". Càng rõ ràng mục tiêu càng tốt!',
-      'Hãy tạm quên thói quen search Google đi. Cứ nắm áo con AI agent mà hỏi trực tiếp.',
-      'AI không thông minh hơn anh/chị đâu, nhưng nó có tốc độ xử lý nhanh và cực kỳ chăm chỉ. Ở môi trường công sở, có một trợ lý siêu tốc và chăm chỉ là đã thắng lớn rồi.',
+      'Hỏi thật thà: "Tôi không biết code, hãy dựng giúp tôi một cái cổng xin nghỉ phép". Càng thật lòng, AI càng thương.',
+      'Quên Google đi: Coi AI như đứa em khóa dưới, cứ giao việc trực tiếp cho nó.',
+      'Chăm chỉ là thắng: Ở Masan hay Vinamilk, đứa làm nhanh chưa chắc bằng đứa làm đúng và đều. Con AI này chính là đứa đó.',
     ],
-    revealMsg: 'Nền tảng cốt lõi của cả khóa học nằm ở đây — cần giải quyết việc gì thì hỏi thẳng AI, đừng vòng vo qua Google. Tư duy này anh/chị nắm chắc thì các buổi sau sẽ cực kỳ nhàn.',
-    diligenceNote: '⚠ Lưu ý bảo mật tuần này: Form Telegram của anh/chị có chứa Bot Token. ĐỪNG hard-code token này thẳng vào file index.html rồi đẩy lên GitHub public — lộ token là người ngoài có thể spam tin nhắn vào Zalo/Telegram nội bộ của anh/chị. Token phải được lưu ở biến môi trường (.env), hoặc trong tuần 1 chúng ta chỉ chạy local (trên máy tính cá nhân) là đủ an toàn rồi.',
+    revealMsg: 'Nền tảng cốt lõi của cả khóa học nằm ở đây — cần giải quyết việc gì thì hỏi thẳng AI, đừng vòng vo qua Google. Tư duy này anh em nắm chắc thì các buổi sau sẽ cực kỳ nhàn.',
+    diligenceNote: '⚠ Góc bảo mật: Anh em lưu ý, cái "Mã kích hoạt" (Token) gửi tin nhắn giống như chìa khóa nhà vậy. Đừng vứt lung tung trên mạng kẻo người lạ vào spam nát cái Zalo/Telegram nội bộ. Tuần 1 cứ chạy trên máy cá nhân cho chắc.',
     layers: [
       { name: 'Là cái gì', text: 'Cần kiến thức gì để dựng HR Portal? Chỉ cần viết prompt hỏi thẳng AI là xong. Các agent hiện nay có khả năng ghi nhớ context (ngữ cảnh) anh/chị đang làm HR, nên không phải giải thích dài dòng lại từ đầu mỗi lần chat. Còn Google thì ném cho anh/chị một mớ tài liệu để tự đọc, tự chắt lọc. Nỗi vất vả đó chắc dân HR mình ai cũng thấm.' },
       { name: 'Vì sao trúng', text: 'Lý do rất đơn giản: AI nó đã tổng hợp, phân tích data giúp anh/chị rồi đóng gói lại thành câu trả lời trực tiếp. Tôi xin nhấn mạnh lại: AI không giỏi chuyên môn HR bằng anh/chị đâu, nhưng năng suất cày cuốc của nó thì vô địch. Mình dùng nó làm trợ lý thực thi là chuẩn bài.' },
       { name: 'Khi nào đừng hỏi máy', text: 'Có những thứ anh/chị phải tự tra cứu văn bản gốc, đặc biệt là các vấn đề liên quan đến Luật lao động, Bảo hiểm xã hội, Thuế TNCN... Nếu AI bịa số liệu (hallucinate) mà anh/chị đem báo cáo sếp hay tư vấn cho nhân viên thì hậu quả rất khó lường. Thêm một nguyên tắc sống còn: Tuyệt đối KHÔNG đưa dữ liệu cá nhân nhạy cảm (PII) của nhân sự vào prompt. Mất data là sự cố cực kỳ nghiêm trọng.' },
     ],
-    lanVoice: 'Tôi đoán các anh/chị đang lo: "Mình dân HR mù tịt code, chưa biết HTML thì dựng HR Portal kiểu gì?" Câu hỏi rất thực tế. Và tin vui là — anh/chị không cần biết code. Năm 2026 rồi, việc viết code là việc của AI, việc của người làm HR là tư duy quy trình và viết prompt ra lệnh. Chỉ sau 90 phút nữa, link HR Portal của anh/chị đã có thể gắn lên Zalo bio, giao diện xịn xò như vừa thuê team dev làm. Thực tế, AI agent nó làm cả. Các công cụ hỗ trợ giờ rất mạnh: Google Antigravity, VSCode chat, Cursor, Cline, Claude Code... anh/chị cứ chọn tool nào thấy thuận tay nhất. Tôi nói trước cho yên tâm: cả 10 buổi đều có path miễn phí với các tool trên. Đến khoảng Buổi 4, ai muốn AI tự chạy trên cloud (ngủ vẫn chạy) thì có tuỳ chọn nâng cấp Claude Code Pro $20/tháng (~470k) — không bắt buộc, lúc đó tính, giờ chưa cần.',
+    lanVoice: 'Tôi đoán anh em đang lo: "Mình dân HR mù tịt code, dựng HR Portal kiểu gì?" — Yên tâm, năm 2026 rồi, việc viết code là việc của AI, việc của HR là tư duy quy trình + ra lệnh. 90 phút nữa anh em đã có Portal xịn như thuê team dev. Cả 10 buổi đều có path miễn phí. Đến Buổi 4 ai muốn AI ngủ vẫn chạy thì có Path C — bridge anh Lân host miễn phí, không phải mua thêm gói nào.\n\n💬 HỎI ĐÁP NHANH:\nQ: "Em không biết code, AI đưa đống chữ loằng ngoằng thì sao?"\nA: Copy hết, dán vào Bàn làm việc, nó tự chạy. Đừng đọc code, hãy đọc kết quả.\n\nQ: "Sao không dùng Google Form cho nhanh?"\nA: Google Form nhìn phèn, không custom theo ý mình được. Tự build portal mới có cảm giác làm chủ.',
     outcomes: {
       cam: [
         'Một HR Portal chạy mượt mà trên máy tính cá nhân, có sẵn 3 tính năng cốt lõi: xin nghỉ phép, hỏi đáp chính sách, đăng ký team building.',
@@ -34,8 +34,8 @@ const LESSONS = {
     },
     steps: [
       {
-        title: 'Cài đặt IDE có tích hợp AI chat — chọn 1 trong 4 công cụ', xp: 20,
-        desc: 'Đây coi như bước warm-up — khoan vội viết prompt. Anh/chị hãy chọn cài đặt 1 trong 4 công cụ dưới đây. Tất cả đều có bản miễn phí để bắt đầu.\n\n⚠ Lưu ý cho HR enterprise: Tuỳ chọn 🅰 Antigravity là dễ nhất nếu máy công ty không có quyền admin (chỉ cần login Google). 3 lựa chọn còn lại 🅱🅲🅳 đều cần cài software xuống máy — nếu bị IT chặn, anh/chị quay về 🅰 hoặc xin IT mở quyền cài VSCode user-mode.',
+        title: 'Mở "Bàn làm việc AI" — chọn 1 công cụ để chat với code', xp: 20,
+        desc: '🛠️ Đây coi như bước warm-up — khoan vội viết prompt. Chọn 1 trong 4 công cụ, tất cả đều free.\n\n💡 Ví dụ HR: Giống như anh em chọn dùng Excel hay Google Sheets để làm bảng lương vậy — tool nào tay quen thì dùng.\n\n⚠ Lưu ý cho HR enterprise: 🅰 Antigravity là dễ nhất nếu máy công ty không có quyền admin (chỉ cần login Google). 3 lựa chọn 🅱🅲🅳 đều cần cài software — nếu IT chặn, quay về 🅰 hoặc xin IT mở quyền cài VSCode User-mode.',
         sampleType: 'instruction',
         samplePrompt: `Chọn 1 trong 4 IDE — anh/chị nên đọc lướt 4 lựa chọn rồi chọn cái phù hợp với máy đang dùng:
 
@@ -74,8 +74,8 @@ const LESSONS = {
 🆘 Nếu IT chặn HẾT cả 4 lựa chọn → nhắn nhóm Zalo cohort hoặc anh Lan hỗ trợ workaround.`,
       },
       {
-        title: 'Dùng 1 prompt để dựng nguyên HR Portal', xp: 50,
-        desc: 'Copy prompt mẫu dưới đây dán vào ô chat của AI (Antigravity/Cursor/Cline...), điền các thông tin trong ngoặc vuông [...] rồi nhấn Enter. Việc của anh/chị giờ là nhâm nhi cà phê và xem code tự động sinh ra.',
+        title: 'Ra lệnh dựng "Cổng thông tin HR" — 1 câu prompt', xp: 50,
+        desc: 'Copy prompt mẫu dưới, điền tên + công ty + vai trò vào ô [...] rồi nhấn Enter. Giờ ngồi nhâm nhi cà phê, xem AI tự vẽ trang web có 3 nút: Xin nghỉ phép / Hỏi đáp chính sách / Đăng ký Team building.',
         sampleType: 'prompt',
         samplePrompt: `Tôi tên là [TÊN BẠN — ví dụ: Nguyễn Thị Tuyền].
 Tôi làm [VAI TRÒ — ví dụ: HR Executive] tại [CÔNG TY — ví dụ: An Nam Retail].
@@ -93,8 +93,8 @@ Hãy tạo cho tôi 1 cổng HR Portal hoàn chỉnh, gom tất cả code vào d
 Sau khi tạo xong: hãy mở localhost để tôi preview kết quả ngay lập tức. File này sẽ làm base để tích hợp API Telegram ở step 4.`,
       },
       {
-        title: 'Custom UI (Màu sắc + Logo công ty)', xp: 30,
-        desc: 'Trải nghiệm sức mạnh của việc "iterate" (tinh chỉnh liên tục). Chỉ cần vài dòng prompt, AI sẽ update giao diện ngay tức khắc.',
+        title: 'Trang điểm giao diện (Màu + Logo + Footer)', xp: 30,
+        desc: 'Đổi màu sắc cho đúng nhận diện thương hiệu công ty, thay logo, thêm hotline phòng HR ở dưới cùng. Chỉ cần vài dòng prompt, AI update tức khắc.',
         sampleType: 'prompt',
         samplePrompt: `Sửa lại cổng HR Portal giúp tôi:
 1. Đổi background theme từ dark mode sang [MÀU SẮC — ví dụ: xanh dương gradient / xám nhạt thanh lịch]
@@ -104,8 +104,8 @@ Sau khi tạo xong: hãy mở localhost để tôi preview kết quả ngay lậ
 Sau khi sửa xong code, hãy refresh browser để tôi xem UI mới.`,
       },
       {
-        title: 'Tích hợp Webhook → Telegram bot', xp: 60,
-        desc: '⚠ Step này cần anh/chị chuẩn bị 2 thông số (PRE-REQUISITE). Vui lòng làm theo hướng dẫn TRƯỚC khi chạy prompt — nếu bỏ qua sẽ bị kẹt lại khá lâu.',
+        title: 'Nối dây thông báo về Telegram', xp: 60,
+        desc: '🔔 Lấy "Mã kết nối" từ Telegram. Giờ ai bấm nút "Xin nghỉ" trên web là điện thoại anh em "tinh tinh" ngay.\n\n💡 Giải ngố: "Webhook" thực ra là cái dây nối — Webhook kêu thì điện thoại rung. Nghe ghê vậy chứ thực chất chỉ là 2 cái mã copy-paste.\n\n⚠ Step này cần anh em chuẩn bị 2 thông số (PRE-REQUISITE) TRƯỚC khi chạy prompt — bỏ qua sẽ bị kẹt lâu.',
         sampleType: 'prompt',
         samplePrompt: `📋 PRE-REQUISITE — Làm 2 bước này TRƯỚC khi paste prompt cho AI:
 
@@ -134,8 +134,8 @@ Hãy sửa file index.html: Thiết lập logic khi user bấm nút "Gửi" trê
 Bây giờ tôi sẽ test thử bằng cách điền form trên browser, hãy đảm bảo tin nhắn được push về Telegram cá nhân của tôi.`,
       },
       {
-        title: 'Reflect: 30 phút vừa qua anh/chị đã đạt được gì?', xp: 40,
-        desc: 'Đây là bước duy nhất anh/chị KHÔNG viết prompt cho AI mà phải tự viết review. Bot sẽ chấm điểm dựa trên rubric 3 phần dưới đây. Làm hời hợt là fail.',
+        title: 'Tự soi lại mình — Reflection 3 phần', xp: 40,
+        desc: '✍️ Bước duy nhất CẤM dùng AI, anh em phải tự viết bằng "cơm". Bot sẽ chấm dựa trên rubric 3 phần dưới đây. Làm hời hợt là fail.',
         gradingCriteria: [
           'Phần 1: Phải có đủ 5 gạch đầu dòng, mỗi gạch có ít nhất 2 câu mô tả chi tiết. Từ chối các câu chung chung như "đã làm xong", "bước này OK".',
           'Phần 2: Phải là 1 câu hỏi mang tính chuyên môn/kỹ thuật. Các câu kiểu "Khoá học rất hay ạ" KHÔNG được tính điểm.',
@@ -165,7 +165,7 @@ PHẦN 3 — USE CASE HR ÁP DỤNG TƯ DUY NÀY (3-5 câu):
   2: {
     week: 'TUẦN 2', duration: '90 phút',
     title: 'Xử lý "Núi CV" và nghệ thuật "Task Breakdown" (Chia nhỏ việc)',
-    sub: 'Lại nói chuyện đọc CV. Nhìn một xấp 30 cái CV rải trên màn hình, hoa hết cả mắt, đọc đến cái thứ 10 là bắt đầu mất tập trung. Nhưng nếu anh/chị quăng cả cục 30 cái đó cho AI và bảo "Chấm điểm hộ cái" — nó cũng sẽ bị quá tải (hallucinate hoặc miss data). Nguyên tắc kinh điển: Việc lớn thì phải băm nhỏ ra (breakdown). Trong 90 phút buổi này, chúng ta sẽ làm ra một cái dashboard phân tích CV xịn xò như hệ thống ATS của các tập đoàn lớn.',
+    sub: 'Đọc 10 cái CV thì tỉnh, đọc đến cái thứ 50 là mắt bắt đầu "đứng hình". Nếu anh em quăng cả xấp cho AI rồi bảo "Chấm đi", nó sẽ làm ẩu ngay. Bí kíp ở đây là: Việc lớn thì phải băm nhỏ. 90 phút buổi này, mình làm ra cái dashboard phân tích CV xịn như hệ thống ATS của các tập đoàn lớn.',
     principle: { num: 2, name: 'Task Breakdown (Chia nhỏ việc)' },
     hints: [
       'AI rất sợ bị "ngợp" context — ném cho nó một khối lượng công việc khổng lồ và mù mờ, kết quả trả về sẽ rất tệ.',
@@ -194,8 +194,8 @@ PHẦN 3 — USE CASE HR ÁP DỤNG TƯ DUY NÀY (3-5 câu):
     },
     steps: [
       {
-        title: 'Anonymize 30 CV (Ẩn PII: SĐT, CCCD, Tên, Ảnh)', xp: 30,
-        desc: '⚠ Để tuân thủ Nghị định 13/2023, anh/chị phải "bôi đen" (che) dữ liệu cá nhân TRƯỚC khi đẩy lên AI. Bám sát checklist dưới đây.',
+        title: '"Làm sạch" 30 CV mẫu — Ẩn PII (SĐT, CCCD, Tên, Ảnh)', xp: 30,
+        desc: '🧽 Dùng AI quét qua, đổi "Nguyễn Văn A" thành "Ứng viên #1", che số điện thoại.\n\n💡 Ví dụ HR: Giống như khi anh em gửi danh sách đề xuất tăng lương cho Sếp mà phải ẩn tên để khách quan vậy.\n\n⚠ Theo Nghị định 13/2023, phải "bôi đen" PII TRƯỚC khi đẩy lên AI. Bám sát checklist dưới đây.',
         sampleType: 'instruction',
         samplePrompt: `📋 PII (Personal Identifiable Information) cần ANONYMIZE TRƯỚC khi xử lý bằng AI:
 
@@ -224,8 +224,8 @@ HƯỚNG DẪN THỰC HIỆN (Chọn 1 trong 2):
 ⚠ Nếu anh/chị chưa có sẵn data: Hãy dùng bộ data mẫu tại folder /sample-cvs/ (Gồm 30 CV giả lập của VN đã được anonymize sẵn).`,
       },
       {
-        title: 'Dùng 1 prompt xuất bản nguyên cái Dashboard', xp: 80,
-        desc: 'Đây là lúc anh/chị trải nghiệm khoảnh khắc "Wow". Paste prompt chia làm 5 step dưới đây để AI chấm 30 CV và render ra file Dashboard.',
+        title: 'Xuất bản "Bảng điều khiển" chấm điểm', xp: 80,
+        desc: '🎯 Dùng 1 câu lệnh, AI sẽ vừa trích xuất kinh nghiệm, vừa chấm điểm theo tiêu chí (vd văn hóa Vinamilk 8/10), vừa vẽ biểu đồ hình nhện. Đây là khoảnh khắc "Wow" của Buổi 2.',
         sampleType: 'prompt',
         samplePrompt: `Tôi đã chuẩn bị 30 CV (đã anonymized) trong folder ./cvs-anon/.
 Vị trí tuyển dụng: [ĐIỀN VỊ TRÍ — vd: Sales Lead mảng Bán lẻ]
@@ -250,8 +250,8 @@ BƯỚC 5 (Visualize): Render ra 1 file dashboard.html (Code chung vào 1 file, 
 Làm xong hãy mở file dashboard.html lên cho tôi xem kết quả.`,
       },
       {
-        title: 'Tinh chỉnh liên tục (Iterate UI)', xp: 30,
-        desc: 'Test khả năng update code của AI. Chỉ cần ra lệnh, AI sẽ tự sửa cả cấu trúc dữ liệu lẫn giao diện.',
+        title: 'Chỉnh sửa theo ý thích — Iterate UI', xp: 30,
+        desc: 'Thêm cột "Lương mong muốn", đổi layout cho đẹp hơn. Chỉ cần ra lệnh, AI tự sửa cả cấu trúc dữ liệu lẫn giao diện. Làm đến khi nào thấy ưng thì thôi.',
         sampleType: 'prompt',
         samplePrompt: `Cập nhật file dashboard.html theo các yêu cầu sau:
 1. Thêm cột "Lương kỳ vọng (Triệu VNĐ)" vào bảng và cho phép sort (sắp xếp).
@@ -262,8 +262,8 @@ Làm xong hãy mở file dashboard.html lên cho tôi xem kết quả.`,
 Cập nhật code xong nhớ refresh lại browser để tôi xem.`,
       },
       {
-        title: 'Hoàn thiện Modal Popup cho ứng viên', xp: 40,
-        desc: 'Giao diện Modal chi tiết, chuyên nghiệp sẽ giúp sếp dễ ra quyết định hơn.',
+        title: 'Hoàn thiện "Cửa sổ chi tiết" ứng viên', xp: 40,
+        desc: '🪟 Bấm vào tên ứng viên là hiện ra: Điểm mạnh (xanh) / Điểm yếu (đỏ).\n\n💡 Giải ngố: "Modal popup" chỉ là cái bảng hiện ra giữa màn hình khi mình bấm nút.',
         sampleType: 'prompt',
         samplePrompt: `Cải thiện UI/UX của Modal popup khi tôi click vào 1 ứng viên trong bảng:
 1. Modal cần chia làm 4 section rõ ràng:
@@ -277,8 +277,8 @@ Cập nhật code xong nhớ refresh lại browser để tôi xem.`,
 Sửa xong hãy refresh và tự động click mở thử 1 ứng viên trong Top 5 để tôi check UI.`,
       },
       {
-        title: 'Báo cáo Before/After và Transfer Plan', xp: 70,
-        desc: 'Bước này anh/chị tự viết tóm tắt. Cần bám sát rubric để lấy đủ điểm pass.',
+        title: 'Báo cáo "Hiệu quả" Before/After + Transfer Plan', xp: 70,
+        desc: '📊 So sánh: Trước khi dùng AI mất bao lâu? Giờ mất bao lâu? (Gợi ý: Thường là giảm từ 4 tiếng xuống 15 phút). Bước này tự viết, bám rubric để pass.',
         sampleType: 'rubric',
         samplePrompt: `📝 Cấu trúc bài tóm tắt Buổi 2:
 
@@ -312,7 +312,7 @@ PHẦN 4 — TRANSFER PLAN (ỨNG DỤNG CHO NGHIỆP VỤ HR KHÁC) (3-5 câu):
   3: {
     week: 'TUẦN 3', duration: '90 phút',
     title: 'Đóng gói quy trình và nghệ thuật "Viết JD cho AI"',
-    sub: 'Nếu mỗi lần có đợt tuyển dụng mới, anh/chị lại hì hục ngồi gõ lại nguyên một đoạn prompt dài 200 dòng từ đầu, thì thật là thiếu hiệu quả. Tuần này, chúng ta sẽ học cách "đóng gói" toàn bộ các câu lệnh xuất sắc từ Buổi 1 & 2 thành một bộ thư viện (Skills Package). Chỉ cần share thư mục này, đồng nghiệp của anh/chị gõ một lệnh đơn giản /screen-cv là AI tự động chạy trơn tru. Khi sếp hỏi "Phòng mình quy trình chuẩn hoá đến đâu rồi?", anh/chị chỉ cần mở thư mục này ra là xong.',
+    sub: 'Viết lệnh cho AI thực chất là viết Mô tả công việc (JD) cho một đứa nhân viên ảo. JD lôm côm thì nó làm bậy. Tuần này mình học cách "đóng gói" những câu lệnh hay nhất từ Buổi 1 & 2 thành một bộ thư viện dùng chung cho cả phòng HR. Chỉ cần share folder, đồng nghiệp gõ /screen-cv là AI tự chạy. Sếp hỏi "Phòng mình chuẩn hoá đến đâu?" — mở folder ra là xong.',
     principle: { num: 3, name: 'Tả việc cho rõ (Prompt Engineering)' },
     hints: [
       'Viết prompt cho AI bản chất y hệt như anh/chị viết bản Mô tả công việc (JD) & Hướng dẫn (Guideline) cho một nhân viên mới: Nếu guideline mập mờ, nhân viên sẽ tự "sáng tạo" và làm sai lệch ý đồ.',
@@ -340,8 +340,8 @@ PHẦN 4 — TRANSFER PLAN (ỨNG DỤNG CHO NGHIỆP VỤ HR KHÁC) (3-5 câu):
     },
     steps: [
       {
-        title: 'Khởi tạo cấu trúc Skills Package', xp: 30,
-        desc: 'AI sẽ giúp anh/chị generate cấu trúc folder .claude/skills/ kèm các file markdown (.md). Việc của anh/chị là duyệt kiến trúc.',
+        title: 'Tạo "Ngăn tủ" chứa Kỹ năng AI', xp: 30,
+        desc: '📁 Sắp xếp các câu lệnh vào từng thư mục: Tuyển dụng / Đào tạo / Chính sách / Compliance. AI tự generate cấu trúc folder .claude/skills/ — anh em chỉ duyệt kiến trúc.',
         sampleType: 'prompt',
         samplePrompt: `Hãy tạo cho tôi một cấu trúc Skills Package chuẩn dành cho team HR Việt Nam:
 
@@ -360,8 +360,8 @@ Yêu cầu cho mỗi file SKILL.md phải bao gồm các section:
 Tạo xong cấu trúc: Hãy in cây thư mục ra màn hình + show nội dung 3 file đầu tiên để tôi review.`,
       },
       {
-        title: 'Định nghĩa Brand Voice cho doanh nghiệp', xp: 50,
-        desc: 'Thiết lập văn phong, từ vựng cấm kỵ, các phúc lợi (benefits) cố định... Đây là "tâm hồn" của công ty mà AI không thể tự bịa ra được.',
+        title: 'Dạy AI "Giọng điệu công ty"', xp: 50,
+        desc: '🎙️ Dạy AI viết mail đúng phong cách công ty: thân thiện hay trang trọng? Có được dùng từ "Lương thoả thuận" không?\n\n💡 Ví dụ HR: Văn hóa FPT khác văn hóa Masan, AI cũng phải biết "nhập gia tùy tục".',
         sampleType: 'prompt',
         samplePrompt: `Hãy điền nội dung chi tiết cho file .claude/skills/brand-voice/SKILL.md, bám sát Brand guideline của công ty [TÊN CÔNG TY]:
 
@@ -373,8 +373,8 @@ Tạo xong cấu trúc: Hãy in cây thư mục ra màn hình + show nội dung 
 Lưu ý: Content generate ra phải tự nhiên, mang đậm dấu ấn con người, KHÔNG được mang "mùi AI giọng robot".`,
       },
       {
-        title: 'Build hệ thống 5 Lệnh thực thi (Commands)', xp: 60,
-        desc: 'Tạo các file lệnh ngắn gọn. Lệnh chỉ có nhiệm vụ "gọi" Skill ra chạy, không chứa logic chấm điểm phức tạp. Tách biệt hoàn toàn để dễ bảo trì sau này.',
+        title: 'Tạo 5 "Phím tắt" quyền năng', xp: 60,
+        desc: '⌨️ Thiết lập để chỉ cần gõ /cham-cv hay /soan-jd là AI tự hiểu + chạy đúng quy trình mình đã dạy. Lệnh chỉ "gọi" Skill ra chạy, KHÔNG copy logic Rubric vào — sau này sửa 1 chỗ là cả team update.',
         sampleType: 'prompt',
         samplePrompt: `Hãy tạo 5 file lệnh (Commands) lưu trong folder .claude/commands/:
 
@@ -389,8 +389,8 @@ RÀO CHẮN (CONSTRAINTS):
 - TUYỆT ĐỐI KHÔNG copy/paste logic của Rubric vào trong file Command.`,
       },
       {
-        title: 'Test mức độ "ngấm" Brand Voice', xp: 40,
-        desc: 'Chạy lệnh /draft-jd để tạo JD cho một vị trí trái ngành hoàn toàn. Mục đích để test xem AI có giữ vững được Tone of voice của cty hay bị "lạc trôi" theo data ngành mới.',
+        title: 'Kiểm tra độ "thấm" văn hóa', xp: 40,
+        desc: '🧪 Thử bảo AI soạn JD cho một vị trí lạ hoắc (vd Bếp trưởng nhà hàng). Nếu nó vẫn viết đúng giọng điệu công ty mình → thành công. Nếu lệch tone → quay lại sửa brand-voice/SKILL.md.',
         sampleType: 'prompt',
         samplePrompt: `Bây giờ tôi muốn test độ ổn định (consistency) của thư viện Skills Package.
 Hãy chạy lệnh /draft-jd để viết JD cho 3 vị trí hoàn toàn khác biệt nhau:
@@ -405,8 +405,8 @@ Sau khi generate xong, hãy so sánh 3 bản JD này:
 Nếu vị trí 2 & 3 bị lệch tone → Hãy tự động quay lại file brand-voice/SKILL.md để tinh chỉnh rule cho chặt chẽ hơn.`,
       },
       {
-        title: 'Push code lên GitHub & Handover cho đồng nghiệp', xp: 70,
-        desc: 'Đẩy source code lên Repository Private. Mời một đồng nghiệp tải về, chạy thử và xin feedback. Đây là bước chứng minh "tính nhân bản" hệ thống của anh/chị.',
+        title: 'Cất vào "Tủ hồ sơ Online" + Handover đồng nghiệp', xp: 70,
+        desc: '☁️ Đưa toàn bộ lên Kho lưu trữ bảo mật (GitHub) và mời đồng nghiệp dùng thử. Nhớ để PRIVATE — đừng để cả thế giới thấy "bí kíp" của mình. Đây là bước chứng minh "tính nhân bản" hệ thống.',
         sampleType: 'instruction',
         samplePrompt: `📋 PHẦN A — Đẩy (Push) source code lên GitHub:
 
@@ -428,8 +428,8 @@ Tạo một file FEEDBACK-[ten-dong-nghiep].md đính kèm vào Repo — đây l
   4: {
     week: 'TUẦN 4', duration: '90 phút · ⭐ MỐC HOÀN 5M',
     prereqWarning: '💰 Buổi này CÓ THỂ phát sinh chi phí Claude Code (ngoài học phí cohort 9.9M). 3 PATHS để chọn theo túi tiền:\n  • PATH A — Cloud Pro ($20/tháng ~ 480k/tháng): Có gói Pro của Claude, chạy Routine bằng cron job trên máy cá nhân. Phù hợp HR có laptop ở nhà bật 24/7.\n  • PATH B — Cloud Max ($100/tháng ~ 2.4M/tháng): Routines tự động chạy trên Cloud Anthropic, máy tắt vẫn chạy. Phù hợp HR có ngân sách rộng.\n  • PATH C — Bridge Lan host miễn phí (RECOMMENDED): Dùng bridge của anh Lân chạy sẵn trên server cohort. Anh/chị KHÔNG cần Pro/Max riêng, KHÔNG cần máy 24/7. Anh Lân add anh/chị vào bridge khi onboard cohort.\n\n⚠ Bắt buộc thực hiện 1 trong 3 paths để pass mốc hoàn 5 triệu — anh/chị có thể đổi path bất cứ lúc nào.',
-    title: 'Automation và quyền năng "Tự kích hoạt" (Triggers)',
-    sub: 'Đỉnh cao của làm việc hiệu quả là: Mình đang ngủ mà hệ thống vẫn tự động cày cuốc. Suốt 3 tuần đầu, anh/chị vẫn phải "nhấn nút" thì AI mới chạy. Tuần này chúng ta nâng cấp lối chơi. 6h sáng, khi anh/chị còn đang ngủ, con AI agent đã lặng lẽ khởi động, tự động quét thư mục CV ứng viên mới gửi đêm qua, chấm điểm tóm tắt rồi tổng hợp thành 1 bản tin vắn (Brief) bắn thẳng vào Telegram của anh/chị.',
+    title: 'Tự động hóa và quyền năng "Hẹn giờ chạy"',
+    sub: 'Đỉnh cao là đây: Anh em đang ngủ, AI vẫn làm. 6h sáng nó tự quét CV mới, chấm điểm, rồi nhắn tin báo cáo vào Telegram trước khi anh em ngủ dậy.',
     principle: { num: 4, name: 'Tự kích hoạt (Triggers)' },
     hints: [
       'Từ Buổi 1 đến 3, anh/chị là người "chủ động" ra lệnh. Ở tuần này, hệ thống sẽ "tự động" kích hoạt (Triggers).',
@@ -443,7 +443,7 @@ Tạo một file FEEDBACK-[ten-dong-nghiep].md đính kèm vào Repo — đây l
       { name: 'Vì sao trúng', text: 'Các nhà cung cấp như Anthropic cho phép AI chạy ngầm trên mây và tính phí theo thời lượng thực thi — chỉ tốn cỡ 20 cents/tháng cho một routine chạy 5 phút/ngày. Anh/chị hoàn toàn không phải đau đầu cấu hình server rườm rà. Chỉ cần setup prompt chuẩn và bấm nút "Activate".' },
       { name: 'Khi nào đừng dùng', text: 'Đừng lạm dụng tạo Routine cho những việc chỉ làm mang tính "Ad-hoc" (phát sinh 1 lần). Ví dụ: "Chấm điểm 1 tập CV của đợt tuyển dụng đặc biệt này". Những task kiểu đó thì cứ chạy thủ công cho nhanh. Routine chỉ phát huy tác dụng cho các tác vụ mang tính Repetitive (lặp đi lặp lại hàng ngày/tuần).' },
     ],
-    lanVoice: 'Nhiều HR thắc mắc: "Mình đẩy CV của ứng viên lên cloud của Anthropic/OpenAI có lo bị lấy data đem đi train AI không?". Mối lo bảo mật này hoàn toàn chính đáng. Cách giải quyết triệt để: Hãy vào phần Settings và bật tính năng "Zero data retention" (Không lưu trữ dữ liệu). AI xử lý xong sẽ xoá data ngay lập tức. Chúng ta sẽ đào sâu vấn đề compliance (tuân thủ) này ở Tuần 9.',
+    lanVoice: 'Nhiều HR thắc mắc: "Mình đẩy CV ứng viên lên cloud Anthropic/OpenAI có bị lấy data đem đi train không?". Lo này chính đáng. Cách triệt để: vào Settings → bật "Zero data retention" — AI xử xong xoá data ngay. Tuần 9 mình đào sâu compliance.\n\n💬 HỎI ĐÁP NHANH:\nQ: "Nếu máy em mất mạng thì AI có nghỉ việc không?"\nA: Nếu dùng Cách C của anh thì mạng nhà em mất nó vẫn làm. Nó chạy trên server của lớp mình mà.\n\nQ: "Sếp thấy em nhàn quá lại giao thêm việc thì sao?"\nA: Đấy là lý do anh bảo phải "giấu". Hãy dành thời gian nhàn đó để đi cafe, suy nghĩ chiến lược, hoặc đơn giản là về sớm với con.',
     outcomes: {
       cam: [
         'Một Routine Automation tự động chạy chuẩn xác trong 7 ngày liên tiếp — kèm hệ thống Log file (nhật ký) đối soát rõ ràng.',
@@ -458,8 +458,8 @@ Tạo một file FEEDBACK-[ten-dong-nghiep].md đính kèm vào Repo — đây l
     },
     steps: [
       {
-        title: 'Setup Trigger (chọn 1 trong 3 paths)', xp: 30,
-        desc: 'Tuỳ ngân sách + setup máy của anh/chị, chọn 1 path. 3 paths đều hợp lệ để pass mốc 5M.',
+        title: 'Cài đặt "Lẫy kích hoạt" — chọn 1 trong 3 cách', xp: 30,
+        desc: '🎯 Chọn 1 trong 3 cách. Anh em cứ chọn Cách C cho nhẹ đầu và đỡ tốn tiền.\n\n💡 Giải ngố: "Trigger" là cái lẫy — cứ đến giờ hoặc có file mới là nó "bắn" lệnh cho AI chạy.',
         sampleType: 'instruction',
         samplePrompt: `📋 CHỌN 1 TRONG 3 PATHS:
 
@@ -495,8 +495,8 @@ Bất kể chọn Path nào, anh/chị đều phải làm Bước 2 (Viết prom
 🆘 Nếu vướng setup → nhắn nhóm Zalo cohort hoặc anh Lan hỗ trợ 1-1.`,
       },
       {
-        title: 'Setup Prompt cho Routine + 5 Guardrails bảo vệ', xp: 70,
-        desc: 'Viết file prompt định nghĩa luồng chạy (8 bước) và BẮT BUỘC phải thiết lập 5 lớp rào chắn an toàn (Guardrails).',
+        title: 'Soạn kịch bản "Sáng sớm" + 5 Rào chắn', xp: 70,
+        desc: '📝 Viết lệnh: 6h sáng quét CV → Ẩn thông tin → Chấm điểm → Nhắn Telegram.\n\n🛡️ Quan trọng — 5 RÀO CHẮN (Guardrails) BẮT BUỘC: nếu chi phí vượt 10k VNĐ/lần hoặc AI không chắc chắn → phải dừng lại báo ngay. Không có rào chắn = không bật automation.',
         sampleType: 'prompt',
         samplePrompt: `📋 Hãy tạo file \`prompt-routine.md\` trong repo với nội dung sau:
 
@@ -529,8 +529,8 @@ Sau khi lưu file, hãy test thử bằng cách gõ prompt này cho Claude Code:
 "Đọc file prompt-routine.md, hãy validate giúp tôi xem 8 bước thực thi và 5 guardrails đã đầy đủ, chặt chẽ và khả thi chưa. Báo cáo nếu thiếu sót."`,
       },
       {
-        title: 'Test Run (Chạy thử) → Nhận tin nhắn Telegram', xp: 40,
-        desc: 'Chạy thử hệ thống (Dry-run) trước khi bật công tắc Activate chính thức. Phải đảm bảo Telegram nhận được bản tin chuẩn.',
+        title: 'Chạy thử và nhận tin nhắn Telegram', xp: 40,
+        desc: '🧪 Thả thử 3 cái CV vào thư mục. Ngồi đợi 2-5 phút xem Telegram có nổ tin nhắn tóm tắt không. Đây là Dry-run trước khi bật Activate chính thức.',
         sampleType: 'instruction',
         samplePrompt: `1. Chuẩn bị data: Đảm bảo có sẵn ≥ 3 file CV trong folder \`./cvs-incoming/\` (Lấy CV mẫu từ Buổi 2 để test).
 2. Nếu dùng Path A (Max): Vào mục Routines → Chọn routine vừa tạo → Bấm nút "Run now".
@@ -545,8 +545,8 @@ Sau khi lưu file, hãy test thử bằng cách gõ prompt này cho Claude Code:
 - Cảnh báo vượt Cost cap → Kiểm tra Guardrail số 3 + Giảm bớt số lượng CV nạp vào trong 1 batch.`,
       },
       {
-        title: 'Kích hoạt (Activate) Routine và vận hành 7 ngày liên tiếp', xp: 80,
-        desc: 'Bật công tắc và theo dõi nhật ký hoạt động (log) mỗi sáng trong vòng 1 tuần.',
+        title: 'Vận hành "Ẩn mình" trong 7 ngày', xp: 80,
+        desc: '🌙 Để hệ thống tự chạy liên tục 1 tuần. Mỗi sáng chỉ cần check tin nhắn xem con AI "trợ lý" báo cáo gì.\n\n💰 Điều kiện hoàn 5M: chạy ổn định ít nhất 5/7 ngày.',
         sampleType: 'instruction',
         samplePrompt: `1. Path A (Max): Gạt nút toggle sang trạng thái "Active" (Màu xanh) trên trình quản lý Routines.
 2. Path B (Pro): Verify lại job cron bằng lệnh \`crontab -l\` đảm bảo đang kích hoạt.
@@ -571,8 +571,8 @@ Tiêu chí pass mốc:
 - ❌ Dưới 3/7 ngày + không lý do → FAIL mốc`,
       },
       {
-        title: 'Báo cáo Before/After (Nộp bài duyệt mốc hoàn 5M)', xp: 60,
-        desc: 'Báo cáo bằng số liệu định lượng (Measurable). KHÔNG ép buộc phải ra số ảo "Tiết kiệm 5h/tuần" — Điều quan trọng là biết cách đo lường thực tế và có đủ evidence (Log files).',
+        title: 'Báo cáo "Đổi đời" — Nộp bài duyệt mốc hoàn 5M', xp: 60,
+        desc: '🎉 Nộp bảng so sánh cuối cùng. Anh em sẽ thấy mình nhàn hơn bao nhiêu. Pass bước này là anh Lân tinh tinh hoàn 5M ngay và luôn.\n\n💡 KHÔNG ép phải ra số ảo "tiết kiệm 5h/tuần" — quan trọng là biết cách đo lường thực tế + đủ evidence (Log files).',
         sampleType: 'rubric',
         samplePrompt: `📝 Bảng báo cáo Before/After Buổi 4 — Copy và điền vào textarea bên dưới:
 
